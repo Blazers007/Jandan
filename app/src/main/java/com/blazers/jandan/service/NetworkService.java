@@ -6,10 +6,13 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
+import com.blazers.jandan.orm.MeiziModel;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import io.realm.Realm;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * Created by Blazers on 2015/8/25.
@@ -38,7 +41,7 @@ public class NetworkService extends android.app.Service {
             protected String doInBackground(Void... params) {
                 OkHttpClient client = new OkHttpClient();
                 Request request = new Request.Builder()
-                        .url(URL.JANDAN_HOME)
+                        .url(URL.JANDAN_OOXX)
                         .build();
                 try {
                     return client.newCall(request).execute().body().string();
@@ -61,7 +64,23 @@ public class NetworkService extends android.app.Service {
 
     /* Export */
     void handleHtmlPage(String html) {
-        Log.i(TAG, html);
+//        Log.i(TAG, html);
         Document document = Jsoup.parse(html);
+        String nowPage = document.getElementsByClass("current-comment-page").first().val();
+        Log.i(TAG, " NOW PAGE ==> " + nowPage);
+        Element ol = document.getElementsByClass("commentlist").first();
+
+        Realm realm = Realm.getInstance(this);
+        realm.beginTransaction();
+        for(Element li : ol.children()) {
+            for (Element img : li.getElementsByTag("img")) {
+                Log.i(TAG, "SRC ==> " + img.attr("src"));
+                MeiziModel meizi = realm.createObject(MeiziModel.class);
+                meizi.setCommentId(li.id());
+                meizi.setUrl(img.attr("src"));
+            }
+        }
+        realm.commitTransaction();
+        realm.close();
     }
 }

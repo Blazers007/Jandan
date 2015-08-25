@@ -5,4 +5,5 @@ package com.blazers.jandan.common;
  */
 public class URL {
     public static final String JANDAN_HOME = "http://jandan.net";
+    public static final String JANDAN_OOXX = "http://jandan.net/ooxx";
 }
