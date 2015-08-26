@@ -9,7 +9,11 @@ import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,20 +58,20 @@ public class MeiziFragment extends Fragment {
 
     public static final String TAG = MeiziFragment.class.getSimpleName();
 
-    @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.recycler_list) RecyclerView meiziList;
+//    @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
+//    @Bind(R.id.recycler_list) RecyclerView meiziList;
 
-    private Realm realm;
-    private MeiziAdapter adapter;
-    private ArrayList<MeiziModel> meiziModels;
-//    private JSONArray meiziArray;
+    @Bind(R.id.tab_layout) TabLayout tabLayout;
+    @Bind(R.id.view_pager) ViewPager viewPager;
+
+    private ArrayList<View> pages;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_meizi, container, false);
         ButterKnife.bind(this, root);
-        initRecyclerView();
-        initMeiziPics();
+        initViewPager();
         return root;
     }
 
@@ -78,60 +82,119 @@ public class MeiziFragment extends Fragment {
      * */
 
 
-    void initRecyclerView() {
-        /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        meiziList.setLayoutManager(linearLayoutManager);
+//    void initRecyclerView() {
+//        /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+//        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        meiziList.setLayoutManager(linearLayoutManager);
+//
+//        adapter = new MeiziAdapter();
+//        meiziList.setAdapter(adapter);
+//
+//        /* */
+//        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
+//        swipeRefreshLayout.setOnRefreshListener(() -> {
+//            /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
+//
+//        });
+//    }
 
-        adapter = new MeiziAdapter();
-        meiziList.setAdapter(adapter);
+    void initViewPager() {
+        viewPager.setAdapter(new MeiziPager());
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        /* */
-        swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
+            }
 
+            @Override
+            public void onPageSelected(int position) {
+                if (position == viewPager.getAdapter().getCount() - 1) {
+//                    pages.add(initOnePage(position+1));
+//                    viewPager.getAdapter().notifyDataSetChanged();
+//                    Snackbar.make(getView(), "ADD", Snackbar.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
         });
-    }
-
-    void initMeiziPics() {
-//        realm = Realm.getInstance(getActivity());
-//        RealmQuery<MeiziModel> query = realm.where(MeiziModel.class);
-//        meiziModels = query.findAll();
-        /**/
-        new AsyncTask<Void,Void,ArrayList<MeiziModel>>(){
-
-            @Override
-            protected ArrayList<MeiziModel> doInBackground(Void... params) {
-                return MeiziParser.parse();
-            }
-
-            @Override
-            protected void onPostExecute(ArrayList<MeiziModel> meizi) {
-                meiziModels = meizi;
-                adapter.notifyDataSetChanged();
-                super.onPostExecute(meiziModels);
-            }
-        }.execute();
     }
 
     @Override
     public void onDestroyView() {
-        if (realm != null)
-            realm.close();
         super.onDestroyView();
     }
 
-    //     gengxin duibi xianyou
+    class MeiziPager extends PagerAdapter {
+
+        public MeiziPager() {
+            pages = new ArrayList<>();
+            pages.add(initOnePage(0));
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View)object);
+        }
+
+        @Override
+        public int getCount() {
+            return pages.size();
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View v = pages.get(position);
+            container.addView(v);
+            return v;
+        }
+    }
+
+    private View initOnePage(int page) {
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.pager_image_recycler, null);
+        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recycler_list);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(new MeiziAdapter(page));
+        return v;
+    }
 
     /* Meizi Adapter */
     class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziHolder>{
 
         private LayoutInflater inflater;
+        private ArrayList<MeiziModel> meiziModels = new ArrayList<>();
+        private MeiziAdapter adapter;
 
-        public MeiziAdapter() {
+        public MeiziAdapter(int page) {
             inflater = LayoutInflater.from(getActivity());
+            adapter = this;
+            new AsyncTask<Void,Void,ArrayList<MeiziModel>>(){
+                @Override
+                protected ArrayList<MeiziModel> doInBackground(Void... params) {
+                    return page == 0 ? MeiziParser.parse() : MeiziParser.parse(page);
+                }
+                @Override
+                protected void onPostExecute(ArrayList<MeiziModel> meizi) {
+                    meiziModels = meizi;
+                    adapter.notifyDataSetChanged();
+                    super.onPostExecute(meizi);
+                }
+            }.execute();
         }
 
         @Override
@@ -158,7 +221,7 @@ public class MeiziFragment extends Fragment {
                                 return;
                             }
                             QualityInfo qualityInfo = imageInfo.getQualityInfo();
-                            Log.i(TAG, ""+imageInfo.getWidth() +
+                            Log.i(TAG, ""+imageInfo.getWidth() + "  " +
                                     imageInfo.getHeight() + "  " +
                                     qualityInfo.getQuality());
                         }

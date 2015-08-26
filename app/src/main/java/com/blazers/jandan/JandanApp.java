@@ -10,7 +10,7 @@ public class JandanApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().init(this);
 
         Fresco.initialize(this);
 
