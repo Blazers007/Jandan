@@ -19,7 +19,7 @@ import org.jsoup.nodes.Element;
  */
 public class NetworkService extends android.app.Service {
 
-    private static final String TAG = NetworkService.class.getSimpleName();
+    public static final String TAG = NetworkService.class.getSimpleName();
 
     @Nullable
     @Override
@@ -30,7 +30,7 @@ public class NetworkService extends android.app.Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "Start");
-        getFrontPageInformation();
+//        getFrontPageInformation();
         return super.onStartCommand(intent, flags, startId);
     }
 
