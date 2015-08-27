@@ -11,6 +11,7 @@ public class Picture extends RealmObject {
     private long comment_ID;// Belong to group
     private int index;      // Inner group index
     private String url;     // Url
+    private String localUrl;// Local Storage
     private Meizi meizi;    // Relationship
 
     public long getComment_ID() {
@@ -35,6 +36,14 @@ public class Picture extends RealmObject {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getLocalUrl() {
+        return localUrl;
+    }
+
+    public void setLocalUrl(String localUrl) {
+        this.localUrl = localUrl;
     }
 
     public Meizi getMeizi() {

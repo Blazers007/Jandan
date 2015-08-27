@@ -21,12 +21,17 @@ import com.blazers.jandan.orm.Meizi;
 import com.blazers.jandan.orm.Picture;
 import com.blazers.jandan.util.network.MeiziParser;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
+import com.facebook.common.references.CloseableReference;
+import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.core.ImagePipeline;
+import com.facebook.imagepipeline.image.CloseableImage;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.image.QualityInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -75,6 +80,7 @@ public class MeiziFragment extends Fragment {
         meiziList.setLayoutManager(linearLayoutManager);
         /* Loadmore */
         meiziList.setLoadMoreListener(() -> {
+            smoothProgressBar.setVisibility(View.VISIBLE);
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
@@ -89,6 +95,7 @@ public class MeiziFragment extends Fragment {
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
+                    smoothProgressBar.setVisibility(View.GONE);
                     super.onPostExecute(aVoid);
                 }
             }.execute();
@@ -114,12 +121,10 @@ public class MeiziFragment extends Fragment {
                     meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
-                    smoothProgressBar.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     super.onPostExecute(aVoid);
                 }
             }.execute();
-            smoothProgressBar.setVisibility(View.VISIBLE);
         });
 
         /* Pull to load */
@@ -130,7 +135,26 @@ public class MeiziFragment extends Fragment {
         meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
         listSize = meiziPics.size();
         Log.e("SIZE", "= " + meiziPics.size());
-        /* Update */
+        /* Update 需要整合 以及更智能的自动更新判断 */
+        if (listSize == 0) {
+            swipeRefreshLayout.setRefreshing(true);
+            new AsyncTask<Void, Void, Void>(){
+                @Override
+                protected Void doInBackground(Void... params) {
+                    MeiziParser.getInstance().parseAPI(true);
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
+                    listSize = meiziPics.size();
+                    adapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                    super.onPostExecute(aVoid);
+                }
+            }.execute();
+        }
     }
 
     @Override
@@ -162,14 +186,18 @@ public class MeiziFragment extends Fragment {
         public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
             meiziHolder.draweeView.setAspectRatio(0.618f);
             Picture picture = meiziPics.get(i);
+            ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(picture.getUrl()));
             DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setUri(Uri.parse(picture.getUrl()))
+                    .setImageRequest(imageRequest)
                     .setAutoPlayAnimations(true)
                     .setControllerListener(new FrescoControllListener(meiziHolder.draweeView))
                     .build();
             meiziHolder.draweeView.setController(controller);
-            /*  */
             meiziHolder.author.setText(picture.getMeizi().getComment_author());
+//
+            meiziHolder.draweeView.setOnClickListener(v->{
+                new ImageViewerFragment().show(getActivity().getSupportFragmentManager(), "a");
+            });
         }
 
         @Override
