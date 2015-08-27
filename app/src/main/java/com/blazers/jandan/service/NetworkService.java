@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.MeiziModel;
+import com.blazers.jandan.orm.Meizi;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;
@@ -75,9 +75,6 @@ public class NetworkService extends android.app.Service {
         for(Element li : ol.children()) {
             for (Element img : li.getElementsByTag("img")) {
                 Log.i(TAG, "SRC ==> " + img.attr("src"));
-                MeiziModel meizi = realm.createObject(MeiziModel.class);
-                meizi.setCommentId(li.id());
-                meizi.setUrl(img.attr("src"));
             }
         }
         realm.commitTransaction();

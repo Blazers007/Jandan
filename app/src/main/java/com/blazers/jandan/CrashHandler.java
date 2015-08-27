@@ -24,17 +24,11 @@ import java.util.Locale;
 public class CrashHandler implements UncaughtExceptionHandler {
 
     public static final String TAG = CrashHandler.class.getSimpleName();
-    /**
-     * 系统默认UncaughtExceptionHandler
-     * */
+    /* 系统默认UncaughtExceptionHandler */
     private UncaughtExceptionHandler mDefaultHandler;
-    /**
-     * Instance
-     * */
+    /* Instance */
     private static CrashHandler INSTANCE;
-    /**
-     * Vars
-     * */
+    /* Vars */
     private Context mContext;
     private String courseName;
     private String VERSION_NAME;

@@ -17,7 +17,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="#fff200"
+                android:background="#3c69ff"
                 app:layout_scrollFlags="scroll|enterAlways"
                 />
     </android.support.design.widget.AppBarLayout>
@@ -28,30 +28,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-        <com.blazers.jandan.widget.LoadMoreRecyclerView
+        <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#fff"
                 />
     </android.support.v4.widget.SwipeRefreshLayout>
-    <!-- Progress-->
-    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-            android:id="@+id/load_more_progress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:visibility="gone"
-            android:indeterminate="true"
-            app:spb_sections_count="4"
-            app:spb_color="#FF0000"
-            app:spb_speed="2.0"
-            app:spb_stroke_width="4dp"
-            app:spb_stroke_separator_length="4dp"
-            app:spb_reversed="false"
-            app:spb_mirror_mode="false"
-            app:spb_progressiveStart_activated="true"
-            app:spb_progressiveStart_speed="1.5"
-            app:spb_progressiveStop_speed="3.4"
-            />
 </android.support.design.widget.CoordinatorLayout>
