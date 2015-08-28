@@ -20,6 +20,7 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.orm.Meizi;
 import com.blazers.jandan.orm.Picture;
 import com.blazers.jandan.util.network.MeiziParser;
+import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
 import com.facebook.common.references.CloseableReference;
 import com.facebook.datasource.DataSource;
@@ -90,8 +91,8 @@ public class MeiziFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    long last = meiziPics.last().getComment_ID();
-                    meiziPics.addAll(meiziPics.size(), realm.where(Picture.class).lessThan("comment_ID", last).findAllSorted("comment_ID", false));
+                    long last = Long.parseLong(meiziPics.last().getComment_ID_index().split("_")[0]);
+                    meiziPics.addAll(meiziPics.size(), realm.where(Picture.class).lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
@@ -118,7 +119,7 @@ public class MeiziFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
+                    meiziPics = realm.where(Picture.class).findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -132,7 +133,7 @@ public class MeiziFragment extends Fragment {
 
     void initMeiziPics() {
         realm = Realm.getInstance(getActivity());
-        meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
+        meiziPics = realm.where(Picture.class).findAllSorted("comment_ID_index", false);
         listSize = meiziPics.size();
         Log.e("SIZE", "= " + meiziPics.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
@@ -147,7 +148,7 @@ public class MeiziFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).findAllSorted("comment_ID", false);
+                    meiziPics = realm.where(Picture.class).findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -184,19 +185,16 @@ public class MeiziFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
-            meiziHolder.draweeView.setAspectRatio(0.618f);
             Picture picture = meiziPics.get(i);
-            ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(picture.getUrl()));
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setImageRequest(imageRequest)
-                    .setAutoPlayAnimations(true)
-                    .setControllerListener(new FrescoControllListener(meiziHolder.draweeView))
-                    .build();
-            meiziHolder.draweeView.setController(controller);
+            meiziHolder.draweeView.setAspectRatio(0.618f);
+            if (picture.getLocalUrl() == null) {
+                meiziHolder.draweeView.showImageWeb(picture.getUrl());
+            } else {
+                meiziHolder.draweeView.showImageLocal(picture.getLocalUrl());
+            }
             meiziHolder.author.setText(picture.getMeizi().getComment_author());
-//
             meiziHolder.draweeView.setOnClickListener(v->{
-                new ImageViewerFragment().show(getActivity().getSupportFragmentManager(), "a");
+                ((DownloadFrescoView)v).saveFileToSdcard();
             });
         }
 
@@ -207,64 +205,14 @@ public class MeiziFragment extends Fragment {
 
         class MeiziHolder extends RecyclerView.ViewHolder {
 
-            public SimpleDraweeView draweeView;
+            public DownloadFrescoView draweeView;
             public TextView author;
 
             public MeiziHolder(View itemView) {
                 super(itemView);
-                draweeView = (SimpleDraweeView) itemView.findViewById(R.id.drweeView);
+                draweeView = (DownloadFrescoView) itemView.findViewById(R.id.drweeView);
                 author = (TextView) itemView.findViewById(R.id.textView);
             }
-        }
-    }
-
-    class FrescoControllListener implements ControllerListener<ImageInfo>{
-
-        private SimpleDraweeView draweeView;
-
-        public FrescoControllListener(SimpleDraweeView draweeView) {
-            this.draweeView = draweeView;
-        }
-
-        @Override
-        public void onSubmit(String s, Object o) {
-
-        }
-
-        @Override
-        public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
-            if (imageInfo == null) {
-                return;
-            }
-            QualityInfo qualityInfo = imageInfo.getQualityInfo();
-            Log.i(TAG, "Width: " + imageInfo.getWidth() + "Height: " +
-                    imageInfo.getHeight() + "  " +
-                    qualityInfo.getQuality());
-             /* Resizing the item */
-            if(imageInfo.getWidth() > imageInfo.getHeight()) {
-                float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
-                draweeView.setAspectRatio(asp);
-            }
-        }
-
-        @Override
-        public void onIntermediateImageSet(String s, ImageInfo imageInfo) {
-
-        }
-
-        @Override
-        public void onIntermediateImageFailed(String s, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onFailure(String s, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onRelease(String s) {
-
         }
     }
 }

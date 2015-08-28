@@ -95,11 +95,16 @@ public class MeiziParser {
                 Meizi meizi = mRealm.createOrUpdateObjectFromJson(Meizi.class, comment);
                 JSONArray pics = comment.getJSONArray("pics");
                 for (int pi = 0 ; pi < pics.length() ; pi ++) {
-                    Picture picture = mRealm.createObject(Picture.class);
-                    picture.setComment_ID(comment_ID);
-                    picture.setIndex(pi);
+                    /* 避免多次保存 */
+                    Picture picture = new Picture();
+                    picture.setComment_ID_index(comment_ID + "_" + pi);
                     picture.setUrl(pics.getString(pi));
                     picture.setMeizi(meizi);
+                    try {
+                        mRealm.copyToRealm(picture);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 meizi.setPicture_size(pics.length());
                 Log.e("UPDATE OR CREATE ", "ID === > " + meizi.getComment_ID());

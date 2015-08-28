@@ -29,6 +29,12 @@ public class ImageViewerFragment extends DialogFragment {
 
     @Bind(R.id.viewer) RecyclerView recyclerView;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,7 +75,7 @@ public class ImageViewerFragment extends DialogFragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(pictures.get(position).getUrl()));
+            ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(pictures.get(position).getLocalUrl()));
             DraweeController controller = Fresco.newDraweeControllerBuilder()
                     .setImageRequest(imageRequest)
                     .setAutoPlayAnimations(true)

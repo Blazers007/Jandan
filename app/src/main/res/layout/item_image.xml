@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:gravity="bottom"
             >
-        <com.facebook.drawee.view.SimpleDraweeView
+        <com.blazers.jandan.widget.DownloadFrescoView
                 android:id="@+id/drweeView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

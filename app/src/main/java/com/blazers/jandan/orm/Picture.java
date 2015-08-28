@@ -8,26 +8,18 @@ import io.realm.annotations.PrimaryKey;
  */
 public class Picture extends RealmObject {
 
-    private long comment_ID;// Belong to group
-    private int index;      // Inner group index
+    @PrimaryKey
+    private String comment_ID_index;// Belong to group and index split by _
     private String url;     // Url
     private String localUrl;// Local Storage
     private Meizi meizi;    // Relationship
 
-    public long getComment_ID() {
-        return comment_ID;
+    public String getComment_ID_index() {
+        return comment_ID_index;
     }
 
-    public void setComment_ID(long comment_ID) {
-        this.comment_ID = comment_ID;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
+    public void setComment_ID_index(String comment_ID_index) {
+        this.comment_ID_index = comment_ID_index;
     }
 
     public String getUrl() {
