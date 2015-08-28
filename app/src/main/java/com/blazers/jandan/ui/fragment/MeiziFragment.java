@@ -193,9 +193,6 @@ public class MeiziFragment extends Fragment {
                 meiziHolder.draweeView.showImageLocal(picture.getLocalUrl());
             }
             meiziHolder.author.setText(picture.getMeizi().getComment_author());
-            meiziHolder.draweeView.setOnClickListener(v->{
-                ((DownloadFrescoView)v).saveFileToSdcard();
-            });
         }
 
         @Override

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 import com.blazers.jandan.orm.Picture;
 import com.blazers.jandan.util.network.ImageDownloader;
 import com.blazers.jandan.util.sdcard.SdcardHelper;
@@ -30,6 +33,8 @@ import com.facebook.imagepipeline.memory.PooledByteBuffer;
 import com.facebook.imagepipeline.memory.PooledByteBufferInputStream;
 import com.facebook.imagepipeline.request.ImageRequest;
 import io.realm.Realm;
+import io.realm.RealmResults;
+
 import java.io.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -37,12 +42,13 @@ import java.util.concurrent.Executors;
 /**
  * Created by Blazers on 2015/8/28.
  */
-public class DownloadFrescoView extends SimpleDraweeView {
+public class DownloadFrescoView extends SimpleDraweeView implements View.OnClickListener {
 
     private DownloadFrescoView self = this;
     private Context context = getContext();
     /* Image Request */
     private ImageRequest imageRequest;
+    private String url;
 
     public DownloadFrescoView(Context context, GenericDraweeHierarchy hierarchy) {
         super(context, hierarchy);
@@ -61,8 +67,9 @@ public class DownloadFrescoView extends SimpleDraweeView {
     }
 
     public void showImageWeb(String url) {
-        imageRequest = ImageRequest.fromUri(Uri.parse(url));
+        imageRequest = ImageRequest.fromUri(Uri.parse(this.url = url));
         showImage();
+        setOnClickListener(this);
     }
 
     public void showImageLocal(String path) {
@@ -79,8 +86,8 @@ public class DownloadFrescoView extends SimpleDraweeView {
         self.setController(controller);
     }
 
-    public void saveFileToSdcard() {
-        /* 订阅事件 */
+    public void stupid() {
+         /* 订阅事件 */
         ImagePipeline imagePipeline = Fresco.getImagePipeline();
         DataSource<CloseableReference<PooledByteBuffer>> dataSource = imagePipeline.fetchEncodedImage(imageRequest, context.getApplicationContext());
         DataSubscriber<CloseableReference<PooledByteBuffer>> dataSubscriber = new BaseDataSubscriber<CloseableReference<PooledByteBuffer>>() {
@@ -136,6 +143,41 @@ public class DownloadFrescoView extends SimpleDraweeView {
             }
         };
         dataSource.subscribe(dataSubscriber, CallerThreadExecutor.getInstance());
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (url == null)
+            return;
+        new AsyncTask<Void, Void, String>(){
+            @Override
+            protected String doInBackground(Void... params) {
+                return ImageDownloader.getInstance().doDownloading(url);
+            }
+
+            @Override
+            protected void onPostExecute(String path) {
+                Realm realm = Realm.getInstance(context);
+                RealmResults<Picture> pictures = realm.where(Picture.class).equalTo("url", url).findAll();
+                realm.beginTransaction();
+                for (Picture picture : pictures)
+                    picture.setLocalUrl(path);
+                realm.commitTransaction();
+                realm.close();
+                /*  */
+                Snackbar.make(self, "保存完毕", Snackbar.LENGTH_SHORT).setAction("删除", v->{
+                    new File(path).delete();
+                    Realm realm2 = Realm.getInstance(context);
+                    RealmResults<Picture> pictures2 = realm.where(Picture.class).equalTo("url", url).findAll();
+                    realm.beginTransaction();
+                    for (Picture picture : pictures2)
+                        picture.setLocalUrl(null);
+                    realm2.commitTransaction();
+                    realm2.close();
+                    Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
+                }).show();
+            }
+        }.execute();
     }
 
     class FrescoControllListener implements ControllerListener<ImageInfo> {
