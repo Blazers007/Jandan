@@ -9,27 +9,21 @@ import com.blazers.jandan.orm.Picture;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;
-import io.realm.RealmList;
 import io.realm.RealmQuery;
-import io.realm.RealmResults;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Blazers on 2015/8/26.
  */
-public class MeiziParser {
-    public static final String TAG = MeiziParser.class.getSimpleName();
+public class JandanParser {
+    public static final String TAG = JandanParser.class.getSimpleName();
     /* INSTANCE */
     private static Context mContext;
-    private static MeiziParser INSTANCE;
+    private static JandanParser INSTANCE;
     /* 缓存当前最新的Page 应该与数据库同步 */
     private int CURRENT_PAGE = 1;
     private int TOTAL_PAGE;
@@ -43,22 +37,22 @@ public class MeiziParser {
         mContext = context;
     }
 
-    private MeiziParser(){
+    private JandanParser(){
         mClient = new OkHttpClient();
     }
 
-    public static MeiziParser getInstance() {
+    public static JandanParser getInstance() {
         if (mContext == null) {
             throw new NullPointerException(String.valueOf("You must init the MeiziParse before call it"));
         }
         if (INSTANCE == null) {
-            INSTANCE = new MeiziParser();
+            INSTANCE = new JandanParser();
         }
         return INSTANCE;
     }
 
 
-    public void parseAPI(boolean refresh) {
+    public void parseMeiziAPI(boolean refresh) {
         mRealm = Realm.getInstance(mContext);
         String url = refresh ? URL.JANDAN_OOXX_API : URL.JANDAN_OOXX_API + "&page=" + (CURRENT_PAGE + 1);
         Request request = new Request.Builder()
@@ -117,5 +111,9 @@ public class MeiziParser {
         } finally {
             mRealm.close();
         }
+    }
+
+    public void parseNewsAPI(boolean refresh) {
+
     }
 }

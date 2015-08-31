@@ -1,6 +1,8 @@
 package com.blazers.jandan.ui.activity;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +10,7 @@ import android.view.MenuItem;
 import com.blazers.jandan.R;
 import com.blazers.jandan.service.NetworkService;
 import com.blazers.jandan.ui.fragment.MeiziFragment;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
                 .add(R.id.container, new MeiziFragment())
                 .commit();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

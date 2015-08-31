@@ -1,8 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,35 +15,20 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.orm.Meizi;
 import com.blazers.jandan.orm.Picture;
-import com.blazers.jandan.util.network.MeiziParser;
+import com.blazers.jandan.util.network.JandanParser;
 import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
-import com.facebook.common.references.CloseableReference;
-import com.facebook.datasource.DataSource;
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.core.ImagePipeline;
-import com.facebook.imagepipeline.image.CloseableImage;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
-import com.facebook.imagepipeline.request.ImageRequest;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
-import io.realm.RealmQuery;
 import io.realm.RealmResults;
-
-import java.util.ArrayList;
 
 /**
  * Created by Blazers on 2015/8/25.
  */
 public class MeiziFragment extends Fragment {
 
-    public static final String TAG = MeiziFragment.class.getSimpleName();
+    private static final String TAG = MeiziFragment.class.getSimpleName();
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
@@ -85,7 +68,7 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    MeiziParser.getInstance().parseAPI(false);
+                    JandanParser.getInstance().parseMeiziAPI(false);
                     return null;
                 }
 
@@ -113,7 +96,7 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    MeiziParser.getInstance().parseAPI(true);
+                    JandanParser.getInstance().parseMeiziAPI(true);
                     return null;
                 }
 
@@ -142,7 +125,7 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    MeiziParser.getInstance().parseAPI(true);
+                    JandanParser.getInstance().parseMeiziAPI(true);
                     return null;
                 }
 
@@ -178,7 +161,7 @@ public class MeiziFragment extends Fragment {
 
         @Override
         public MeiziHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.item_image, parent, false);
+            View v = inflater.inflate(R.layout.item_meizi, parent, false);
             return new MeiziHolder(v);
         }
 
@@ -187,11 +170,7 @@ public class MeiziFragment extends Fragment {
         public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
             Picture picture = meiziPics.get(i);
             meiziHolder.draweeView.setAspectRatio(0.618f);
-            if (picture.getLocalUrl() == null) {
-                meiziHolder.draweeView.showImageWeb(picture.getUrl());
-            } else {
-                meiziHolder.draweeView.showImageLocal(picture.getLocalUrl());
-            }
+            meiziHolder.draweeView.showImage(picture);
             meiziHolder.author.setText(picture.getMeizi().getComment_author());
         }
 

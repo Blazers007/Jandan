@@ -1,7 +1,7 @@
 package com.blazers.jandan;
 
 import android.app.Application;
-import com.blazers.jandan.util.network.MeiziParser;
+import com.blazers.jandan.util.network.JandanParser;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 /**
@@ -11,9 +11,9 @@ public class JandanApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        CrashHandler.getInstance().init(this);
+        CrashHandler.getInstance().init(this);
         Fresco.initialize(this);
-        MeiziParser.init(this);
+        JandanParser.init(this);
 
     }
 }
