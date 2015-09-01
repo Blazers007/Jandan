@@ -1,4 +1,4 @@
-package com.blazers.jandan.util.network;
+package com.blazers.jandan.network;
 
 import com.blazers.jandan.util.sdcard.SdcardHelper;
 import com.squareup.okhttp.OkHttpClient;

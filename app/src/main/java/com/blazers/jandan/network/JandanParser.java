@@ -1,4 +1,4 @@
-package com.blazers.jandan.util.network;
+package com.blazers.jandan.network;
 
 
 import android.content.Context;
@@ -139,6 +139,7 @@ public class JandanParser {
                 NewsList newsList = new NewsList();
                 newsList.setId(post.getLong("id"));
                 newsList.setTitle(post.getString("title"));
+                newsList.setUrl(post.getString("url"));
                 newsList.setAuthor(post.getJSONObject("author").getString("name"));
                 newsList.setDate(post.getString("date"));
                 newsList.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));

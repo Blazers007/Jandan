@@ -16,6 +16,8 @@ public class NewsList extends RealmObject {
     private String tagTitle; // tags 可为多个 因为是JSONArray形式存在
     private String author;
 
+    private String url;
+
     public long getId() {
         return id;
     }
@@ -70,5 +72,13 @@ public class NewsList extends RealmObject {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

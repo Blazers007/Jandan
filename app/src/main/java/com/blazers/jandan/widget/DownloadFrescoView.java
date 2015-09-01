@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import com.blazers.jandan.orm.meizi.Picture;
-import com.blazers.jandan.util.network.ImageDownloader;
+import com.blazers.jandan.network.ImageDownloader;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
@@ -130,6 +130,9 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
                 float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
                 draweeView.setAspectRatio(asp);
                 loaded = true;
+            } else {
+                float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
+                float asp2 = asp < 0.618f ? asp : 0.618f;
             }
         }
 

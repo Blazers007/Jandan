@@ -1,7 +1,7 @@
 package com.blazers.jandan;
 
 import android.app.Application;
-import com.blazers.jandan.util.network.JandanParser;
+import com.blazers.jandan.network.JandanParser;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 /**

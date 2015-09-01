@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.container) ViewPager viewPager;
 
     private ArrayList<Fragment> fragments;
-    private String[] titles = {"新鲜事", "妹子图"};
+    private String[] titles = {"新鲜事", "妹子图", "段子"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabTextColors(Color.WHITE, Color.WHITE);
+        tabLayout.setTabTextColors(Color.rgb(187, 187, 187), Color.WHITE);
         viewPager.setPageMargin(Dppx.Dp2Px(this, 12));
         /* 读取上次最后访问的 */
     }

@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,11 +18,10 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.orm.news.NewsList;
+import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.divider.DividerItemDecoration;
-import com.blazers.jandan.util.network.JandanParser;
-import com.blazers.jandan.widget.DownloadFrescoView;
+import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -39,7 +39,7 @@ public class NewsFragment extends Fragment {
     @Bind(R.id.recycler_list) LoadMoreRecyclerView newsList;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private Realm realm;
+    private Realm mRealm;
     private NewsAdapter adapter;
     private RealmResults<NewsList> newsListRealmResults;
     private int listSize;
@@ -74,6 +74,8 @@ public class NewsFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    long last = newsListRealmResults.last().getId();
+                    newsListRealmResults.addAll(newsListRealmResults.size(), mRealm.where(NewsList.class).lessThan("id", last).findAllSorted("id", false));
                     adapter.notifyDataSetChanged();
                     newsList.endLoading();
                     smoothProgressBar.setVisibility(View.GONE);
@@ -98,7 +100,9 @@ public class NewsFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-
+                    /* 应该首先缓存到数据库 然后仅仅加载部分 如果数据库没有则更新数据库并显示 */
+                    newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
+                    listSize = newsListRealmResults.size();
                     swipeRefreshLayout.setRefreshing(false);
                     super.onPostExecute(aVoid);
                 }
@@ -109,8 +113,8 @@ public class NewsFragment extends Fragment {
 
 
     void initNews() {
-        realm = Realm.getInstance(getActivity());
-        newsListRealmResults = realm.where(NewsList.class).findAllSorted("id", false);
+        mRealm = Realm.getInstance(getActivity());
+        newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
         listSize = newsListRealmResults.size();
         Log.e("SIZE", "= " + newsListRealmResults.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
@@ -125,7 +129,7 @@ public class NewsFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    newsListRealmResults = realm.where(NewsList.class).findAllSorted("id", false);
+                    newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
                     listSize = newsListRealmResults.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -137,8 +141,8 @@ public class NewsFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        if (realm != null)
-            realm.close();
+        if (mRealm != null)
+            mRealm.close();
         super.onDestroyView();
     }
 
@@ -163,6 +167,7 @@ public class NewsFragment extends Fragment {
             newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
             newsHolder.title.setText(newsList.getTitle());
             newsHolder.content.setText(newsList.getAuthor() + "  @ " + newsList.getDate());
+            newsHolder.itemView.setOnClickListener(new OnNewsClickListener(newsList));
         }
 
         @Override
@@ -181,6 +186,25 @@ public class NewsFragment extends Fragment {
                 title = (TextView) itemView.findViewById(R.id.news_title);
                 content = (TextView) itemView.findViewById(R.id.news_content);
             }
+        }
+    }
+
+    class OnNewsClickListener implements View.OnClickListener {
+
+        private NewsList newsList;
+
+        public OnNewsClickListener(NewsList newsList) {
+            this.newsList = newsList;
+        }
+
+        @Override
+        public void onClick(View view) {
+            startActivity(
+                    new Intent(getActivity(), NewsReadActivity.class)
+                            .putExtra("url", newsList.getUrl())
+                            .putExtra("title", newsList.getTitle())
+
+            );
         }
     }
 }

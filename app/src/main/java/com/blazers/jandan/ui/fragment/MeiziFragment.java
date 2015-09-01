@@ -16,7 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.orm.meizi.Picture;
-import com.blazers.jandan.util.network.JandanParser;
+import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -169,7 +169,7 @@ public class MeiziFragment extends Fragment {
         @Override
         public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
             Picture picture = meiziPics.get(i);
-            meiziHolder.draweeView.setAspectRatio(0.618f);
+            meiziHolder.draweeView.setAspectRatio(1.418f);
             meiziHolder.draweeView.showImage(picture);
             meiziHolder.author.setText(picture.getMeizi().getComment_author());
         }
