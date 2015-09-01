@@ -4,8 +4,9 @@ package com.blazers.jandan.util.network;
 import android.content.Context;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.Meizi;
-import com.blazers.jandan.orm.Picture;
+import com.blazers.jandan.orm.meizi.Meizi;
+import com.blazers.jandan.orm.meizi.Picture;
+import com.blazers.jandan.orm.news.NewsList;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;
@@ -25,7 +26,8 @@ public class JandanParser {
     private static Context mContext;
     private static JandanParser INSTANCE;
     /* 缓存当前最新的Page 应该与数据库同步 */
-    private int CURRENT_PAGE = 1;
+    private int CURRENT_MEIZI_PAGE = 1;
+    private int CURRENT_NEWS_PAGE = 1;
     private int TOTAL_PAGE;
     private Realm mRealm;
     private OkHttpClient mClient;
@@ -43,7 +45,7 @@ public class JandanParser {
 
     public static JandanParser getInstance() {
         if (mContext == null) {
-            throw new NullPointerException(String.valueOf("You must init the MeiziParse before call it"));
+            throw new NullPointerException(String.valueOf("You must init the JandanParse before call it"));
         }
         if (INSTANCE == null) {
             INSTANCE = new JandanParser();
@@ -52,9 +54,10 @@ public class JandanParser {
     }
 
 
+    /* 解析妹子API */
     public void parseMeiziAPI(boolean refresh) {
         mRealm = Realm.getInstance(mContext);
-        String url = refresh ? URL.JANDAN_OOXX_API : URL.JANDAN_OOXX_API + "&page=" + (CURRENT_PAGE + 1);
+        String url = refresh ? URL.JANDAN_OOXX_API : URL.JANDAN_OOXX_API + "&page=" + (CURRENT_MEIZI_PAGE + 1);
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -63,7 +66,7 @@ public class JandanParser {
             Log.i(TAG, "=== START PARSING ===" + System.currentTimeMillis());
             JSONObject object = new JSONObject(json);
             /* 保存页码信息 */
-            CURRENT_PAGE = object.getInt("current_page");
+            CURRENT_MEIZI_PAGE = object.getInt("current_page");
             TOTAL_PAGE = object.getInt("page_count");
             int size = object.getInt("count");
             /* 提取信息 */
@@ -94,11 +97,7 @@ public class JandanParser {
                     picture.setComment_ID_index(comment_ID + "_" + pi);
                     picture.setUrl(pics.getString(pi));
                     picture.setMeizi(meizi);
-                    try {
-                        mRealm.copyToRealm(picture);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    mRealm.copyToRealmOrUpdate(picture);
                 }
                 meizi.setPicture_size(pics.length());
                 Log.e("UPDATE OR CREATE ", "ID === > " + meizi.getComment_ID());
@@ -113,7 +112,46 @@ public class JandanParser {
         }
     }
 
+    /* 解析新鲜事API */
     public void parseNewsAPI(boolean refresh) {
-
+        mRealm = Realm.getInstance(mContext);
+        if (refresh){
+            CURRENT_NEWS_PAGE = 1;
+        } else {
+            CURRENT_NEWS_PAGE ++;
+        }
+        String url = URL.JANDAN_NEWS_API_PREFIX + CURRENT_NEWS_PAGE + URL.JANDAN_NEWS_API_END;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            String json = mClient.newCall(request).execute().body().string();
+            /* Parse News JSON */
+            Log.i(TAG, "=== START PARSING ===" + System.currentTimeMillis());
+            JSONObject object = new JSONObject(json);
+            int count = object.getInt("count");
+            int count_total = object.getInt("count_total"); //可用该项来对比是否需要更新?
+            int pages = object.getInt("pages");
+            mRealm.beginTransaction();
+            JSONArray posts = object.getJSONArray("posts");
+            for (int i = 0 ; i < count ; i ++) {
+                JSONObject post = posts.getJSONObject(i);
+                NewsList newsList = new NewsList();
+                newsList.setId(post.getLong("id"));
+                newsList.setTitle(post.getString("title"));
+                newsList.setAuthor(post.getJSONObject("author").getString("name"));
+                newsList.setDate(post.getString("date"));
+                newsList.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));
+                newsList.setThumbUrl(post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0));
+                newsList.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
+                mRealm.copyToRealmOrUpdate(newsList);
+            }
+            Log.i(TAG, "=== END PARSING ===" + System.currentTimeMillis());
+            mRealm.commitTransaction();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        } finally {
+            mRealm.close();
+        }
     }
 }

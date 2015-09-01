@@ -9,18 +9,17 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import com.blazers.jandan.orm.Picture;
+import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.util.network.ImageDownloader;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import io.realm.Realm;
-import io.realm.RealmResults;
+
 import java.io.*;
 
 

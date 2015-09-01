@@ -7,17 +7,48 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity"
         >
-    <FrameLayout
-            android:id="@+id/container"
+    <!-- Fragments container-->
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
+            android:orientation="vertical"
+            >
+        <include layout="@layout/toolbar"/>
+        <android.support.design.widget.CoordinatorLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+            <android.support.design.widget.AppBarLayout
+                    android:id="@+id/appbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:fitsSystemWindows="true"
+                    >
+                <android.support.design.widget.TabLayout
+                        android:id="@+id/tab_layout"
+                        app:tabIndicatorColor="#ff4081"
+                        app:layout_scrollFlags="scroll|enterAlways"
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"/>
+            </android.support.design.widget.AppBarLayout>
+            <!-- Wrapped RecycleView in SwipeRefreshLayout -->
+            <android.support.v4.view.ViewPager
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+        </android.support.design.widget.CoordinatorLayout>
+    </LinearLayout>
+    <!-- Fragments container end-->
     <RelativeLayout
             android:id="@+id/drawer"
             android:layout_gravity="start"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-
     </RelativeLayout>
 </android.support.v4.widget.DrawerLayout>

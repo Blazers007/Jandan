@@ -15,7 +15,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.orm.Picture;
+import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.util.network.JandanParser;
 import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;

@@ -6,7 +6,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.Meizi;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;

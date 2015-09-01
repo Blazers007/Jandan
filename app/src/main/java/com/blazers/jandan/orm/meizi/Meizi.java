@@ -1,4 +1,4 @@
-package com.blazers.jandan.orm;
+package com.blazers.jandan.orm.meizi;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
