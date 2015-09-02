@@ -70,7 +70,7 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
                 .setAutoPlayAnimations(true)
-                .setControllerListener(new FrescoControllListener(self))
+                .setControllerListener(new FrescoControlListener(self))
                 .build();
         self.setController(controller);
     }
@@ -112,11 +112,11 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         }.execute();
     }
 
-    class FrescoControllListener extends BaseControllerListener<ImageInfo> {
+    class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 
         private SimpleDraweeView draweeView;
 
-        public FrescoControllListener(SimpleDraweeView draweeView) {
+        public FrescoControlListener(SimpleDraweeView draweeView) {
             this.draweeView = draweeView;
         }
 
@@ -126,13 +126,15 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
                 return;
             }
              /* Resizing the item */
+            loaded = true;
             if(imageInfo.getWidth() > imageInfo.getHeight()) {
                 float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
                 draweeView.setAspectRatio(asp);
-                loaded = true;
+
             } else {
                 float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
                 float asp2 = asp < 0.618f ? asp : 0.618f;
+                draweeView.setAspectRatio(asp2);
             }
         }
 

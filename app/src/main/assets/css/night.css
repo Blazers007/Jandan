@@ -1,0 +1,25 @@
+html, body {
+	padding: 0 8px 0 8px;
+	margin: 0;
+	background: #000;
+}
+
+p {
+	color: #cfcfcf;
+	text-indent: 1.2em;
+	margin-top: 8px;
+	margin-bottom: 12px;
+}
+
+blockquote {
+	background:#1b1b1b;
+	margin: 0;
+	border-left:4px solid #222;
+	padding:2px 8px 2px 8px;
+}
+
+blockquote , blockquote p {
+	font-style: italic;
+	color: #ccc;
+	font-size: 14px;
+}

@@ -155,4 +155,28 @@ public class JandanParser {
             mRealm.close();
         }
     }
+
+    public String parseNewsContent(long id) {
+        String url = URL.GernarateNewsContentUrl(id);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            String json = mClient.newCall(request).execute().body().string();
+            JSONObject object = new JSONObject(json);
+            String html = object.getJSONObject("post").getString("content");
+            StringBuilder sb = new StringBuilder();
+            sb.append("<!DOCTYPE html>");
+            sb.append("<html><body>");
+            sb.append("<head>");
+            sb.append("<script src=\"file:///android_asset/js/main.js\" type=\"text/javascript\"></script>");
+            sb.append("</head>");
+            sb.append(html);
+            sb.append("</body></html>");
+            return sb.toString();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

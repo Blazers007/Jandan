@@ -18,6 +18,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.common.URL;
 import com.blazers.jandan.orm.news.NewsList;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.divider.DividerItemDecoration;
@@ -201,7 +202,7 @@ public class NewsFragment extends Fragment {
         public void onClick(View view) {
             startActivity(
                     new Intent(getActivity(), NewsReadActivity.class)
-                            .putExtra("url", newsList.getUrl())
+                            .putExtra("id", newsList.getId())
                             .putExtra("title", newsList.getTitle())
 
             );
