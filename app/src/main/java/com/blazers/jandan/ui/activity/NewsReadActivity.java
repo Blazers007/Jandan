@@ -1,39 +1,73 @@
 package com.blazers.jandan.ui.activity;
 
+import android.annotation.TargetApi;
+import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
+import android.support.design.widget.AppBarLayout;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.JandanParser;
+import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.util.Dppx;
+import com.blazers.jandan.widget.ObservableWebView;
 
-public class NewsReadActivity extends AppCompatActivity {
+public class NewsReadActivity extends BaseActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.webView) WebView webView;
+    @Bind(R.id.webView) ObservableWebView webView;
+
+    /* Vars for testing the scroll visible effect */
+    private static final int HIDE_THRESHOLD = 300;
+    private int scrolledDistance = 0;
+    private boolean controlsVisible = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_read);
         ButterKnife.bind(this);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(getIntent().getStringExtra("title"));
+        /* Init Toolbar */
+        initToolbarByType(toolbar, ToolbarType.FINISH);
+        setToolbarTitle(getIntent().getStringExtra("title"));
+        setContentFloatingModeEnabled(true);
+
+        /* Init Appbar listener */
+        webView.setListener(((left, top, oldLeft, oldTop) -> {
+            int distance = top - oldTop;
+            if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                //hide
+                hideNavigationBar(toolbar);
+                controlsVisible = false;
+                scrolledDistance = 0;
+            } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                showSystemUI(toolbar);
+                controlsVisible = true;
+                scrolledDistance = 0;
+            }
+            if((controlsVisible && distance>0) || (!controlsVisible && distance<0)) {
+                scrolledDistance += distance;
+            }
+        }));
         /* Init Webview */
         long id = getIntent().getLongExtra("id", -1);
         /* 更合理的提示与判断 */
         if (id == -1)
             finish();
-
         webView.getSettings().setBuiltInZoomControls(false);
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.getSettings().setLoadsImagesAutomatically(true);
 
@@ -65,31 +99,24 @@ public class NewsReadActivity extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                webView.loadUrl("javascript:loadCssFile('night')");
+                webView.loadUrl("javascript:loadCssFile('day')");
             }
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_news_read, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            webView.loadUrl("javascript:loadCssFile('day')");
+            webView.loadUrl("javascript:loadCssFile('night')");
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -1,6 +1,7 @@
 package com.blazers.jandan.ui.activity;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -21,6 +22,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.service.NetworkService;
+import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.ui.fragment.JokeFragment;
 import com.blazers.jandan.ui.fragment.MeiziFragment;
 import com.blazers.jandan.ui.fragment.NewsFragment;
 import com.blazers.jandan.util.Dppx;
@@ -28,7 +31,7 @@ import com.blazers.jandan.util.Dppx;
 import java.util.ArrayList;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.left_nav) NavigationView navigationView;
 
     private ArrayList<Fragment> fragments;
-    private String[] titles = {"新鲜事", "妹子图", "段子"};
+    private String[] titles = {"新鲜事", "段子", "妹子图"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         /* 根据需要填充主界面所加载的Fragment */
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
+        fragments.add(new JokeFragment());
         fragments.add(new MeiziFragment());
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
@@ -59,10 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void initDrawerWithToolbar() {
-        /* TODO: 根据上次阅读情况设置toolbar文字 */
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbarByType(toolbar, ToolbarType.NORMAL);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.drawer_open, R.string.drawer_close);
         drawerToggle.syncState();
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override

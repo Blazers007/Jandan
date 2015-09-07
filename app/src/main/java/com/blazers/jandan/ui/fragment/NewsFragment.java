@@ -18,9 +18,9 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.common.URL;
 import com.blazers.jandan.orm.news.NewsList;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
+import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.divider.DividerItemDecoration;
 import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
@@ -34,7 +34,7 @@ import io.realm.RealmResults;
  */
 public class NewsFragment extends Fragment {
 
-    private static final String TAG = NewsFragment.class.getSimpleName();
+    public static final String TAG = NewsFragment.class.getSimpleName();
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView newsList;
@@ -44,13 +44,12 @@ public class NewsFragment extends Fragment {
     private NewsAdapter adapter;
     private RealmResults<NewsList> newsListRealmResults;
     private int listSize;
-    private int nowViewPosition;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_meizi, container, false);
+        View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
         initNews();
@@ -59,10 +58,8 @@ public class NewsFragment extends Fragment {
 
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        newsList.setLayoutManager(linearLayoutManager);
-        newsList.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+        newsList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+        newsList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
         /* Loadmore */
         newsList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);

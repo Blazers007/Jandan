@@ -1,5 +1,6 @@
 package com.blazers.jandan.network;
 
+import android.util.Log;
 import com.blazers.jandan.util.sdcard.SdcardHelper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -35,6 +36,7 @@ public class ImageDownloader {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+        Log.i("Downloading", url);
         try {
             InputStream inputStream = client.newCall(request).execute().body().byteStream();
             File file = SdcardHelper.createImageFile(type);

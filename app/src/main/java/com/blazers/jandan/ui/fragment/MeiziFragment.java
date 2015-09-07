@@ -11,12 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.network.JandanParser;
+import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -28,7 +30,7 @@ import io.realm.RealmResults;
  */
 public class MeiziFragment extends Fragment {
 
-    private static final String TAG = MeiziFragment.class.getSimpleName();
+    public static final String TAG = MeiziFragment.class.getSimpleName();
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
@@ -38,14 +40,13 @@ public class MeiziFragment extends Fragment {
     private MeiziAdapter adapter;
     private RealmResults<Picture> meiziPics;
     private int listSize;
-    private int nowViewPosition;
 
     /* Beta */
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_meizi, container, false);
+        View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
         initMeiziPics();
@@ -59,9 +60,7 @@ public class MeiziFragment extends Fragment {
      * */
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        meiziList.setLayoutManager(linearLayoutManager);
+        meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
         /* Loadmore */
         meiziList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
@@ -88,7 +87,6 @@ public class MeiziFragment extends Fragment {
         /* Set Adapter */
         adapter = new MeiziAdapter();
         meiziList.setAdapter(adapter);
-
         /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -148,8 +146,6 @@ public class MeiziFragment extends Fragment {
         super.onDestroyView();
     }
 
-    //     gengxin duibi xianyou
-
     /* Meizi Adapter */
     class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziHolder>{
 
@@ -169,9 +165,11 @@ public class MeiziFragment extends Fragment {
         @Override
         public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
             Picture picture = meiziPics.get(i);
-            meiziHolder.draweeView.setAspectRatio(1.418f);
+            meiziHolder.draweeView.setAspectRatio(1.318f);
             meiziHolder.draweeView.showImage(picture);
-            meiziHolder.author.setText(picture.getMeizi().getComment_author());
+            meiziHolder.draweeView.setDownloadHandlder(meiziHolder.save);
+            meiziHolder.author.setText("@" + picture.getMeizi().getComment_author());
+            meiziHolder.date.setText(picture.getMeizi().getComment_date());
         }
 
         @Override
@@ -182,12 +180,15 @@ public class MeiziFragment extends Fragment {
         class MeiziHolder extends RecyclerView.ViewHolder {
 
             public DownloadFrescoView draweeView;
-            public TextView author;
+            public TextView author, date;
+            public ImageButton like, dislike, save;
 
             public MeiziHolder(View itemView) {
                 super(itemView);
                 draweeView = (DownloadFrescoView) itemView.findViewById(R.id.drweeView);
-                author = (TextView) itemView.findViewById(R.id.textView);
+                author = (TextView) itemView.findViewById(R.id.poster);
+                date = (TextView) itemView.findViewById(R.id.postDate);
+                save = (ImageButton) itemView.findViewById(R.id.btn_save);
             }
         }
     }

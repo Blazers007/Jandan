@@ -8,7 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
+import com.blazers.jandan.R;
 import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.network.ImageDownloader;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -36,6 +38,8 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
     private ImageRequest imageRequest;
     private Picture picture;
     private boolean loaded, downloaded;
+    /* Vars for trigger */
+    private ImageButton trigger;
 
     public DownloadFrescoView(Context context, GenericDraweeHierarchy hierarchy) {
         super(context, hierarchy);
@@ -75,6 +79,13 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         self.setController(controller);
     }
 
+    public void setDownloadHandlder(ImageButton trigger) {
+        setOnClickListener(null);
+        this.trigger = trigger;
+        trigger.setClickable(true);
+        trigger.setOnClickListener(this);
+    }
+
     @Override
     public void onClick(View v) {
         if (loaded)
@@ -92,6 +103,7 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
 
             @Override
             protected void onPostExecute(String path) {
+                trigger.setImageResource(R.mipmap.ic_publish_16dp);//TODO: 应当直接隐藏或者更换为以保存按钮
                 Realm realm = Realm.getInstance(context);
                 realm.beginTransaction();   //No outside changes to a Realm is allowed while iterating a RealmResults. Use iterators methods instead.
                     picture.setLocalUrl(path);
@@ -125,16 +137,17 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
             if (imageInfo == null) {
                 return;
             }
-             /* Resizing the item */
+            // 加载完毕 可以下载
             loaded = true;
-            if(imageInfo.getWidth() > imageInfo.getHeight()) {
-                float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
+            trigger.setVisibility(VISIBLE);
+            float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
+            if (asp >= 0.818) {
                 draweeView.setAspectRatio(asp);
-
+            } else if (asp <= 0.4) {
+                draweeView.setAspectRatio(0.818f);
+                draweeView.setScaleType(ScaleType.FIT_START);
             } else {
-                float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
-                float asp2 = asp < 0.618f ? asp : 0.618f;
-                draweeView.setAspectRatio(asp2);
+                draweeView.setAspectRatio(0.818f);
             }
         }
 

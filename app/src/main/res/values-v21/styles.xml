@@ -1,0 +1,20 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Other attributes like colorPrimary, colorAccent etc. -->
+        <item name="colorPrimary">#328bff</item>
+        <item name="colorPrimaryDark">#2c70d7</item>
+        <item name="colorAccent">#ff5722</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="NeedDrawerStyle" parent="AppTheme">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="ReadingModeStyle" parent="AppTheme">
+        <!--<item name="android:windowTranslucentNavigation">true</item>-->
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
+    </style>
+
+</resources>

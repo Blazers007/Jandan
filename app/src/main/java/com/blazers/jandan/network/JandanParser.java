@@ -4,6 +4,7 @@ package com.blazers.jandan.network;
 import android.content.Context;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
+import com.blazers.jandan.orm.joke.Joke;
 import com.blazers.jandan.orm.meizi.Meizi;
 import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.orm.news.NewsList;
@@ -169,6 +170,8 @@ public class JandanParser {
             sb.append("<!DOCTYPE html>");
             sb.append("<html><body>");
             sb.append("<head>");
+            sb.append("<link id=\"style\" rel=\"stylesheet\" type=\"text/css\" href=\"\" />");
+            sb.append("<link rel=\"stylesheet\" type=\"text/css\" href=\"file:///android_asset/css/style.css\" />");
             sb.append("<script src=\"file:///android_asset/js/main.js\" type=\"text/javascript\"></script>");
             sb.append("</head>");
             sb.append(html);
@@ -178,5 +181,30 @@ public class JandanParser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void parseJokeAPI(boolean refresh) {
+        mRealm = Realm.getInstance(mContext);
+        String url = URL.JANDAN_JOKE_API;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            String json = mClient.newCall(request).execute().body().string();
+            Log.i(TAG, "=== START PARSING ===" + System.currentTimeMillis());
+            JSONObject object = new JSONObject(json);
+            JSONArray comments = object.getJSONArray("comments");
+            mRealm.beginTransaction();
+            for (int i = 0 ; i < comments.length() ; i ++) {
+                JSONObject comment = comments.getJSONObject(i);
+                mRealm.createOrUpdateObjectFromJson(Joke.class, comment);
+            }
+            Log.i(TAG, "=== END PARSING ===" + System.currentTimeMillis());
+            mRealm.commitTransaction();
+        } catch (Exception e) {
+
+        } finally {
+            mRealm.close();
+        }
     }
 }
