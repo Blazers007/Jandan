@@ -21,29 +21,25 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.ImageDownloader;
-import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.network.JandanParser;
+import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.widget.DownloadFrescoView;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 import java.io.File;
 
 /**
- * Created by Blazers on 2015/8/25.
+ * Created by Blazers on 15/9/8.
  */
-public class MeiziFragment extends Fragment {
-
-    public static final String TAG = MeiziFragment.class.getSimpleName();
+public class PicFragment extends Fragment {
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
@@ -81,14 +77,14 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(false);
+                    JandanParser.getInstance().parsePicAPI(false);
                     return null;
                 }
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     long last = Long.parseLong(meiziPics.last().getComment_ID_index().split("_")[0]);
-                    meiziPics.addAll(meiziPics.size(), realm.where(Picture.class).equalTo("type", "meizi").lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
+                    meiziPics.addAll(meiziPics.size(), realm.where(Picture.class).equalTo("type", "pic").lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
@@ -108,13 +104,13 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(true);
+                    JandanParser.getInstance().parsePicAPI(true);
                     return null;
                 }
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).equalTo("type", "meizi").findAllSorted("comment_ID_index", false);
+                    meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -128,7 +124,7 @@ public class MeiziFragment extends Fragment {
 
     void initMeiziPics() {
         realm = Realm.getInstance(getActivity());
-        meiziPics = realm.where(Picture.class).equalTo("type", "meizi").findAllSorted("comment_ID_index", false);
+        meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
         listSize = meiziPics.size();
         Log.e("SIZE", "= " + meiziPics.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
@@ -137,13 +133,13 @@ public class MeiziFragment extends Fragment {
             new AsyncTask<Void, Void, Void>(){
                 @Override
                 protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(true);
+                    JandanParser.getInstance().parsePicAPI(true);
                     return null;
                 }
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).equalTo("type", "meizi").findAllSorted("comment_ID_index", false);
+                    meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -274,10 +270,12 @@ public class MeiziFragment extends Fragment {
             trigger.setVisibility(View.VISIBLE);
             float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
             draweeView.setAspectRatio(asp);
-            if (asp <= 0.4) {draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
+            if (asp <= 0.4) {
+                draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
                 draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
                 draweeView.setAspectRatio(1.118f);
             }
+
         }
 
         @Override
@@ -286,7 +284,7 @@ public class MeiziFragment extends Fragment {
             if (!picture.getLocalUrl().equals("")) { // 从本地加载图片失败 删除数据库缓存地址
                 Realm realm = Realm.getInstance(getActivity());
                 realm.beginTransaction();
-                    picture.setLocalUrl("");
+                picture.setLocalUrl("");
                 realm.commitTransaction();
                 realm.close();
                 /* 重新从网络加载图片 此时 localUrl已经被赋值为空 */

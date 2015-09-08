@@ -1,10 +1,6 @@
 package com.blazers.jandan.ui.activity;
 
-import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -13,7 +9,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,11 +16,11 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.service.NetworkService;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.JokeFragment;
 import com.blazers.jandan.ui.fragment.MeiziFragment;
 import com.blazers.jandan.ui.fragment.NewsFragment;
+import com.blazers.jandan.ui.fragment.PicFragment;
 import com.blazers.jandan.util.Dppx;
 
 import java.util.ArrayList;
@@ -40,7 +35,7 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.left_nav) NavigationView navigationView;
 
     private ArrayList<Fragment> fragments;
-    private String[] titles = {"新鲜事", "段子", "妹子图"};
+    private String[] titles = {"新鲜事", "无聊图" ,"段子", "妹子图"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +46,17 @@ public class MainActivity extends BaseActivity {
         /* 根据需要填充主界面所加载的Fragment */
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
+        fragments.add(new PicFragment());
         fragments.add(new JokeFragment());
         fragments.add(new MeiziFragment());
         viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         /* TODO: 根据屏幕尺寸设置TabMode */
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tabLayout.setTabTextColors(Color.rgb(187, 187, 187), Color.WHITE);
+        tabLayout.setTabTextColors(Color.rgb(221, 221, 221), Color.WHITE);
         viewPager.setPageMargin(Dppx.Dp2Px(this, 12));
         /* 读取上次最后访问的 */
+        navigationView.setCheckedItem(R.id.nav_jandan);
     }
 
     void initDrawerWithToolbar() {
@@ -83,7 +80,7 @@ public class MainActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return fragments.size();
         }
 
         @Override

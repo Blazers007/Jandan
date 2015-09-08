@@ -6,28 +6,38 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        style="@style/CardBase"
         app:cardCornerRadius="4dp"
         >
     <RelativeLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:fresco="http://schemas.android.com/apk/res-auto"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+        <TextView
+                android:id="@+id/comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/author"
+                android:layout_marginTop="12dp"
+                tools:text="@string/longText"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="12dp"
+                android:lineSpacingExtra="4dp"
+                android:textColor="#444"
+                android:layout_marginBottom="-4dp"/>
         <com.blazers.jandan.widget.DownloadFrescoView
-                android:id="@+id/drweeView"
+                android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 fresco:actualImageScaleType="fitCenter"
-                android:layout_below="@+id/poster"
+                android:layout_below="@+id/comment"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="4dp"
                 />
         <!-- Title and time-->
         <TextView
-                android:id="@+id/poster"
+                android:id="@+id/author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="@Blazers"
@@ -39,50 +49,57 @@
                 android:layout_marginTop="12dp"
                 />
         <TextView
-                android:id="@+id/postDate"
+                android:id="@+id/date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:text="3小时前"
                 android:textColor="#666"
                 android:textSize="12sp"
-                android:layout_toRightOf="@+id/poster"
+                android:layout_toRightOf="@+id/author"
                 android:layout_marginLeft="12dp"
                 android:gravity="center"
-                android:layout_alignBottom="@+id/poster"
+                android:layout_alignBottom="@+id/author"
+                />
+        <com.blazers.jandan.widget.ThumbTextButton
+                style="@style/ThumbButtonBase"
+                android:id="@+id/btn_oo"
+                android:layout_below="@+id/content"
+                android:src="@drawable/selector_thumb_up"
+                app:ttb_floatTextColor="@color/thumbUp"
+                android:layout_marginLeft="8dp"
+                />
+        <com.blazers.jandan.widget.ThumbTextButton
+                style="@style/ThumbDownSpec"
+                android:id="@+id/btn_xx"
+                app:ttb_floatTextColor="@color/thumbDown"
+                android:layout_toRightOf="@+id/btn_oo"
+                android:layout_alignTop="@+id/btn_oo"
+                android:src="@drawable/selector_thumb_down"
+                android:layout_marginLeft="8dp"
+                />
+        <com.blazers.jandan.widget.ThumbTextButton
+                style="@style/ThumbDownSpec"
+                android:id="@+id/btn_comment"
+                android:layout_toRightOf="@+id/btn_xx"
+                android:layout_alignTop="@+id/btn_oo"
+                android:src="@drawable/selector_comment"
+                android:layout_marginLeft="8dp"
                 />
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/button" android:layout_below="@+id/drweeView"
-                android:src="@drawable/selector_thumb_up"
-                android:padding="12dp" android:scaleType="fitCenter" android:layout_marginLeft="8dp"
-                android:layout_marginRight="4dp" android:layout_alignParentBottom="false"
-                android:background="#00000000"/>
+                style="@style/ImageButton40Base"
+                android:id="@+id/btn_save"
+                android:src="@drawable/selector_download"
+                android:layout_alignTop="@+id/btn_oo"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:visibility="invisible"
+                />
         <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/button2" android:layout_toRightOf="@+id/button" android:layout_alignTop="@+id/button"
-                android:src="@drawable/selector_thumb_down"
-                android:padding="12dp" android:scaleType="fitCenter" android:layout_marginRight="4dp"
-                android:background="#00000000"/>
-        <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/button3" android:layout_toRightOf="@+id/button2" android:layout_alignTop="@+id/button"
-                android:src="@drawable/selector_comment"
-                android:padding="12dp" android:scaleType="fitCenter" android:background="#00000000"/>
-        <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:text="15"
-                android:id="@+id/textView" android:gravity="center" android:layout_alignTop="@+id/button"
-                android:layout_toRightOf="@+id/button3"/>
-        <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:id="@+id/btn_save" android:layout_alignTop="@+id/button" android:layout_alignParentRight="true"
-                android:src="@drawable/selector_download" android:padding="12dp"
-                android:scaleType="fitCenter" android:layout_marginRight="8dp" android:visibility="invisible"
-                android:background="#00000000"/>
+                style="@style/ImageButton40Base"
+                android:id="@+id/btn_share"
+                android:src="@drawable/selector_share"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

@@ -8,4 +8,13 @@
     <!-- Drawer State -->
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+
+    <string name="sec_jandan">煎蛋</string>
+    <string name="sec_iplay">异次元软件</string>
+    <string name="sec_36">36氪</string>
+    <string name="sec_zhihu">知乎日报</string>
+    <string name="setting">设置</string>
+
+    <!-- TestStrings -->
+    <string name="longText">反法西斯就是为了我在想晒孩子的时候就可以晒孩子，我不想看阅兵的时候也不会招来谩骂，尊重个人意志，使个人意志不被集体意志和强权所裹挟。我觉得那些先烈们白牺牲了，他们反抗的东西至今还存在着，还披上了爱国的外衣</string>
 </resources>

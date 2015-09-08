@@ -98,6 +98,7 @@ public class JandanParser {
                     picture.setComment_ID_index(comment_ID + "_" + pi);
                     picture.setUrl(pics.getString(pi));
                     picture.setMeizi(meizi);
+                    picture.setType("meizi");
                     mRealm.copyToRealmOrUpdate(picture);
                 }
                 meizi.setPicture_size(pics.length());
@@ -203,6 +204,64 @@ public class JandanParser {
             mRealm.commitTransaction();
         } catch (Exception e) {
 
+        } finally {
+            mRealm.close();
+        }
+    }
+
+    public void parsePicAPI(boolean refresh) {
+        mRealm = Realm.getInstance(mContext);
+        String url = refresh ? URL.JANDAN_PIC_API : URL.JANDAN_PIC_API + "&page=" + (CURRENT_MEIZI_PAGE + 1);
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        try {
+            String json = mClient.newCall(request).execute().body().string();
+            Log.i(TAG, "=== START PARSING ===" + System.currentTimeMillis());
+            JSONObject object = new JSONObject(json);
+            /* 保存页码信息 */
+            CURRENT_MEIZI_PAGE = object.getInt("current_page");
+            TOTAL_PAGE = object.getInt("page_count");
+            int size = object.getInt("count");
+            /* 提取信息 */
+            JSONArray comments = object.getJSONArray("comments");
+            /* 提取出首尾 */
+            String first = comments.getJSONObject(0).getString("comment_ID");
+            String last = comments.getJSONObject(size - 1).getString("comment_ID");
+            Log.i(TAG, " From: " + first + " ====  To:" + last);
+            /* 扎找本地备份 该更新的更新 该添加的添加 */
+            RealmQuery<Meizi> query = mRealm.where(Meizi.class);
+            long max = query.maximumInt("comment_ID");
+            long min = query.minimumInt("comment_ID");
+            Log.i(TAG, "Local Database From: " + max + " ====  To:" + min);
+            /* 更新 */
+            mRealm.beginTransaction();
+            for (int i = 0 ; i < size ; i ++) {
+                JSONObject comment = comments.getJSONObject(i);
+                /* Parse */
+                long comment_ID = Long.parseLong(comment.getString("comment_ID"));
+                long comment_post_ID = Long.parseLong(comment.getString("comment_post_ID"));
+                comment.put("comment_ID", comment_ID);
+                comment.put("comment_post_ID", comment_post_ID);
+                Meizi pic = mRealm.createOrUpdateObjectFromJson(Meizi.class, comment);
+                JSONArray pics = comment.getJSONArray("pics");
+                for (int pi = 0 ; pi < pics.length() ; pi ++) {
+                    /* 避免多次保存 */
+                    Picture picture = new Picture();
+                    picture.setComment_ID_index(comment_ID + "_" + pi);
+                    picture.setUrl(pics.getString(pi));
+                    picture.setMeizi(pic);
+                    picture.setType("pic");
+                    mRealm.copyToRealmOrUpdate(picture);
+                }
+                pic.setPicture_size(pics.length());
+                Log.e("UPDATE OR CREATE ", "ID === > " + pic.getComment_ID());
+            }
+            /* 添加 */
+            Log.i(TAG, "=== END PARSING ===" + System.currentTimeMillis());
+            mRealm.commitTransaction();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
         } finally {
             mRealm.close();
         }

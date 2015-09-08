@@ -15,6 +15,7 @@ public class NewsList extends RealmObject {
     private long views;
     private String tagTitle; // tags 可为多个 因为是JSONArray形式存在
     private String author;
+    private String html;
 
     private String url;
 
@@ -80,5 +81,13 @@ public class NewsList extends RealmObject {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 }

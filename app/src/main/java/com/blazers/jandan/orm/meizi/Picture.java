@@ -14,6 +14,8 @@ public class Picture extends RealmObject {
     private String localUrl;// Local Storage
     private Meizi meizi;    // Relationship
 
+    private String type;
+
     public String getComment_ID_index() {
         return comment_ID_index;
     }
@@ -44,5 +46,13 @@ public class Picture extends RealmObject {
 
     public void setMeizi(Meizi meizi) {
         this.meizi = meizi;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

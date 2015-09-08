@@ -29,7 +29,7 @@ public class NewsReadActivity extends BaseActivity {
     @Bind(R.id.webView) ObservableWebView webView;
 
     /* Vars for testing the scroll visible effect */
-    private static final int HIDE_THRESHOLD = 300;
+    private static final int HIDE_THRESHOLD = 256;
     private int scrolledDistance = 0;
     private boolean controlsVisible = true;
 

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- For implement the "DrawerLayout behind status bar effect "
-      More Info http://stackoverflow.com/questions/26440879/how-do-i-use-drawerlayout-to-display-over-the-actionbar-toolbar-and-under-the-st/26440880-->
-</resources>
+    <!-- ThumbView -->
+    <declare-styleable name="ThumbTextButton">
+        <attr name="ttb_textColor" format="color"/>
+        <attr name="ttb_floatTextColor" format="color"/>
+        <attr name="ttb_textSize" format="dimension"/>
+        <attr name="ttb_floatTextSize" format="dimension"/>
+    </declare-styleable>
+ </resources>

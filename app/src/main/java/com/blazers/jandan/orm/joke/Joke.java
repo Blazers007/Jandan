@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
 public class Joke extends RealmObject {
     @PrimaryKey
     private long comment_ID;
-    private String comment_contnet;
+    private String comment_content;
     private String comment_author;
     private String comment_date;
 
@@ -21,12 +21,12 @@ public class Joke extends RealmObject {
         this.comment_ID = comment_ID;
     }
 
-    public String getComment_contnet() {
-        return comment_contnet;
+    public String getComment_content() {
+        return comment_content;
     }
 
-    public void setComment_contnet(String comment_contnet) {
-        this.comment_contnet = comment_contnet;
+    public void setComment_content(String comment_content) {
+        this.comment_content = comment_content;
     }
 
     public String getComment_author() {

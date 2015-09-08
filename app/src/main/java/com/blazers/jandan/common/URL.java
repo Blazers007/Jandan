@@ -15,6 +15,7 @@ public class URL {
     public static final String JANDAN_NEWS_CONTENT = "http://i.jandan.net/?oxwlxojflwblxbsapi=get_post&id=";
     public static final String JANDAN_NEWS_CONTENT_END = "&include=content";
     public static final String JANDAN_JOKE_API = "http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments";
+    public static final String JANDAN_PIC_API = "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_pic_comments";
 
     public static String GernarateNewsContentUrl(long id) {
         return JANDAN_NEWS_CONTENT + id + JANDAN_NEWS_CONTENT_END;

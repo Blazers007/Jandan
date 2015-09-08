@@ -18,10 +18,13 @@ import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.orm.joke.Joke;
 import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.util.RecyclerViewHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.widget.ThumbTextButton;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
  * Created by Blazers on 15/9/1.
@@ -52,7 +55,7 @@ public class JokeFragment extends Fragment{
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         jokeList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        jokeList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
+        jokeList.setItemAnimator(new SlideInUpAnimator());
         /* Loadmore */
         jokeList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
@@ -83,7 +86,7 @@ public class JokeFragment extends Fragment{
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseNewsAPI(true);
+                    JandanParser.getInstance().parseJokeAPI(true);
                     return null;
                 }
 
@@ -140,7 +143,12 @@ public class JokeFragment extends Fragment{
         @Override
         public void onBindViewHolder(JokeHolder holder, int position) {
             Joke joke = jokeRealmResults.get(position);
-            holder.content.setText(joke.getComment_contnet());
+            holder.content.setText(joke.getComment_content());
+            holder.author.setText("@"+joke.getComment_author());
+            holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));
+            holder.thumbUp.setThumbText("15");
+            holder.thumbDown.setThumbText("15");
+            holder.comment.setThumbText("15");
         }
 
         @Override
@@ -148,14 +156,38 @@ public class JokeFragment extends Fragment{
             return listSize;
         }
 
-        class JokeHolder extends RecyclerView.ViewHolder {
-            public TextView content;
+        class JokeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public TextView content, author, date;
+            public ThumbTextButton thumbUp, thumbDown, comment;
             public JokeHolder(View itemView) {
                 super(itemView);
                 content = (TextView) itemView.findViewById(R.id.content);
+                author = (TextView) itemView.findViewById(R.id.author);
+                date = (TextView) itemView.findViewById(R.id.date);
+
+                thumbUp = (ThumbTextButton) itemView.findViewById(R.id.btn_oo);
+                thumbDown = (ThumbTextButton) itemView.findViewById(R.id.btn_xx);
+                comment = (ThumbTextButton) itemView.findViewById(R.id.btn_comment);
+
+                thumbUp.setOnClickListener(this);
+                thumbDown.setOnClickListener(this);
+                comment.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.btn_oo:
+                        thumbUp.addThumbText(1);
+                        break;
+                    case R.id.btn_xx:
+                        thumbDown.addThumbText(1);
+                        break;
+                }
             }
         }
     }
+
 
     @Override
     public void onDestroyView() {

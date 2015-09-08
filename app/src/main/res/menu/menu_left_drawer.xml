@@ -2,25 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-                android:id="@+id/nav_home"
-                android:title="CC Talk"/>
+                android:id="@+id/nav_jandan"
+                android:icon="@drawable/nav_jandan"
+                android:title="@string/sec_jandan"/>
         <item
                 android:id="@+id/nav_messages"
-                android:title="HJ Class"/>
+                android:icon="@drawable/nav_36kr"
+                android:title="@string/sec_36"/>
         <item
                 android:id="@+id/nav_friends"
-                android:title="Words"/>
+                android:icon="@drawable/nav_iplay"
+                android:title="@string/sec_iplay"/>
         <item
                 android:id="@+id/nav_discussion"
-                android:title="Big HJ"/>
+                android:title="@string/sec_zhihu"/>
     </group>
 
-    <item android:title="Version">
+    <item android:title="其他">
         <menu>
-            <item
-                    android:title="Android"/>
-            <item
-                    android:title="iOS"/>
+            <item android:title="@string/setting"/>
         </menu>
     </item>
 </menu>

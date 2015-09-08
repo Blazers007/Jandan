@@ -15,7 +15,7 @@
                 android:id="@+id/recycler_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#fff"
+                android:background="#e5e5e5"
                 />
     </android.support.v4.widget.SwipeRefreshLayout>
     <!-- Progress-->
