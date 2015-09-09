@@ -1,38 +1,22 @@
 package com.blazers.jandan.widget;
 
 import android.content.Context;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
-import com.blazers.jandan.R;
-import com.blazers.jandan.orm.PictureInterface;
-import com.blazers.jandan.orm.meizi.Picture;
-import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
-import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
 import com.facebook.drawee.drawable.ProgressBarDrawable;
-import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
-import io.realm.Realm;
-
-import java.io.*;
 
 
 /**
@@ -59,16 +43,12 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         this.listener = listener;
     }
 
-    private PictureInterface picture;
+    public String url;
 
-    public void showImage(PictureInterface picture) {
-        this.picture = picture;
+    public void showImage(String url) {
+        this.url = url;
         /* Init vars prefer to load from local storage */
-        ImageRequest imageRequest;
-        if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals(""))
-            imageRequest = ImageRequest.fromUri(Uri.parse("file://" + (picture.getLocalUrl())));
-        else
-            imageRequest = ImageRequest.fromUri(Uri.parse(picture.getUrl()));
+        ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(url));
         PipelineDraweeControllerBuilder builder = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
                 .setAutoPlayAnimations(false);
@@ -86,13 +66,9 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
     @Override
     public void onClick(View view) {
         Bundle args = new Bundle();
-        args.putString("url", picture.getUrl());
+        args.putString("url", url);
         DialogFragment fragment = new ImageViewerFragment();
         fragment.setArguments(args);
         fragment.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "tag");
-    }
-
-    public PictureInterface getPicture() {
-        return picture;
     }
 }

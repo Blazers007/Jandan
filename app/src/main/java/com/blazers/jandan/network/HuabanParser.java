@@ -59,7 +59,7 @@ public class HuabanParser extends HttpParser {
                 huabanPin.setUser_key(user.getJSONObject("avatar").getString("key"));
 
                 JSONObject board = pin.getJSONObject("board");
-                huabanPin.setBorad(board.getString("title"));
+                huabanPin.setBoard(board.getString("title"));
             }
             mRealm.commitTransaction();
         } catch (Exception e) {

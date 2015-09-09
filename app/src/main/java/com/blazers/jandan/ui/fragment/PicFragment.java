@@ -177,15 +177,17 @@ public class PicFragment extends Fragment {
             Picture picture = meiziPics.get(i);
             String comment = picture.getMeizi().getText_content();
             meiziHolder.draweeView.setAspectRatio(1.318f);
-            meiziHolder.draweeView.showImage(picture);
             meiziHolder.comment.setText(comment);
             meiziHolder.author.setText("@" + picture.getMeizi().getComment_author());
             meiziHolder.date.setText(picture.getMeizi().getComment_date());
             /* Update UI */
-            if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals(""))
+            if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals("")) {
+                meiziHolder.draweeView.showImage(picture.getLocalUrl());
                 meiziHolder.save.setImageResource(R.mipmap.ic_publish_16dp);
-            else
+            } else {
+                meiziHolder.draweeView.showImage(picture.getUrl());
                 meiziHolder.save.setImageResource(R.drawable.selector_download);
+            }
             if (comment.trim().equals(""))
                 meiziHolder.comment.setVisibility(View.GONE);
             else
@@ -280,18 +282,18 @@ public class PicFragment extends Fragment {
 
         @Override
         public void onFailure(String s, Throwable throwable) {
-            Picture picture = draweeView.getPicture();
-            if (!picture.getLocalUrl().equals("")) { // 从本地加载图片失败 删除数据库缓存地址
-                Realm realm = Realm.getInstance(getActivity());
-                realm.beginTransaction();
-                picture.setLocalUrl("");
-                realm.commitTransaction();
-                realm.close();
-                /* 重新从网络加载图片 此时 localUrl已经被赋值为空 */
-                draweeView.showImage(picture);
-            } else { // 从网络加载图片失败 检查网络连接
-
-            }
+//            Picture picture = draweeView.getPicture();
+//            if (!picture.getLocalUrl().equals("")) { // 从本地加载图片失败 删除数据库缓存地址
+//                Realm realm = Realm.getInstance(getActivity());
+//                realm.beginTransaction();
+//                picture.setLocalUrl("");
+//                realm.commitTransaction();
+//                realm.close();
+//                /* 重新从网络加载图片 此时 localUrl已经被赋值为空 */
+//                draweeView.showImage(picture);
+//            } else { // 从网络加载图片失败 检查网络连接
+//
+//            }
         }
 
         @Override

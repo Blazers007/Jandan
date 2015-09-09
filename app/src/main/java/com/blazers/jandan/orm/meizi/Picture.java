@@ -1,7 +1,5 @@
 package com.blazers.jandan.orm.meizi;
 
-import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.PictureInterface;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -10,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Blazers on 2015/8/27.
  */
-public class Picture extends RealmObject implements PictureInterface{
+public class Picture extends RealmObject {
 
     @PrimaryKey
     private String comment_ID_index;// Belong to group and index split by _
@@ -60,17 +58,6 @@ public class Picture extends RealmObject implements PictureInterface{
         this.type = type;
     }
 
-    @Override
-    public RealmObject getOrmObject() {
-        return this;
-    }
-
-    @Override
-    public String getUrlByQulity(URL.HUABAN_QULITY qulity) {
-        return url;
-    }
-    
-    /* APIs */
     /* APIS */
     public static RealmResults<Picture> findAllSortDesc(Realm realm, String type) {
         return realm.where(Picture.class).equalTo("type", type).findAllSorted("comment_ID_index", false);

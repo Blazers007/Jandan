@@ -9,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Blazers on 2015/9/9.
  */
-public class HuabanPin extends RealmObject implements PictureInterface{
+public class HuabanPin extends RealmObject {
     @PrimaryKey
     private long pin_id;
     private long file_id;
@@ -61,14 +61,6 @@ public class HuabanPin extends RealmObject implements PictureInterface{
         this.board_id = board_id;
     }
 
-    public String getFile_key() {
-        return file_key;
-    }
-
-    public void setFile_key(String file_key) {
-        this.file_key = file_key;
-    }
-
     public int getLike_count() {
         return like_count;
     }
@@ -109,23 +101,16 @@ public class HuabanPin extends RealmObject implements PictureInterface{
         this.user_key = user_key;
     }
 
-    @Override
-    public RealmObject getOrmObject() {
-        return this;
+    public String getFile_key() {
+        return file_key;
+    }
+
+    public void setFile_key(String file_key) {
+        this.file_key = file_key;
     }
 
     public String getLocalUrl() {
         return localUrl;
-    }
-
-    @Override
-    public String getUrl() {
-        return URL.getHuabanPiCByQuality(file_key, URL.HUABAN_QULITY.FULL);
-    }
-
-    @Override
-    public String getUrlByQulity(URL.HUABAN_QULITY qulity) {
-        return URL.getHuabanPiCByQuality(file_key, qulity);
     }
 
     public void setLocalUrl(String localUrl) {

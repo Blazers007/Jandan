@@ -175,7 +175,7 @@ public class PinFragment extends Fragment {
         public void onBindViewHolder(HuabanHolder meiziHolder, int i) {
             HuabanPin picture = huabanPins.get(i);
             meiziHolder.content.setAspectRatio(1.318f);
-            meiziHolder.content.showImage(picture);
+            meiziHolder.content.showImage(URL.getHuabanPiCByQuality(picture.getFile_key(), URL.HUABAN_QULITY.FULL));
             meiziHolder.userHead.setImageURI(Uri.parse(URL.getHuabanPiCByQuality(picture.getUser_key(), URL.HUABAN_QULITY.SQ75W)));
             /* Update UI */
             if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals(""))

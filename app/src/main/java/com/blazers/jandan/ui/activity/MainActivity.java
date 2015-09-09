@@ -1,18 +1,22 @@
 package com.blazers.jandan.ui.activity;
 
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
@@ -38,10 +42,10 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.left_nav) NavigationView navigationView;
 
     private ArrayList<Fragment> fragments;
+    private ArrayList<Boolean> updates;
     private String[] titles = {"新鲜事", "无聊图" ,"段子", "妹子图"};
 
     private int nowSelectedNavId = R.id.nav_jandan;
-
     private FragmentAdapter adapter;
 
     @Override
@@ -51,6 +55,11 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initDrawerWithToolbar();
         /* 根据需要填充主界面所加载的Fragment */
+        updates = new ArrayList<>();
+        updates.add(false);
+        updates.add(false);
+        updates.add(false);
+        updates.add(false);
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
         fragments.add(new PicFragment());
@@ -79,6 +88,10 @@ public class MainActivity extends BaseActivity {
                 return true;
             switch (menuItem.getItemId()) {
                 case R.id.nav_jandan:
+                    updates = new ArrayList<Boolean>();
+                    for (int i = 0 ; i < titles.length ;i ++) {
+                        updates.add(true);
+                    }
                     titles = new String[]{"新鲜事", "无聊图" ,"段子", "妹子图"};
                     fragments = new ArrayList<>();
                     fragments.add(new NewsFragment());
@@ -88,20 +101,28 @@ public class MainActivity extends BaseActivity {
                     adapter.notifyDataSetChanged();
                     break;
                 case R.id.nav_huaban:
+                    updates = new ArrayList<Boolean>();
+                    for (int i = 0 ; i < titles.length ;i ++) {
+                        updates.add(true);
+                    }
                     titles = new String[]{"妹子图"};
                     fragments = new ArrayList<>();
                     fragments.add(new PinFragment());
                     adapter.notifyDataSetChanged();
                     break;
             }
+            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
     }
 
     class FragmentAdapter extends FragmentPagerAdapter {
 
+        private FragmentManager fm;
+
         public FragmentAdapter(FragmentManager fm) {
             super(fm);
+            this.fm = fm;
         }
 
         @Override
@@ -112,6 +133,28 @@ public class MainActivity extends BaseActivity {
         @Override
         public int getCount() {
             return fragments.size();
+        }
+
+        /* TODO: WHY? */
+        @Override
+        public int getItemPosition(Object object) {
+            return POSITION_NONE;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            String tag = fragment.getTag();
+            if (updates.get(position)) {
+                android.support.v4.app.FragmentTransaction fragmentTransaction = fm.beginTransaction();
+                fragmentTransaction.remove(fragment);
+                fragment = fragments.get(position);
+                fragmentTransaction.add(container.getId(), fragment, tag);
+                fragmentTransaction.attach(fragment);
+                fragmentTransaction.commit();
+                updates.set(position, true);
+            }
+            return fragment;
         }
 
         @Override
