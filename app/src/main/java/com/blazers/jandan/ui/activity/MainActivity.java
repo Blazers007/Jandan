@@ -16,11 +16,14 @@ import android.view.MenuItem;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.network.HttpParser;
+import com.blazers.jandan.orm.HuabanPin;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.JokeFragment;
 import com.blazers.jandan.ui.fragment.MeiziFragment;
 import com.blazers.jandan.ui.fragment.NewsFragment;
 import com.blazers.jandan.ui.fragment.PicFragment;
+import com.blazers.jandan.ui.fragment.huaban.PinFragment;
 import com.blazers.jandan.util.Dppx;
 
 import java.util.ArrayList;
@@ -37,6 +40,10 @@ public class MainActivity extends BaseActivity {
     private ArrayList<Fragment> fragments;
     private String[] titles = {"新鲜事", "无聊图" ,"段子", "妹子图"};
 
+    private int nowSelectedNavId = R.id.nav_jandan;
+
+    private FragmentAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +56,7 @@ public class MainActivity extends BaseActivity {
         fragments.add(new PicFragment());
         fragments.add(new JokeFragment());
         fragments.add(new MeiziFragment());
-        viewPager.setAdapter(new FragmentAdapter(getSupportFragmentManager()));
+        viewPager.setAdapter(adapter = new FragmentAdapter(getSupportFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         /* TODO: 根据屏幕尺寸设置TabMode */
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
@@ -65,6 +72,30 @@ public class MainActivity extends BaseActivity {
                 R.string.drawer_open, R.string.drawer_close);
         drawerToggle.syncState();
         drawerLayout.setDrawerListener(drawerToggle);
+
+        /* Navigation View */
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            if (menuItem.getItemId() == nowSelectedNavId)
+                return true;
+            switch (menuItem.getItemId()) {
+                case R.id.nav_jandan:
+                    titles = new String[]{"新鲜事", "无聊图" ,"段子", "妹子图"};
+                    fragments = new ArrayList<>();
+                    fragments.add(new NewsFragment());
+                    fragments.add(new PicFragment());
+                    fragments.add(new JokeFragment());
+                    fragments.add(new MeiziFragment());
+                    adapter.notifyDataSetChanged();
+                    break;
+                case R.id.nav_huaban:
+                    titles = new String[]{"妹子图"};
+                    fragments = new ArrayList<>();
+                    fragments.add(new PinFragment());
+                    adapter.notifyDataSetChanged();
+                    break;
+            }
+            return true;
+        });
     }
 
     class FragmentAdapter extends FragmentPagerAdapter {
@@ -109,5 +140,10 @@ public class MainActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

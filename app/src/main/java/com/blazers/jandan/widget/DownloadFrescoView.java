@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import com.blazers.jandan.R;
+import com.blazers.jandan.orm.PictureInterface;
 import com.blazers.jandan.orm.meizi.Picture;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
@@ -41,7 +42,6 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
 
     /* Vars */
     private ControllerListener<ImageInfo> listener;
-    private Picture picture;
 
     public DownloadFrescoView(Context context) {
         super(context);
@@ -59,9 +59,11 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         this.listener = listener;
     }
 
-    public void showImage(Picture picture) {
-        /* Init vars prefer to load from local storage */
+    private PictureInterface picture;
+
+    public void showImage(PictureInterface picture) {
         this.picture = picture;
+        /* Init vars prefer to load from local storage */
         ImageRequest imageRequest;
         if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals(""))
             imageRequest = ImageRequest.fromUri(Uri.parse("file://" + (picture.getLocalUrl())));
@@ -80,9 +82,6 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         setOnClickListener(this);
     }
 
-    public Picture getPicture() {
-        return picture;
-    }
 
     @Override
     public void onClick(View view) {
@@ -91,5 +90,9 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         DialogFragment fragment = new ImageViewerFragment();
         fragment.setArguments(args);
         fragment.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "tag");
+    }
+
+    public PictureInterface getPicture() {
+        return picture;
     }
 }

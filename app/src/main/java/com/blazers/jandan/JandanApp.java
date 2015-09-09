@@ -1,6 +1,7 @@
 package com.blazers.jandan;
 
 import android.app.Application;
+import com.blazers.jandan.network.HttpParser;
 import com.blazers.jandan.network.JandanParser;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
@@ -13,7 +14,7 @@ public class JandanApp extends Application {
         super.onCreate();
         CrashHandler.getInstance().init(this);
         Fresco.initialize(this);
-        JandanParser.init(this);
-
+        HttpParser.init(this);
     }
+
 }

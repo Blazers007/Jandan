@@ -23,4 +23,24 @@ public class URL {
 
 
     /* Other restful api */
+
+    /* Huaban http://huaban.com */
+    public enum HUABAN_QULITY {
+        FULL, SQ75W, FW192W;
+        @Override
+        public String toString() {
+            if(this.equals(FULL)) {
+                return "";
+            } else {
+                return "_" + super.toString().toLowerCase();
+            }
+        }
+    }
+    public static final String HUABAN_QUERY_API = "http://api.HuabanPin.com/search/?q=%E5%A6%B9%E5%AD%90&page=1&per_page=20";
+    public static String huabanQuerySthAtPage (String key, int page) {
+        return "http://api.HuabanPin.com/search/?q=" + key + "&page=" + page + "&per_page=20";
+    }
+    public static String getHuabanPiCByQuality(String id, HUABAN_QULITY qulity) {
+        return "http://img.hb.aicdn.com/" + id + qulity.toString();
+    }
 }

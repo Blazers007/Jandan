@@ -21,27 +21,17 @@ import java.io.IOException;
 /**
  * Created by Blazers on 2015/8/26.
  */
-public class JandanParser {
+public class JandanParser extends HttpParser {
     public static final String TAG = JandanParser.class.getSimpleName();
-    /* INSTANCE */
-    private static Context mContext;
-    private static JandanParser INSTANCE;
+
+    protected static JandanParser INSTANCE;
     /* 缓存当前最新的Page 应该与数据库同步 */
     private int CURRENT_MEIZI_PAGE = 1;
     private int CURRENT_NEWS_PAGE = 1;
     private int TOTAL_PAGE;
-    private Realm mRealm;
-    private OkHttpClient mClient;
-
-    /**
-     * 从数据库同步最新字段并读取
-     * */
-    public static void init(Context context) {
-        mContext = context;
-    }
 
     private JandanParser(){
-        mClient = new OkHttpClient();
+        /* Init vars */
     }
 
     public static JandanParser getInstance() {
@@ -53,7 +43,6 @@ public class JandanParser {
         }
         return INSTANCE;
     }
-
 
     /* 解析妹子API */
     public void parseMeiziAPI(boolean refresh) {

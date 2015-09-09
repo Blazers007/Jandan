@@ -16,12 +16,13 @@
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
             >
+        <!-- Comment -->
         <TextView
                 android:id="@+id/comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/author"
-                android:layout_marginTop="12dp"
+                android:layout_below="@+id/user_head"
+                android:layout_marginTop="4dp"
                 tools:text="@string/longText"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="12dp"
@@ -38,6 +39,12 @@
                 android:layout_marginBottom="4dp"
                 />
         <!-- Title and time-->
+        <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/user_head"
+                style="@style/ImageHeaderViewRect"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="16dp"
+                />
         <TextView
                 android:id="@+id/author"
                 android:layout_width="wrap_content"
@@ -47,9 +54,9 @@
                 android:textStyle="bold"
                 android:textColor="#030303"
                 android:gravity="center"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="12dp"
-                />
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="16dp"
+                android:layout_toRightOf="@+id/user_head"/>
         <TextView
                 android:id="@+id/date"
                 android:layout_width="wrap_content"
@@ -64,29 +71,20 @@
                 />
         <com.blazers.jandan.widget.ThumbTextButton
                 style="@style/ThumbButtonBase"
-                android:id="@+id/btn_oo"
+                android:id="@+id/btn_fav"
                 android:layout_below="@+id/content"
-                android:src="@drawable/selector_thumb_up"
-                app:ttb_floatTextColor="@color/thumbUp"
+                android:src="@drawable/selector_fav"
+                app:ttb_floatTextColor="@color/fav"
                 android:layout_marginLeft="8dp"
                 />
-        <com.blazers.jandan.widget.ThumbTextButton
-                style="@style/ThumbDownSpec"
-                android:id="@+id/btn_xx"
-                app:ttb_floatTextColor="@color/thumbDown"
-                android:layout_toRightOf="@+id/btn_oo"
-                android:layout_alignTop="@+id/btn_oo"
-                android:src="@drawable/selector_thumb_down"
-                android:layout_marginLeft="8dp"
-                />
-        <com.blazers.jandan.widget.ThumbTextButton
-                style="@style/ThumbDownSpec"
-                android:id="@+id/btn_comment"
-                android:layout_toRightOf="@+id/btn_xx"
-                android:layout_alignTop="@+id/btn_oo"
-                android:src="@drawable/selector_comment"
-                android:layout_marginLeft="8dp"
-                />
+        <!-- Board and key words -->
+        <TextView
+                android:id="@+id/board"
+                style="@style/ClickTextBase"
+                tools:text="UI设计"
+                android:layout_toRightOf="@+id/btn_oo" android:layout_alignTop="@+id/btn_oo"
+                android:layout_marginLeft="4dp"/>
+        
         <ImageButton
                 style="@style/ImageButton40Base"
                 android:id="@+id/btn_save"

@@ -5,4 +5,5 @@
     <!-- Thumb -->
     <color name="thumbUp">#0f9bf5</color>
     <color name="thumbDown">#ff3205</color>
+    <color name="fav">#f14b4c</color>
 </resources>
