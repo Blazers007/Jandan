@@ -14,6 +14,8 @@ import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
 import io.realm.RealmResults;
 
+import java.util.ArrayList;
+
 /**
  * Created by Blazers on 2015/9/10.
  *
@@ -23,9 +25,9 @@ import io.realm.RealmResults;
 public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.JandanHolder> {
 
     private LayoutInflater inflater;
-    private RealmResults<Image> imageRealmResults;
+    private ArrayList<Image> imageRealmResults;
 
-    public JandanImageAdapter(Context context, RealmResults<Image> imageRealmResults) {
+    public JandanImageAdapter(Context context, ArrayList<Image> imageRealmResults) {
         this.inflater = LayoutInflater.from(context);
         this.imageRealmResults = imageRealmResults;
     }
@@ -68,7 +70,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
 
     @Override
     public int getItemCount() {
-        return imageRealmResults.size();
+        return imageRealmResults == null ? 0 : imageRealmResults.size();
     }
 
     class JandanHolder extends RecyclerView.ViewHolder {

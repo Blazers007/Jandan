@@ -1,25 +1,19 @@
-package com.blazers.jandan.ui.fragment;
+package com.blazers.jandan.ui.fragment.jandan;
 
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.util.RecyclerViewHelper;
@@ -31,10 +25,9 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.imagepipeline.image.ImageInfo;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
-import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 
-import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by Blazers on 15/9/8.
@@ -47,8 +40,7 @@ public class PicFragment extends Fragment {
 
     private Realm realm;
     private JandanImageAdapter adapter;
-    private RealmResults<Image> meiziPics;
-    private int listSize;
+    private ArrayList<Image> imageArrayList = new ArrayList<>();
 
     /* Beta */
 
@@ -83,9 +75,8 @@ public class PicFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    long last = Long.parseLong(meiziPics.last().getComment_ID_index().split("_")[0]);
-                    meiziPics.addAll(meiziPics.size(), realm.where(Image.class).equalTo("type", "pic").lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
-                    listSize = meiziPics.size();
+                    long last = imageArrayList.get(imageArrayList.size()-1).getComment_ID_index();
+                    imageArrayList.addAll(imageArrayList.size(), Image.loadMoreLessThan(realm, "pic", last));
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
                     smoothProgressBar.setVisibility(View.GONE);
@@ -95,13 +86,13 @@ public class PicFragment extends Fragment {
         });
 
         /* Set Adapter */
-        adapter = new JandanImageAdapter(getActivity(), meiziPics);
+        adapter = new JandanImageAdapter(getActivity(), imageArrayList);
         meiziList.setAdapter(adapter);
         /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
                     JandanParser.getInstance().parsePicAPI(true);
@@ -110,10 +101,7 @@ public class PicFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
-                    listSize = meiziPics.size();
-                    adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
+                    updateList();
                     super.onPostExecute(aVoid);
                 }
             }.execute();
@@ -122,31 +110,35 @@ public class PicFragment extends Fragment {
         /* Pull to load */
     }
 
+    private void updateList() {
+        imageArrayList = new ArrayList<>();
+        imageArrayList.addAll(Image.findAllSortDesc(realm, "pic"));
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     void initMeiziPics() {
         realm = Realm.getInstance(getActivity());
-        meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
-        listSize = meiziPics.size();
-        Log.e("SIZE", "= " + meiziPics.size());
+        if (imageArrayList.size() == 0)
+            updateList();
+        Log.e("SIZE", "= " + imageArrayList.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
-        if (listSize == 0) {
-            swipeRefreshLayout.setRefreshing(true);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parsePicAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
-                    listSize = meiziPics.size();
-                    adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
-        }
+//        if (listSize == 0) {
+//            swipeRefreshLayout.setRefreshing(true);
+//            new AsyncTask<Void, Void, Void>(){
+//                @Override
+//                protected Void doInBackground(Void... params) {
+//                    JandanParser.getInstance().parsePicAPI(true);
+//                    return null;
+//                }
+//
+//                @Override
+//                protected void onPostExecute(Void aVoid) {
+//                    updateList();
+//                    super.onPostExecute(aVoid);
+//                }
+//            }.execute();
+//        }
     }
 
     @Override

@@ -22,6 +22,8 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 
+import java.util.ArrayList;
+
 /**
  * Created by Blazers on 2015/8/25.
  */
@@ -35,8 +37,7 @@ public class MeiziFragment extends Fragment {
 
     private Realm realm;
     private JandanImageAdapter adapter;
-    private RealmResults<Image> meiziPics;
-    private int listSize;
+    private ArrayList<Image> imageArrayList = new ArrayList<>();
 
     /* Beta */
 
@@ -71,9 +72,8 @@ public class MeiziFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    long last = Long.parseLong(meiziPics.last().getComment_ID_index().split("_")[0]);
-                    meiziPics.addAll(Image.loadMoreLessThan(realm, "meizi", last));
-                    listSize = meiziPics.size();
+                    long last = imageArrayList.get(imageArrayList.size()-1).getComment_ID_index();
+                    imageArrayList.addAll(Image.loadMoreLessThan(realm, "meizi", last));
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
                     smoothProgressBar.setVisibility(View.GONE);
@@ -83,13 +83,13 @@ public class MeiziFragment extends Fragment {
         });
 
         /* Set Adapter */
-        adapter = new JandanImageAdapter(getActivity(), meiziPics);
+        adapter = new JandanImageAdapter(getActivity(), imageArrayList);
         meiziList.setAdapter(adapter);
         /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... params) {
                     JandanParser.getInstance().parseMeiziAPI(true);
@@ -98,10 +98,7 @@ public class MeiziFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = Image.findAllSortDesc(realm, "meizi");
-                    listSize = meiziPics.size();
-                    adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
+                    updateList();
                     super.onPostExecute(aVoid);
                 }
             }.execute();
@@ -110,31 +107,35 @@ public class MeiziFragment extends Fragment {
         /* Pull to load */
     }
 
+    private void updateList() {
+        imageArrayList = new ArrayList<>();
+        imageArrayList.addAll(Image.findAllSortDesc(realm, "meizi"));
+        adapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     void initMeiziPics() {
         realm = Realm.getInstance(getActivity());
-        meiziPics = Image.findAllSortDesc(realm, "meizi");
-        listSize = meiziPics.size();
-        Log.e("SIZE", "= " + meiziPics.size());
+        if (imageArrayList.size() == 0)
+            updateList();
+        Log.e("SIZE", "= " + imageArrayList.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
-        if (listSize == 0) {
-            swipeRefreshLayout.setRefreshing(true);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    meiziPics = Image.findAllSortDesc(realm, "meizi");
-                    listSize = meiziPics.size();
-                    adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
-        }
+//        if (listSize == 0) {
+//            swipeRefreshLayout.setRefreshing(true);
+//            new AsyncTask<Void, Void, Void>(){
+//                @Override
+//                protected Void doInBackground(Void... params) {
+//                    JandanParser.getInstance().parseMeiziAPI(true);
+//                    return null;
+//                }
+//
+//                @Override
+//                protected void onPostExecute(Void aVoid) {
+//                    updateList();
+//                    super.onPostExecute(aVoid);
+//                }
+//            }.execute();
+//        }
     }
 
     @Override
@@ -162,7 +163,7 @@ public class MeiziFragment extends Fragment {
 //
 //        @Override
 //        public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
-//            Image image = meiziPics.get(i);
+//            Image image = imageArrayList.get(i);
 //            String comment = image.getPost().getText_content();
 //            meiziHolder.draweeView.setAspectRatio(1.318f);
 //            meiziHolder.comment.setText(comment);
@@ -211,7 +212,7 @@ public class MeiziFragment extends Fragment {
 //            public void onClick(View view) {
 //                ImageButton trigger = (ImageButton) view;
 //                int position = getAdapterPosition();
-//                Image picture = meiziPics.get(position);
+//                Image picture = imageArrayList.get(position);
 //                final String url = picture.getImage().getWeb_url();
 //                new AsyncTask<Void, Void, String>(){
 //                    @Override

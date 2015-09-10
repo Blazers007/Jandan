@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
@@ -22,7 +21,7 @@ import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.jandan.JokeFragment;
 import com.blazers.jandan.ui.fragment.jandan.MeiziFragment;
 import com.blazers.jandan.ui.fragment.jandan.NewsFragment;
-import com.blazers.jandan.ui.fragment.PicFragment;
+import com.blazers.jandan.ui.fragment.jandan.PicFragment;
 import com.blazers.jandan.ui.fragment.huaban.PinFragment;
 import com.blazers.jandan.util.Dppx;
 
@@ -39,7 +38,7 @@ public class MainActivity extends BaseActivity {
 
     private ArrayList<Fragment> fragments;
     private ArrayList<Boolean> updates;
-    private String[] titles = {"新鲜事", "无聊图" ,"段子", "妹子图"};
+    private String[] titles = {"新鲜事" ,"段子", "妹子图"};
 
     private int nowSelectedNavId = R.id.nav_jandan;
     private FragmentAdapter adapter;
@@ -51,14 +50,9 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         initDrawerWithToolbar();
         /* 根据需要填充主界面所加载的Fragment */
-        updates = new ArrayList<>();
-        updates.add(false);
-        updates.add(false);
-        updates.add(false);
-        updates.add(false);
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
-        fragments.add(new PicFragment());
+//        fragments.add(new PicFragment());
         fragments.add(new JokeFragment());
         fragments.add(new MeiziFragment());
         viewPager.setAdapter(adapter = new FragmentAdapter(getSupportFragmentManager()));
@@ -84,27 +78,10 @@ public class MainActivity extends BaseActivity {
                 return true;
             switch (menuItem.getItemId()) {
                 case R.id.nav_jandan:
-                    updates = new ArrayList<Boolean>();
-                    for (int i = 0 ; i < titles.length ;i ++) {
-                        updates.add(true);
-                    }
-                    titles = new String[]{"新鲜事", "无聊图" ,"段子", "妹子图"};
-                    fragments = new ArrayList<>();
-                    fragments.add(new NewsFragment());
-                    fragments.add(new PicFragment());
-                    fragments.add(new JokeFragment());
-                    fragments.add(new MeiziFragment());
-                    adapter.notifyDataSetChanged();
+
                     break;
                 case R.id.nav_huaban:
-                    updates = new ArrayList<Boolean>();
-                    for (int i = 0 ; i < titles.length ;i ++) {
-                        updates.add(true);
-                    }
-                    titles = new String[]{"妹子图"};
-                    fragments = new ArrayList<>();
-                    fragments.add(new PinFragment());
-                    adapter.notifyDataSetChanged();
+
                     break;
             }
             drawerLayout.closeDrawer(GravityCompat.START);

@@ -43,6 +43,10 @@ public class JandanParser extends HttpParser {
         return INSTANCE;
     }
 
+    private void parseJandanImageAPI(int type, float refreshing) {
+        /* 每次从网络更新后  获取一下当前页码的标志 并判断数据库是否需要读取后面的内容？ */
+    }
+
     /* 解析妹子API */
     public void parseMeiziAPI(boolean refresh) {
         mRealm = Realm.getInstance(mContext);
@@ -83,14 +87,15 @@ public class JandanParser extends HttpParser {
                 for (int pi = 0 ; pi < pics.length() ; pi ++) {
                     /* 避免多次保存 */
                     Image picture = new Image();
-                    picture.setComment_ID_index(comment_ID + "_" + pi);
+                    picture.setComment_ID_index(Long.parseLong(comment_ID +"1"+ String.format("%02d", pi)));
                     picture.setPost(meizi);
                     picture.setType("meizi");
                     picture = mRealm.copyToRealmOrUpdate(picture);
                     /* 判断是否需要更新Image */
                     if (picture.getImage() == null) {
                         OSBSImage osbsImage = new OSBSImage();
-                        osbsImage.setWeb_url(pics.getString(i));
+                        osbsImage.setWeb_url(pics.getString(pi));
+                        osbsImage = mRealm.copyToRealmOrUpdate(osbsImage);
                         picture.setImage(osbsImage);
                     }
                 }
@@ -241,14 +246,14 @@ public class JandanParser extends HttpParser {
                 for (int pi = 0 ; pi < pics.length() ; pi ++) {
                     /* 避免多次保存 */
                     Image picture = new Image();
-                    picture.setComment_ID_index(comment_ID + "_" + pi);
+                    picture.setComment_ID_index(Long.parseLong(comment_ID +"2"+ String.format("%02d", pi)));
                     picture.setPost(pic);
                     picture.setType("pic");
                     picture = mRealm.copyToRealmOrUpdate(picture);
                     /* 判断是否需要更新Image */
                     if (picture.getImage() == null) {
                         OSBSImage osbsImage = new OSBSImage();
-                        osbsImage.setWeb_url(pics.getString(i));
+                        osbsImage.setWeb_url(pics.getString(pi));
                         osbsImage = mRealm.copyToRealmOrUpdate(osbsImage);
                         picture.setImage(osbsImage);
                     }
