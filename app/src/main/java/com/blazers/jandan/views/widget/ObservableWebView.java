@@ -1,4 +1,4 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;

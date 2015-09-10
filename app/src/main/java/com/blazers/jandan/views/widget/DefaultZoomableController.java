@@ -1,17 +1,10 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
-import com.blazers.jandan.widget.facebook.gesture.TransformGestureDetector;
-
-
-
-import android.graphics.Matrix;
-import android.graphics.PointF;
-import android.graphics.RectF;
-import android.view.MotionEvent;
+import com.blazers.jandan.views.widget.facebook.gesture.TransformGestureDetector;
 
 /**
  * Zoomable controller that calculates transformation based on touch events.

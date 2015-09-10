@@ -1,6 +1,5 @@
 package com.blazers.jandan.ui.activity;
 
-import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,19 +12,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.HttpParser;
-import com.blazers.jandan.orm.HuabanPin;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.ui.fragment.JokeFragment;
-import com.blazers.jandan.ui.fragment.MeiziFragment;
-import com.blazers.jandan.ui.fragment.NewsFragment;
+import com.blazers.jandan.ui.fragment.jandan.JokeFragment;
+import com.blazers.jandan.ui.fragment.jandan.MeiziFragment;
+import com.blazers.jandan.ui.fragment.jandan.NewsFragment;
 import com.blazers.jandan.ui.fragment.PicFragment;
 import com.blazers.jandan.ui.fragment.huaban.PinFragment;
 import com.blazers.jandan.util.Dppx;
@@ -133,28 +129,6 @@ public class MainActivity extends BaseActivity {
         @Override
         public int getCount() {
             return fragments.size();
-        }
-
-        /* TODO: WHY? */
-        @Override
-        public int getItemPosition(Object object) {
-            return POSITION_NONE;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = (Fragment) super.instantiateItem(container, position);
-            String tag = fragment.getTag();
-            if (updates.get(position)) {
-                android.support.v4.app.FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.remove(fragment);
-                fragment = fragments.get(position);
-                fragmentTransaction.add(container.getId(), fragment, tag);
-                fragmentTransaction.attach(fragment);
-                fragmentTransaction.commit();
-                updates.set(position, true);
-            }
-            return fragment;
         }
 
         @Override

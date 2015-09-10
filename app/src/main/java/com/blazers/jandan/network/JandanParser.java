@@ -1,14 +1,13 @@
 package com.blazers.jandan.network;
 
 
-import android.content.Context;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.joke.Joke;
-import com.blazers.jandan.orm.meizi.Meizi;
-import com.blazers.jandan.orm.meizi.Picture;
-import com.blazers.jandan.orm.news.NewsList;
-import com.squareup.okhttp.OkHttpClient;
+import com.blazers.jandan.models.local.OSBSImage;
+import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.models.jandan.ImagePost;
+import com.blazers.jandan.models.jandan.Joke;
+import com.blazers.jandan.models.jandan.NewsList;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -66,7 +65,7 @@ public class JandanParser extends HttpParser {
             String last = comments.getJSONObject(size - 1).getString("comment_ID");
             Log.i(TAG, " From: " + first + " ====  To:" + last);
             /* 扎找本地备份 该更新的更新 该添加的添加 */
-            RealmQuery<Meizi> query = mRealm.where(Meizi.class);
+            RealmQuery<ImagePost> query = mRealm.where(ImagePost.class);
             long max = query.maximumInt("comment_ID");
             long min = query.minimumInt("comment_ID");
             Log.i(TAG, "Local Database From: " + max + " ====  To:" + min);
@@ -79,18 +78,23 @@ public class JandanParser extends HttpParser {
                 long comment_post_ID = Long.parseLong(comment.getString("comment_post_ID"));
                 comment.put("comment_ID", comment_ID);
                 comment.put("comment_post_ID", comment_post_ID);
-                Meizi meizi = mRealm.createOrUpdateObjectFromJson(Meizi.class, comment);
+                ImagePost meizi = mRealm.createOrUpdateObjectFromJson(ImagePost.class, comment);
                 JSONArray pics = comment.getJSONArray("pics");
                 for (int pi = 0 ; pi < pics.length() ; pi ++) {
                     /* 避免多次保存 */
-                    Picture picture = new Picture();
+                    Image picture = new Image();
                     picture.setComment_ID_index(comment_ID + "_" + pi);
-                    picture.setUrl(pics.getString(pi));
-                    picture.setMeizi(meizi);
+                    picture.setPost(meizi);
                     picture.setType("meizi");
-                    mRealm.copyToRealmOrUpdate(picture);
+                    picture = mRealm.copyToRealmOrUpdate(picture);
+                    /* 判断是否需要更新Image */
+                    if (picture.getImage() == null) {
+                        OSBSImage osbsImage = new OSBSImage();
+                        osbsImage.setWeb_url(pics.getString(i));
+                        picture.setImage(osbsImage);
+                    }
                 }
-                meizi.setPicture_size(pics.length());
+                meizi.setImage_size(pics.length());
                 Log.e("UPDATE OR CREATE ", "ID === > " + meizi.getComment_ID());
             }
             /* 添加 */
@@ -219,7 +223,7 @@ public class JandanParser extends HttpParser {
             String last = comments.getJSONObject(size - 1).getString("comment_ID");
             Log.i(TAG, " From: " + first + " ====  To:" + last);
             /* 扎找本地备份 该更新的更新 该添加的添加 */
-            RealmQuery<Meizi> query = mRealm.where(Meizi.class);
+            RealmQuery<ImagePost> query = mRealm.where(ImagePost.class);
             long max = query.maximumInt("comment_ID");
             long min = query.minimumInt("comment_ID");
             Log.i(TAG, "Local Database From: " + max + " ====  To:" + min);
@@ -232,18 +236,24 @@ public class JandanParser extends HttpParser {
                 long comment_post_ID = Long.parseLong(comment.getString("comment_post_ID"));
                 comment.put("comment_ID", comment_ID);
                 comment.put("comment_post_ID", comment_post_ID);
-                Meizi pic = mRealm.createOrUpdateObjectFromJson(Meizi.class, comment);
+                ImagePost pic = mRealm.createOrUpdateObjectFromJson(ImagePost.class, comment);
                 JSONArray pics = comment.getJSONArray("pics");
                 for (int pi = 0 ; pi < pics.length() ; pi ++) {
                     /* 避免多次保存 */
-                    Picture picture = new Picture();
+                    Image picture = new Image();
                     picture.setComment_ID_index(comment_ID + "_" + pi);
-                    picture.setUrl(pics.getString(pi));
-                    picture.setMeizi(pic);
+                    picture.setPost(pic);
                     picture.setType("pic");
-                    mRealm.copyToRealmOrUpdate(picture);
+                    picture = mRealm.copyToRealmOrUpdate(picture);
+                    /* 判断是否需要更新Image */
+                    if (picture.getImage() == null) {
+                        OSBSImage osbsImage = new OSBSImage();
+                        osbsImage.setWeb_url(pics.getString(i));
+                        osbsImage = mRealm.copyToRealmOrUpdate(osbsImage);
+                        picture.setImage(osbsImage);
+                    }
                 }
-                pic.setPicture_size(pics.length());
+                pic.setImage_size(pics.length());
                 Log.e("UPDATE OR CREATE ", "ID === > " + pic.getComment_ID());
             }
             /* 添加 */

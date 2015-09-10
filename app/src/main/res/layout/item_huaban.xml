@@ -29,7 +29,7 @@
                 android:lineSpacingExtra="4dp"
                 android:textColor="#444"
                 android:layout_marginBottom="-4dp"/>
-        <com.blazers.jandan.widget.DownloadFrescoView
+        <com.blazers.jandan.views.widget.DownloadFrescoView
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
                 android:gravity="center"
                 android:layout_alignBottom="@+id/author"
                 />
-        <com.blazers.jandan.widget.ThumbTextButton
+        <com.blazers.jandan.views.widget.ThumbTextButton
                 style="@style/ThumbButtonBase"
                 android:id="@+id/btn_fav"
                 android:layout_below="@+id/content"

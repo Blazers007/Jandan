@@ -1,16 +1,10 @@
 package com.blazers.jandan.ui.activity;
 
-import android.annotation.TargetApi;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
-import android.support.design.widget.AppBarLayout;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -20,8 +14,7 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.util.Dppx;
-import com.blazers.jandan.widget.ObservableWebView;
+import com.blazers.jandan.views.widget.ObservableWebView;
 
 public class NewsReadActivity extends BaseActivity {
 

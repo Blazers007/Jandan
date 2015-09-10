@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
@@ -22,10 +21,11 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.JandanParser;
-import com.blazers.jandan.orm.meizi.Picture;
+import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.widget.DownloadFrescoView;
-import com.blazers.jandan.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.views.adapters.JandanImageAdapter;
+import com.blazers.jandan.views.widget.DownloadFrescoView;
+import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.imagepipeline.image.ImageInfo;
@@ -46,8 +46,8 @@ public class PicFragment extends Fragment {
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
     private Realm realm;
-    private MeiziAdapter adapter;
-    private RealmResults<Picture> meiziPics;
+    private JandanImageAdapter adapter;
+    private RealmResults<Image> meiziPics;
     private int listSize;
 
     /* Beta */
@@ -84,7 +84,7 @@ public class PicFragment extends Fragment {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     long last = Long.parseLong(meiziPics.last().getComment_ID_index().split("_")[0]);
-                    meiziPics.addAll(meiziPics.size(), realm.where(Picture.class).equalTo("type", "pic").lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
+                    meiziPics.addAll(meiziPics.size(), realm.where(Image.class).equalTo("type", "pic").lessThan("comment_ID_index", last).findAllSorted("comment_ID_index", false));
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     meiziList.endLoading();
@@ -95,7 +95,7 @@ public class PicFragment extends Fragment {
         });
 
         /* Set Adapter */
-        adapter = new MeiziAdapter();
+        adapter = new JandanImageAdapter(getActivity(), meiziPics);
         meiziList.setAdapter(adapter);
         /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
@@ -110,7 +110,7 @@ public class PicFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
+                    meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -124,7 +124,7 @@ public class PicFragment extends Fragment {
 
     void initMeiziPics() {
         realm = Realm.getInstance(getActivity());
-        meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
+        meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
         listSize = meiziPics.size();
         Log.e("SIZE", "= " + meiziPics.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
@@ -139,7 +139,7 @@ public class PicFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    meiziPics = realm.where(Picture.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
+                    meiziPics = realm.where(Image.class).equalTo("type", "pic").findAllSorted("comment_ID_index", false);
                     listSize = meiziPics.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -156,102 +156,7 @@ public class PicFragment extends Fragment {
         super.onDestroyView();
     }
 
-    /* Meizi Adapter */
-    class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziHolder>{
-
-        private LayoutInflater inflater;
-
-        public MeiziAdapter() {
-            inflater = LayoutInflater.from(getActivity());
-        }
-
-        @Override
-        public MeiziHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.item_meizi, parent, false);
-            return new MeiziHolder(v);
-        }
-
-
-        @Override
-        public void onBindViewHolder(MeiziHolder meiziHolder, int i) {
-            Picture picture = meiziPics.get(i);
-            String comment = picture.getMeizi().getText_content();
-            meiziHolder.draweeView.setAspectRatio(1.318f);
-            meiziHolder.comment.setText(comment);
-            meiziHolder.author.setText("@" + picture.getMeizi().getComment_author());
-            meiziHolder.date.setText(picture.getMeizi().getComment_date());
-            /* Update UI */
-            if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals("")) {
-                meiziHolder.draweeView.showImage(picture.getLocalUrl());
-                meiziHolder.save.setImageResource(R.mipmap.ic_publish_16dp);
-            } else {
-                meiziHolder.draweeView.showImage(picture.getUrl());
-                meiziHolder.save.setImageResource(R.drawable.selector_download);
-            }
-            if (comment.trim().equals(""))
-                meiziHolder.comment.setVisibility(View.GONE);
-            else
-                meiziHolder.comment.setVisibility(View.VISIBLE);
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return listSize;
-        }
-
-        class MeiziHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-            public DownloadFrescoView draweeView;
-            public TextView author, date, comment;
-            public ImageButton like, dislike, save;
-
-            public MeiziHolder(View itemView) {
-                super(itemView);
-                draweeView = (DownloadFrescoView) itemView.findViewById(R.id.content);
-                author = (TextView) itemView.findViewById(R.id.author);
-                comment = (TextView) itemView.findViewById(R.id.comment);
-                date = (TextView) itemView.findViewById(R.id.date);
-                save = (ImageButton) itemView.findViewById(R.id.btn_save);
-                /* 绑定点击事件 */
-                draweeView.setListener(new FrescoControlListener(draweeView, save));
-                save.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View view) {
-                ImageButton trigger = (ImageButton) view;
-                int position = getAdapterPosition();
-                Picture picture = meiziPics.get(position);
-                final String url = picture.getUrl();
-                new AsyncTask<Void, Void, String>(){
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        return ImageDownloader.getInstance().doDownloading(url);
-                    }
-
-                    @Override
-                    protected void onPostExecute(String path) {
-                        trigger.setImageResource(R.mipmap.ic_publish_16dp);//TODO: 应当直接隐藏或者更换为以保存按钮
-                        Realm realm = Realm.getInstance(getActivity());
-                        realm.beginTransaction();   //No outside changes to a Realm is allowed while iterating a RealmResults. Use iterators methods instead.
-                        picture.setLocalUrl(path);
-                        realm.commitTransaction();
-                        realm.close();
-                        Snackbar.make(getView(), "保存完毕", Snackbar.LENGTH_SHORT).setAction("删除", v->{
-                            new File(path).delete();
-                            Realm realm2 = Realm.getInstance(getActivity());
-                            realm2.beginTransaction();
-                            picture.setLocalUrl("");
-                            realm2.commitTransaction();
-                            realm2.close();
-                            Toast.makeText(getActivity(), "删除成功", Toast.LENGTH_SHORT).show();
-                        }).show();
-                    }
-                }.execute();
-            }
-        }
-    }
+    /* ImagePost Adapter */
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 
@@ -282,7 +187,7 @@ public class PicFragment extends Fragment {
 
         @Override
         public void onFailure(String s, Throwable throwable) {
-//            Picture picture = draweeView.getPicture();
+//            Image picture = draweeView.getPicture();
 //            if (!picture.getLocalUrl().equals("")) { // 从本地加载图片失败 删除数据库缓存地址
 //                Realm realm = Realm.getInstance(getActivity());
 //                realm.beginTransaction();

@@ -1,4 +1,4 @@
-package com.blazers.jandan.service;
+package com.blazers.jandan.services;
 
 import android.content.Intent;
 import android.os.AsyncTask;

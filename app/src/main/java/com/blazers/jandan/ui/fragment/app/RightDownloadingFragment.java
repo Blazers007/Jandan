@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment;
+package com.blazers.jandan.ui.fragment.app;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

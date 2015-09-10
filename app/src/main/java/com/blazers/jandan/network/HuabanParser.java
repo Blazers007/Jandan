@@ -1,8 +1,7 @@
 package com.blazers.jandan.network;
 
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.orm.HuabanPin;
-import com.squareup.okhttp.OkHttpClient;
+import com.blazers.jandan.models.HuabanPin;
 import com.squareup.okhttp.Request;
 import io.realm.Realm;
 import org.json.JSONArray;

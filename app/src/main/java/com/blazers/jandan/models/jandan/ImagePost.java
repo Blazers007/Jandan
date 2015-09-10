@@ -1,6 +1,5 @@
-package com.blazers.jandan.orm.meizi;
+package com.blazers.jandan.models.jandan;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -10,20 +9,19 @@ import io.realm.annotations.PrimaryKey;
  * JSON 转数据库持久化
  *
  */
-public class Meizi extends RealmObject {
+public class ImagePost extends RealmObject {
 
-
+    /* From JSON */
     @PrimaryKey
-    private long comment_ID;
-    private long comment_post_ID;
-    private String comment_author;
-    private String comment_date;
-    private String vote_positive;
-    private String vote_negative;
-    private String text_content;
-    private int picture_size;
-
-    /* Getter & Setter */
+    private long comment_ID;         // 每一贴的唯一ID
+    private long comment_post_ID;    // 每次发帖的ID 每次发帖可发多张帖子
+    private String comment_author;   // 作者
+    private String comment_date;     // 发布日期
+    private String vote_positive;    // OO数量
+    private String vote_negative;    // XX数量
+    private String text_content;     // 文本内容
+    /* By Setter */
+    private int image_size;          // 含有的图片数量
 
     public long getComment_ID() {
         return comment_ID;
@@ -81,11 +79,11 @@ public class Meizi extends RealmObject {
         this.text_content = text_content;
     }
 
-    public int getPicture_size() {
-        return picture_size;
+    public int getImage_size() {
+        return image_size;
     }
 
-    public void setPicture_size(int picture_size) {
-        this.picture_size = picture_size;
+    public void setImage_size(int image_size) {
+        this.image_size = image_size;
     }
 }

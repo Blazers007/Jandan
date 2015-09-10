@@ -1,4 +1,4 @@
-package com.blazers.jandan.orm.news;
+package com.blazers.jandan.models.jandan;
 
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;

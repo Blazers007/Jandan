@@ -11,7 +11,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-        <com.blazers.jandan.widget.LoadMoreRecyclerView
+        <com.blazers.jandan.views.widget.LoadMoreRecyclerView
                 android:id="@+id/recycler_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

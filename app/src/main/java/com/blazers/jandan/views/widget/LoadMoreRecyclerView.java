@@ -1,11 +1,8 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 /**
  * Created by Blazers on 2015/8/27.

@@ -24,12 +24,11 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.common.URL;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.HuabanParser;
-import com.blazers.jandan.orm.HuabanPin;
-import com.blazers.jandan.orm.meizi.Picture;
+import com.blazers.jandan.models.HuabanPin;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.widget.DownloadFrescoView;
-import com.blazers.jandan.widget.LoadMoreRecyclerView;
-import com.blazers.jandan.widget.ThumbTextButton;
+import com.blazers.jandan.views.widget.DownloadFrescoView;
+import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.views.widget.ThumbTextButton;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -155,7 +154,7 @@ public class PinFragment extends Fragment {
         super.onDestroyView();
     }
 
-    /* Meizi Adapter */
+    /* ImagePost Adapter */
     class PinAdapter extends RecyclerView.Adapter<PinAdapter.HuabanHolder>{
 
         private LayoutInflater inflater;
@@ -175,7 +174,7 @@ public class PinFragment extends Fragment {
         public void onBindViewHolder(HuabanHolder meiziHolder, int i) {
             HuabanPin picture = huabanPins.get(i);
             meiziHolder.content.setAspectRatio(1.318f);
-            meiziHolder.content.showImage(URL.getHuabanPiCByQuality(picture.getFile_key(), URL.HUABAN_QULITY.FULL));
+//            meiziHolder.content.showImage(URL.getHuabanPiCByQuality(picture.getFile_key(), URL.HUABAN_QULITY.FULL));
             meiziHolder.userHead.setImageURI(Uri.parse(URL.getHuabanPiCByQuality(picture.getUser_key(), URL.HUABAN_QULITY.SQ75W)));
             /* Update UI */
             if (picture.getLocalUrl() != null && !picture.getLocalUrl().equals(""))

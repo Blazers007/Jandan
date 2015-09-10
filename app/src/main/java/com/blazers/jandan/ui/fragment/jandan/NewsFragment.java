@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment;
+package com.blazers.jandan.ui.fragment.jandan;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -17,17 +17,16 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.orm.news.NewsList;
+import com.blazers.jandan.models.jandan.NewsList;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.network.JandanParser;
-import com.blazers.jandan.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
  * Created by Blazers on 2015/8/27.

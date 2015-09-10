@@ -55,7 +55,7 @@
             app:menu="@menu/menu_left_drawer"/>
     <!-- Download card -->
     <fragment
-            class="com.blazers.jandan.ui.fragment.RightDownloadingFragment"
+            class="com.blazers.jandan.ui.fragment.app.RightDownloadingFragment"
             android:id="@+id/right_downloading"
             android:layout_gravity="end"
             android:layout_width="224dp"

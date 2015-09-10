@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment;
+package com.blazers.jandan.ui.fragment.jandan;
 
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -15,12 +15,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.JandanParser;
-import com.blazers.jandan.orm.joke.Joke;
-import com.blazers.jandan.orm.meizi.Picture;
+import com.blazers.jandan.models.jandan.Joke;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.widget.LoadMoreRecyclerView;
-import com.blazers.jandan.widget.ThumbTextButton;
+import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.views.widget.ThumbTextButton;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import io.realm.RealmResults;

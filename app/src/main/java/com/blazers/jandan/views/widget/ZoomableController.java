@@ -1,4 +1,4 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 
 

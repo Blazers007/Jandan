@@ -1,4 +1,4 @@
-package com.blazers.jandan.widget.facebook.gesture;
+package com.blazers.jandan.views.widget.facebook.gesture;
 
 import android.annotation.TargetApi;
 import android.os.Build;

@@ -1,4 +1,4 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 import com.facebook.common.internal.Preconditions;
 import com.facebook.common.logging.FLog;

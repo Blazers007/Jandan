@@ -34,7 +34,7 @@
         </activity>
 
         <!-- Service -->
-        <service android:name=".service.NetworkService" />
+        <service android:name=".services.NetworkService" />
     </application>
 
 </manifest>

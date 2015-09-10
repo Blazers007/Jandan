@@ -1,4 +1,4 @@
-package com.blazers.jandan.widget;
+package com.blazers.jandan.views.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -6,9 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageButton;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.Dppx;

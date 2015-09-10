@@ -1,6 +1,5 @@
-package com.blazers.jandan.orm;
+package com.blazers.jandan.models;
 
-import com.blazers.jandan.common.URL;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
