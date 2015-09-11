@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.network.JandanParser;
+import com.blazers.jandan.ui.fragment.app.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.adapters.JandanImageAdapter;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by Blazers on 2015/8/25.
  */
-public class MeiziFragment extends Fragment {
+public class MeiziFragment extends BaseFragment {
 
     public static final String TAG = MeiziFragment.class.getSimpleName();
 
@@ -35,9 +36,9 @@ public class MeiziFragment extends Fragment {
     @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private Realm realm;
-    private JandanImageAdapter adapter;
-    private ArrayList<Image> imageArrayList = new ArrayList<>();
+    private JandanImageAdapter mAdapter;
+    private ArrayList<Image> mImageArrayList = new ArrayList<>();
+    private int mPage = 1;
 
     /* Beta */
 
@@ -47,7 +48,6 @@ public class MeiziFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
-        initMeiziPics();
         return root;
     }
 
@@ -57,95 +57,28 @@ public class MeiziFragment extends Fragment {
      * 并随后调用一次刷新 刷新后对比 若最新ID比当前ID大则更新
      * */
     void initRecyclerView() {
-        /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
+         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
         meiziList.setItemAnimator(new FadeInUpAnimator());
+        mAdapter = new JandanImageAdapter(getActivity(), mImageArrayList);
+        meiziList.setAdapter(mAdapter);
+
         /* Loadmore */
         meiziList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(false);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    long last = imageArrayList.get(imageArrayList.size()-1).getComment_ID_index();
-                    imageArrayList.addAll(Image.loadMoreLessThan(realm, "meizi", last));
-                    adapter.notifyDataSetChanged();
-                    meiziList.endLoading();
-                    smoothProgressBar.setVisibility(View.GONE);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            getData(false, ++mPage, "meizi", mImageArrayList, mAdapter);
         });
-
         /* Set Adapter */
-        adapter = new JandanImageAdapter(getActivity(), imageArrayList);
-        meiziList.setAdapter(adapter);
-        /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(true);
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    updateList();
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
         });
 
-        /* Pull to load */
+        getData(true, mPage, "meizi", mImageArrayList, mAdapter);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
-    private void updateList() {
-        imageArrayList = new ArrayList<>();
-        imageArrayList.addAll(Image.findAllSortDesc(realm, "meizi"));
-        adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    void initMeiziPics() {
-        realm = Realm.getInstance(getActivity());
-        if (imageArrayList.size() == 0)
-            updateList();
-        Log.e("SIZE", "= " + imageArrayList.size());
-        /* Update 需要整合 以及更智能的自动更新判断 */
-//        if (listSize == 0) {
-//            swipeRefreshLayout.setRefreshing(true);
-//            new AsyncTask<Void, Void, Void>(){
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    JandanParser.getInstance().parseMeiziAPI(true);
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Void aVoid) {
-//                    updateList();
-//                    super.onPostExecute(aVoid);
-//                }
-//            }.execute();
-//        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (realm != null)
-            realm.close();
-        super.onDestroyView();
-    }
-
-    /* ImagePost Adapter */
+    /* ImagePosts Adapter */
 //    class MeiziAdapter extends RecyclerView.Adapter<MeiziAdapter.MeiziHolder>{
 //
 //        private LayoutInflater inflater;

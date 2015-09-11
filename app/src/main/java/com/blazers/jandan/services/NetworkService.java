@@ -35,30 +35,30 @@ public class NetworkService extends android.app.Service {
 
     /* Get front page information */
     void getFrontPageInformation() {
-        new AsyncTask<Void,Void,String>(){
-            @Override
-            protected String doInBackground(Void... params) {
-                OkHttpClient client = new OkHttpClient();
-                Request request = new Request.Builder()
-                        .url(URL.JANDAN_OOXX)
-                        .build();
-                try {
-                    return client.newCall(request).execute().body().string();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                if(null == s) {
-                    return;
-                }
-                handleHtmlPage(s);
-                super.onPostExecute(s);
-            }
-        }.execute();
+//        new AsyncTask<Void,Void,String>(){
+//            @Override
+//            protected String doInBackground(Void... params) {
+//                OkHttpClient client = new OkHttpClient();
+//                Request request = new Request.Builder()
+//                        .url(URL.JANDAN_OOXX)
+//                        .build();
+//                try {
+//                    return client.newCall(request).execute().body().string();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(String s) {
+//                if(null == s) {
+//                    return;
+//                }
+//                handleHtmlPage(s);
+//                super.onPostExecute(s);
+//            }
+//        }.execute();
     }
 
     /* Export */

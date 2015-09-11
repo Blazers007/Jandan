@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.local.OSBSImage;
+import com.blazers.jandan.models.jandan.ImagePosts;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
-import io.realm.RealmResults;
 
 import java.util.ArrayList;
 
@@ -25,11 +26,12 @@ import java.util.ArrayList;
 public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.JandanHolder> {
 
     private LayoutInflater inflater;
-    private ArrayList<Image> imageRealmResults;
+    private ArrayList<Image> imageArrayList;
+    private int page;
 
-    public JandanImageAdapter(Context context, ArrayList<Image> imageRealmResults) {
+    public JandanImageAdapter(Context context, ArrayList<Image> imagePostsArrayList) {
         this.inflater = LayoutInflater.from(context);
-        this.imageRealmResults = imageRealmResults;
+        this.imageArrayList = imagePostsArrayList;
     }
 
     @Override
@@ -41,9 +43,8 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
     @Override
     public void onBindViewHolder(JandanHolder holder, int position) {
         /* Get data */
-        Image image = imageRealmResults.get(position);
+        Image image = imageArrayList.get(position);
         String comment = image.getPost().getText_content();
-        OSBSImage osbsImage = image.getImage();
         /* Set data */
         holder.draweeView.setAspectRatio(1.318f);
         holder.author.setText("@" + image.getPost().getComment_author());
@@ -52,11 +53,11 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         holder.xx.setThumbText(image.getPost().getVote_negative());
         holder.comment.setThumbText(image.getPost().getImage_size()+"");
 
-        if (osbsImage.getLocal_url() != null && !osbsImage.getLocal_url().equals("")) {
-            holder.draweeView.showImage(osbsImage.getLocal_url(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
+        if (image.getLocalUrl() != null && !image.getLocalUrl().equals("")) {
+            holder.draweeView.showImage(image.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
             holder.save.setImageResource(R.mipmap.ic_publish_16dp);
         } else {
-            holder.draweeView.showImage(osbsImage.getWeb_url(), holder.save);
+            holder.draweeView.showImage(image.getUrl(), holder.save);
             holder.save.setImageResource(R.drawable.selector_download);
         }
 
@@ -70,28 +71,24 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
 
     @Override
     public int getItemCount() {
-        return imageRealmResults == null ? 0 : imageRealmResults.size();
+        return imageArrayList.size();
     }
 
     class JandanHolder extends RecyclerView.ViewHolder {
 
-        public DownloadFrescoView draweeView;
-        public TextView author, date, text;
-        public ImageButton save, share;
-        public ThumbTextButton oo, xx, comment;
+        @Bind(R.id.content) DownloadFrescoView draweeView;
+        @Bind(R.id.author) TextView author;
+        @Bind(R.id.text) TextView text;
+        @Bind(R.id.date) TextView date;
+        @Bind(R.id.btn_save) ImageButton save;
+        @Bind(R.id.btn_share) ImageButton share;
+        @Bind(R.id.btn_oo) ThumbTextButton oo;
+        @Bind(R.id.btn_xx) ThumbTextButton xx;
+        @Bind(R.id.btn_comment) ThumbTextButton comment;
 
         public JandanHolder(View itemView) {
             super(itemView);
-            draweeView = (DownloadFrescoView) itemView.findViewById(R.id.content);
-            author = (TextView) itemView.findViewById(R.id.author);
-            text = (TextView) itemView.findViewById(R.id.text);
-            date = (TextView) itemView.findViewById(R.id.date);
-            save = (ImageButton) itemView.findViewById(R.id.btn_save);
-            share = (ImageButton) itemView.findViewById(R.id.btn_share);
-
-            oo = (ThumbTextButton) itemView.findViewById(R.id.btn_oo);
-            xx = (ThumbTextButton) itemView.findViewById(R.id.btn_xx);
-            comment = (ThumbTextButton) itemView.findViewById(R.id.btn_comment);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

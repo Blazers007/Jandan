@@ -1,15 +1,20 @@
 package com.blazers.jandan.views.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import com.blazers.jandan.ui.activity.ImageViewerActivity;
+import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
@@ -76,6 +81,11 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         DialogFragment fragment = new ImageViewerFragment();
         fragment.setArguments(args);
         fragment.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "tag");
+//        Intent intent = new Intent(getContext(), ImageViewerActivity.class);
+//        intent.putExtra("url", url);
+//        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                (MainActivity)getContext(), this, ImageViewerActivity.TRANSIT_PIC);
+//        ActivityCompat.startActivity((MainActivity)getContext(), intent, optionsCompat.toBundle());
     }
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {

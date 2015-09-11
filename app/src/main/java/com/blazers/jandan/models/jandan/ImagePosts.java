@@ -1,7 +1,12 @@
 package com.blazers.jandan.models.jandan;
 
+import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Blazers on 15/8/25.
@@ -9,7 +14,7 @@ import io.realm.annotations.PrimaryKey;
  * JSON 转数据库持久化
  *
  */
-public class ImagePost extends RealmObject {
+public class ImagePosts extends RealmObject {
 
     /* From JSON */
     @PrimaryKey
@@ -22,6 +27,9 @@ public class ImagePost extends RealmObject {
     private String text_content;     // 文本内容
     /* By Setter */
     private int image_size;          // 含有的图片数量
+    private long page;               // 所属的页码
+    private String type;                // 所属的类型
+    private RealmList<Image> images; // 包含的图片
 
     public long getComment_ID() {
         return comment_ID;
@@ -85,5 +93,42 @@ public class ImagePost extends RealmObject {
 
     public void setImage_size(int image_size) {
         this.image_size = image_size;
+    }
+
+    public long getPage() {
+        return page;
+    }
+
+    public void setPage(long page) {
+        this.page = page;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public RealmList<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(RealmList<Image> images) {
+        this.images = images;
+    }
+
+    /* APIs */
+    public static List<ImagePosts> getImagePosts(Realm realm, long page, String type) {
+        return realm.where(ImagePosts.class).equalTo("page", page).equalTo("type", type).findAllSorted("comment_ID", false);
+    }
+
+    public static List<Image> getAllImages(Realm realm, long page, String type) {
+        List<Image> imageList = new ArrayList<>();
+        for (ImagePosts posts : getImagePosts(realm, page, type)) {
+            imageList.addAll(posts.getImages());
+        }
+        return imageList;
     }
 }

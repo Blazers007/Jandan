@@ -1,0 +1,23 @@
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+    <com.blazers.jandan.views.widget.ZoomableDraweeView
+            android:id="@+id/viewer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+    </com.blazers.jandan.views.widget.ZoomableDraweeView>
+    <android.support.v7.widget.Toolbar
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:paddingRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?colorPrimary"
+            android:minHeight="?actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+</FrameLayout>

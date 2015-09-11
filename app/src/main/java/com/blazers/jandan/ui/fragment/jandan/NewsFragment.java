@@ -17,7 +17,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.NewsList;
+import com.blazers.jandan.models.jandan.NewsPosts;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.network.JandanParser;
@@ -41,7 +41,7 @@ public class NewsFragment extends Fragment {
 
     private Realm mRealm;
     private NewsAdapter adapter;
-    private RealmResults<NewsList> newsListRealmResults;
+    private RealmResults<NewsPosts> newsListRealmResults;
     private int listSize;
 
 
@@ -73,7 +73,7 @@ public class NewsFragment extends Fragment {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     long last = newsListRealmResults.last().getId();
-                    newsListRealmResults.addAll(newsListRealmResults.size(), mRealm.where(NewsList.class).lessThan("id", last).findAllSorted("id", false));
+                    newsListRealmResults.addAll(newsListRealmResults.size(), mRealm.where(NewsPosts.class).lessThan("id", last).findAllSorted("id", false));
                     adapter.notifyDataSetChanged();
                     newsList.endLoading();
                     smoothProgressBar.setVisibility(View.GONE);
@@ -99,7 +99,7 @@ public class NewsFragment extends Fragment {
                 @Override
                 protected void onPostExecute(Void aVoid) {
                     /* 应该首先缓存到数据库 然后仅仅加载部分 如果数据库没有则更新数据库并显示 */
-                    newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
+                    newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
                     listSize = newsListRealmResults.size();
                     swipeRefreshLayout.setRefreshing(false);
                     super.onPostExecute(aVoid);
@@ -112,7 +112,7 @@ public class NewsFragment extends Fragment {
 
     void initNews() {
         mRealm = Realm.getInstance(getActivity());
-        newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
+        newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
         listSize = newsListRealmResults.size();
         Log.e("SIZE", "= " + newsListRealmResults.size());
         /* Update 需要整合 以及更智能的自动更新判断 */
@@ -127,7 +127,7 @@ public class NewsFragment extends Fragment {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    newsListRealmResults = mRealm.where(NewsList.class).findAllSorted("id", false);
+                    newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
                     listSize = newsListRealmResults.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -161,7 +161,7 @@ public class NewsFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
-            NewsList newsList = newsListRealmResults.get(i);
+            NewsPosts newsList = newsListRealmResults.get(i);
             newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
             newsHolder.title.setText(newsList.getTitle());
             newsHolder.content.setText(newsList.getAuthor() + "  @ " + newsList.getDate());
@@ -188,7 +188,7 @@ public class NewsFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                NewsList newsList = newsListRealmResults.get(getAdapterPosition());
+                NewsPosts newsList = newsListRealmResults.get(getAdapterPosition());
                 startActivity(
                         new Intent(getActivity(), NewsReadActivity.class)
                                 .putExtra("id", newsList.getId())

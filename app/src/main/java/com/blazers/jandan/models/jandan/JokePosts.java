@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Blazers on 2015/9/7.
  */
-public class Joke extends RealmObject {
+public class JokePosts extends RealmObject {
     @PrimaryKey
     private long comment_ID;
     private String comment_content;

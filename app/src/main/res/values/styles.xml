@@ -6,6 +6,7 @@
         <item name="colorPrimaryDark">#2c70d7</item>
         <item name="colorAccent">#ff5722</item>
         <item name="windowActionModeOverlay">true</item> <!-- 确保ActionMode 浮动在Toolbar上方 -->
+        <!--<item name="android:windowContentTransitions">true</item>-->
     </style>
 
     <style name="NeedDrawerStyle" parent="AppTheme">

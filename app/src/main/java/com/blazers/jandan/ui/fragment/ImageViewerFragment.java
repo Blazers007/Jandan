@@ -56,7 +56,6 @@ public class ImageViewerFragment extends DialogFragment {
                 .setUri(uri)
                 .setTapToRetryEnabled(true)
                 .setAutoPlayAnimations(true)
-//                .setControllerListener(new FrescoControlListener(view)
                 .build();
         GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
                 .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)

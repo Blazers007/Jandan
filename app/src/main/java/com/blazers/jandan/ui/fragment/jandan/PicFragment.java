@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment.jandan;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
@@ -16,6 +17,7 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.ui.fragment.app.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.adapters.JandanImageAdapter;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
@@ -32,27 +34,31 @@ import java.util.ArrayList;
 /**
  * Created by Blazers on 15/9/8.
  */
-public class PicFragment extends Fragment {
+public class PicFragment extends BaseFragment {
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private Realm realm;
-    private JandanImageAdapter adapter;
-    private ArrayList<Image> imageArrayList = new ArrayList<>();
+    private JandanImageAdapter mAdapter;
+    private ArrayList<Image> mImageArrayList = new ArrayList<>();
+    private int mPage = 1;
 
-    /* Beta */
-
+    public PicFragment() {
+        super();
+        setTAG("Pic Fragment");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i("Pic Fragment", "OnCreateView");
         View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
-        initMeiziPics();
         return root;
     }
+
+
 
     /**
      * 从现有的数据库中读取 若没有数据库(首次进入)则建立数据库
@@ -63,92 +69,30 @@ public class PicFragment extends Fragment {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
         meiziList.setItemAnimator(new FadeInUpAnimator());
+        mAdapter = new JandanImageAdapter(getActivity(), mImageArrayList);
+        meiziList.setAdapter(mAdapter);
+
         /* Loadmore */
         meiziList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parsePicAPI(false);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    long last = imageArrayList.get(imageArrayList.size()-1).getComment_ID_index();
-                    imageArrayList.addAll(imageArrayList.size(), Image.loadMoreLessThan(realm, "pic", last));
-                    adapter.notifyDataSetChanged();
-                    meiziList.endLoading();
-                    smoothProgressBar.setVisibility(View.GONE);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            getData(false, ++mPage, "wuliao", mImageArrayList, mAdapter);
         });
-
         /* Set Adapter */
-        adapter = new JandanImageAdapter(getActivity(), imageArrayList);
-        meiziList.setAdapter(adapter);
-        /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parsePicAPI(true);
-                    return null;
-                }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    updateList();
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
         });
 
-        /* Pull to load */
-    }
-
-    private void updateList() {
-        imageArrayList = new ArrayList<>();
-        imageArrayList.addAll(Image.findAllSortDesc(realm, "pic"));
-        adapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
-    }
-
-    void initMeiziPics() {
-        realm = Realm.getInstance(getActivity());
-        if (imageArrayList.size() == 0)
-            updateList();
-        Log.e("SIZE", "= " + imageArrayList.size());
-        /* Update 需要整合 以及更智能的自动更新判断 */
-//        if (listSize == 0) {
-//            swipeRefreshLayout.setRefreshing(true);
-//            new AsyncTask<Void, Void, Void>(){
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    JandanParser.getInstance().parsePicAPI(true);
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Void aVoid) {
-//                    updateList();
-//                    super.onPostExecute(aVoid);
-//                }
-//            }.execute();
-//        }
+        getData(true, mPage, "wuliao", mImageArrayList, mAdapter);
+        swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
     public void onDestroyView() {
-        if (realm != null)
-            realm.close();
         super.onDestroyView();
     }
 
-    /* ImagePost Adapter */
+    /* ImagePosts Adapter */
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 
@@ -198,4 +142,6 @@ public class PicFragment extends Fragment {
             Log.i("Release Image", s);
         }
     }
+
+
 }

@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by Blazers on 2015/9/1.
  */
-public class NewsList extends RealmObject {
+public class NewsPosts extends RealmObject {
     @PrimaryKey
     private long id;
     private String thumbUrl;

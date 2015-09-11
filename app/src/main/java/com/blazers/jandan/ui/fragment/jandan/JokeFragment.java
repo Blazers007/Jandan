@@ -15,7 +15,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.JandanParser;
-import com.blazers.jandan.models.jandan.Joke;
+import com.blazers.jandan.models.jandan.JokePosts;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
@@ -38,7 +38,7 @@ public class JokeFragment extends Fragment{
 
     private Realm mRealm;
     private JokeAdapter adapter;
-    private RealmResults<Joke> jokeRealmResults;
+    private RealmResults<JokePosts> jokeRealmResults;
     private int listSize;
 
     @Nullable
@@ -102,7 +102,7 @@ public class JokeFragment extends Fragment{
 
     void initJokes() {
         mRealm = Realm.getInstance(getActivity());
-        jokeRealmResults = mRealm.where(Joke.class).findAllSorted("comment_ID", false);
+        jokeRealmResults = mRealm.where(JokePosts.class).findAllSorted("comment_ID", false);
         listSize = jokeRealmResults.size();
         if (listSize == 0) {
             swipeRefreshLayout.setRefreshing(true);
@@ -115,7 +115,7 @@ public class JokeFragment extends Fragment{
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
-                    jokeRealmResults = mRealm.where(Joke.class).findAllSorted("comment_ID", false);
+                    jokeRealmResults = mRealm.where(JokePosts.class).findAllSorted("comment_ID", false);
                     listSize = jokeRealmResults.size();
                     adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -141,7 +141,7 @@ public class JokeFragment extends Fragment{
 
         @Override
         public void onBindViewHolder(JokeHolder holder, int position) {
-            Joke joke = jokeRealmResults.get(position);
+            JokePosts joke = jokeRealmResults.get(position);
             holder.content.setText(joke.getComment_content());
             holder.author.setText("@"+joke.getComment_author());
             holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));

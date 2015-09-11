@@ -1,12 +1,10 @@
 package com.blazers.jandan.models.jandan;
 
-import com.blazers.jandan.models.local.OSBSImage;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,41 +13,51 @@ import java.util.List;
 public class Image extends RealmObject {
 
     @PrimaryKey
-    private long comment_ID_index;    // 图片的主键 目前采用 POSTID _ 顺序组成
-    private ImagePost post;             // 关联关系
-    private String type;                // 所属的类型
-    private OSBSImage image;            // 与本地简单图片库对应关系
+    private long id;
+    private String url;
+    private String localUrl;
+    private String size;
 
-    public long getComment_ID_index() {
-        return comment_ID_index;
+    private ImagePosts post;
+
+    public long getId() {
+        return id;
     }
 
-    public void setComment_ID_index(long comment_ID_index) {
-        this.comment_ID_index = comment_ID_index;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public ImagePost getPost() {
+    public String getLocalUrl() {
+        return localUrl;
+    }
+
+    public void setLocalUrl(String localUrl) {
+        this.localUrl = localUrl;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public ImagePosts getPost() {
         return post;
     }
 
-    public void setPost(ImagePost post) {
-        this.post = post;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public OSBSImage getImage() {
-        return image;
-    }
-
-    public void setImage(OSBSImage image) {
-        this.image = image;
+    public void setPost(ImagePosts posts) {
+        this.post = posts;
     }
 
     /* APIS */

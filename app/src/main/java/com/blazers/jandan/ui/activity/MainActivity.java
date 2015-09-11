@@ -38,7 +38,7 @@ public class MainActivity extends BaseActivity {
 
     private ArrayList<Fragment> fragments;
     private ArrayList<Boolean> updates;
-    private String[] titles = {"新鲜事" ,"段子", "妹子图"};
+    private String[] titles = {"新鲜事" , "无聊图", "段子", "妹子图"};
 
     private int nowSelectedNavId = R.id.nav_jandan;
     private FragmentAdapter adapter;
@@ -52,7 +52,7 @@ public class MainActivity extends BaseActivity {
         /* 根据需要填充主界面所加载的Fragment */
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
-//        fragments.add(new PicFragment());
+        fragments.add(new PicFragment());
         fragments.add(new JokeFragment());
         fragments.add(new MeiziFragment());
         viewPager.setAdapter(adapter = new FragmentAdapter(getSupportFragmentManager()));
@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setTabTextColors(Color.rgb(221, 221, 221), Color.WHITE);
         viewPager.setPageMargin(Dppx.Dp2Px(this, 12));
+        viewPager.setOffscreenPageLimit(1);
         /* 读取上次最后访问的 */
         navigationView.setCheckedItem(R.id.nav_jandan);
     }
