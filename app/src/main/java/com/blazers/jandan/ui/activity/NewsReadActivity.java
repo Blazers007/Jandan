@@ -78,6 +78,8 @@ public class NewsReadActivity extends BaseActivity {
                 .subscribe(data -> {
                     post = data;
                     webView.loadDataWithBaseURL("file:///android_asset", data.getHtml(), "text/html; charset=UTF-8", null, null);
+                }, throwable -> {
+                    throwable.printStackTrace();
                 });
 
         webView.setWebChromeClient(new WebChromeClient() {

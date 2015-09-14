@@ -2,6 +2,7 @@ package com.blazers.jandan.views.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -40,15 +41,18 @@ public class AutoLayoutLinearLayout extends LinearLayout {
             View child = getChildAt(index);
 //            child.setPadding(PADDING_HOR, PADDING_VERTICAL, PADDING_HOR, PADDING_VERTICAL);
             //  在方法onMeasure中调用孩子的measure方法 ---> 设置子View宽高
-            child.measure(MeasureSpec.EXACTLY, MeasureSpec.EXACTLY);
+            measureChild(child, widthMeasureSpec, heightMeasureSpec);
+//            child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             int width = child.getMeasuredWidth();
             int height = child.getMeasuredHeight();
+            Log.i("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + index);
             x += width + TEXT_MARGIN;
             if(x > actualWidth){//换行
                 x = width;
                 rows++;
             }
             y = rows * (height + TEXT_MARGIN);
+            Log.i("Measured Row", "" + rows);
         }
         setMeasuredDimension(actualWidth, y);
     }
@@ -64,6 +68,7 @@ public class AutoLayoutLinearLayout extends LinearLayout {
             View view = getChildAt(i);
             int width = view.getMeasuredWidth();
             int height = view.getMeasuredHeight();
+            Log.e("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + i);
             x += width + TEXT_MARGIN;
             if(x > autualWidth){
                 x = width + SIDE_MARGIN;

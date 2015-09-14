@@ -20,12 +20,14 @@ public class SelectableTextView extends TextView implements View.OnClickListener
     private int LABEL_RES_ID = R.mipmap.ic_done_white;
 
     /* Vars for canvas */
-    private Paint paint;
+    private Paint paint, overlayPaint, eraser;
     private Path rectPath, labelPath;
     private Rect iconRect;
     private Bitmap icon;
 
     /* Vars as memory */
+    private Paint.FontMetricsInt fontMetrics;
+    private float progress = 50f;
     private boolean selected = false;
 
     public SelectableTextView(Context context) {
@@ -62,6 +64,14 @@ public class SelectableTextView extends TextView implements View.OnClickListener
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(COLOR);
         paint.setStrokeWidth(LINE_WIDTH);
+
+        overlayPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        overlayPaint.setTextSize(36f);
+        overlayPaint.setColor(Color.WHITE);
+        fontMetrics = overlayPaint.getFontMetricsInt();
+
+        eraser = new Paint(Paint.ANTI_ALIAS_FLAG);
+        eraser.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
 
         icon = BitmapFactory.decodeResource(getResources(), LABEL_RES_ID);
     }
@@ -103,8 +113,16 @@ public class SelectableTextView extends TextView implements View.OnClickListener
                 小于src则把src的裁截区缩小。
               *
               * */
-            canvas.drawBitmap(icon,null,iconRect,null);
+            canvas.drawBitmap(icon, null, iconRect, null);
             /* Progress */
+            canvas.drawRect(0, 0, (width * progress/100), height, paint);
+            canvas.save();
+
+            float length = overlayPaint.measureText("无聊图");
+            int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+            canvas.drawText("无聊图", width / 2.0f - length/2.0f, baseline, overlayPaint);
+            Rect rect = new Rect(0, 0, (int)(width * progress/100), (int)height);
+            canvas.drawRect(rect, eraser);
         }
     }
 
@@ -114,7 +132,8 @@ public class SelectableTextView extends TextView implements View.OnClickListener
         invalidate();
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(float progress) {
+        this.progress = progress;
         invalidate();
     }
 }

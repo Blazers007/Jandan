@@ -35,7 +35,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
 
     @Override
     public JandanHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.item_jandan_image, parent, false);
+        View itemView = inflater.inflate(R.layout.item_jandan_image_2, parent, false);
         return new JandanHolder(itemView);
     }
 

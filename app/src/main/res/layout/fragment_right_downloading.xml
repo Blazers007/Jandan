@@ -10,6 +10,19 @@
             android:layout_width="match_parent"
             android:layout_height="128dp"
             />
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="无聊图"
+            android:id="@+id/textView3" android:textColor="#fff" android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="17331"
+            android:id="@+id/textView4" android:textColor="#fff" android:layout_below="@+id/textView3"
+            android:layout_marginLeft="16dp" android:layout_marginTop="8dp"/>
     <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
