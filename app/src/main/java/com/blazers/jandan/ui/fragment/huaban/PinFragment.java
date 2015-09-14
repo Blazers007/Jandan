@@ -154,7 +154,7 @@ public class PinFragment extends Fragment {
         super.onDestroyView();
     }
 
-    /* ImagePosts Adapter */
+    /* ImagePost Adapter */
     class PinAdapter extends RecyclerView.Adapter<PinAdapter.HuabanHolder>{
 
         private LayoutInflater inflater;

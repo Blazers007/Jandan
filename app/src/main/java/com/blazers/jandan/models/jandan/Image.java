@@ -18,7 +18,7 @@ public class Image extends RealmObject {
     private String localUrl;
     private String size;
 
-    private ImagePosts post;
+    private ImagePost post;
 
     public long getId() {
         return id;
@@ -52,11 +52,11 @@ public class Image extends RealmObject {
         this.size = size;
     }
 
-    public ImagePosts getPost() {
+    public ImagePost getPost() {
         return post;
     }
 
-    public void setPost(ImagePosts posts) {
+    public void setPost(ImagePost posts) {
         this.post = posts;
     }
 

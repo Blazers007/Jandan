@@ -10,7 +10,6 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.ImagePosts;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
@@ -36,7 +35,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
 
     @Override
     public JandanHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = inflater.inflate(R.layout.item_meizi, parent, false);
+        View itemView = inflater.inflate(R.layout.item_jandan_image, parent, false);
         return new JandanHolder(itemView);
     }
 

@@ -11,21 +11,30 @@ public class URL {
 
     public static final String JANDAN_NEWS_API_PREFIX = "http://i.jandan.net/?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,comment_count,custom_fields&page=";
     public static final String JANDAN_NEWS_API_END = "&custom_fields=thumb_c,views&dev=1";
+
     public static final String JANDAN_NEWS_CONTENT = "http://i.jandan.net/?oxwlxojflwblxbsapi=get_post&id=";
     public static final String JANDAN_NEWS_CONTENT_END = "&include=content";
-    public static final String JANDAN_JOKE_API = "http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments";
+
+    public static final String JANDAN_JOKE_API = "http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=";
 
 
-    public static String GernarateNewsContentUrl(long id) {
-        return JANDAN_NEWS_CONTENT + id + JANDAN_NEWS_CONTENT_END;
+    public static String getJandanNewsAtPage(long page) {
+        return JANDAN_NEWS_API_PREFIX + page + JANDAN_NEWS_API_END;
     }
 
+    public static String getJandanNewsContentById(long id) {
+        return JANDAN_NEWS_CONTENT + id + JANDAN_NEWS_CONTENT_END;
+    }
 
     public static String getJandanAPIByPageAndType(long page, String type) {
         if (type.equals("wuliao"))
             return JANDAN_PIC_API + page;
         else
             return JANDAN_OOXX_API + page;
+    }
+
+    public static String getJandanJokeAtPage(long page) {
+        return JANDAN_JOKE_API + page;
     }
 
 

@@ -14,16 +14,18 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.JandanParser;
-import com.blazers.jandan.models.jandan.JokePosts;
+import com.blazers.jandan.models.jandan.JokePost;
+import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import java.util.ArrayList;
 
 /**
  * Created by Blazers on 15/9/1.
@@ -36,10 +38,9 @@ public class JokeFragment extends Fragment{
     @Bind(R.id.recycler_list) LoadMoreRecyclerView jokeList;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private Realm mRealm;
     private JokeAdapter adapter;
-    private RealmResults<JokePosts> jokeRealmResults;
-    private int listSize;
+    private ArrayList<JokePost> mJokePostArrayList = new ArrayList<>();
+    private int mPage = 1;
 
     @Nullable
     @Override
@@ -47,7 +48,6 @@ public class JokeFragment extends Fragment{
         View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
-        initJokes();
         return root;
     }
 
@@ -58,21 +58,8 @@ public class JokeFragment extends Fragment{
         /* Loadmore */
         jokeList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseJokeAPI(false);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    adapter.notifyDataSetChanged();
-                    jokeList.endLoading();
-                    smoothProgressBar.setVisibility(View.GONE);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            mPage ++;
+            getData();
         });
 
         /* Set Adapter */
@@ -82,48 +69,24 @@ public class JokeFragment extends Fragment{
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseJokeAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    /* 应该首先缓存到数据库 然后仅仅加载部分 如果数据库没有则更新数据库并显示 */
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            mPage = 1;
+            getData();
         });
+        getData();
     }
 
-
-    void initJokes() {
-        mRealm = Realm.getInstance(getActivity());
-        jokeRealmResults = mRealm.where(JokePosts.class).findAllSorted("comment_ID", false);
-        listSize = jokeRealmResults.size();
-        if (listSize == 0) {
-            swipeRefreshLayout.setRefreshing(true);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseJokeAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    jokeRealmResults = mRealm.where(JokePosts.class).findAllSorted("comment_ID", false);
-                    listSize = jokeRealmResults.size();
+    private void getData() {
+        /* TODO: 首先加载上次最后看到的？还是上次缓存的最新的一页数据 */
+        Parser parser = Parser.getInstance();
+        parser.getJokeData(mPage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(data -> {
+                    mJokePostArrayList.addAll(data);
                     adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
-        }
+                }, throwable -> throwable.printStackTrace());
     }
+
 
     class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeHolder> {
 
@@ -135,13 +98,13 @@ public class JokeFragment extends Fragment{
 
         @Override
         public JokeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.item_joke, parent, false);
+            View v = inflater.inflate(R.layout.item_jandan_joke, parent, false);
             return new JokeHolder(v);
         }
 
         @Override
         public void onBindViewHolder(JokeHolder holder, int position) {
-            JokePosts joke = jokeRealmResults.get(position);
+            JokePost joke = mJokePostArrayList.get(position);
             holder.content.setText(joke.getComment_content());
             holder.author.setText("@"+joke.getComment_author());
             holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));
@@ -152,7 +115,7 @@ public class JokeFragment extends Fragment{
 
         @Override
         public int getItemCount() {
-            return listSize;
+            return mJokePostArrayList.size();
         }
 
         class JokeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -185,13 +148,5 @@ public class JokeFragment extends Fragment{
                 }
             }
         }
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        if (mRealm != null)
-            mRealm.close();
-        super.onDestroyView();
     }
 }

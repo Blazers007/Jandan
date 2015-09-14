@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.ui.fragment.app.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
@@ -92,7 +91,7 @@ public class PicFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-    /* ImagePosts Adapter */
+    /* ImagePost Adapter */
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 

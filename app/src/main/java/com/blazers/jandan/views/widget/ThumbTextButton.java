@@ -22,9 +22,9 @@ public class ThumbTextButton extends ImageButton {
     /* Vars by default */
     private int TEXT_COLOR = 0xff666666;
     private int FLOAT_TEXT_COLOR = 0xff666666;
-    private float TEXT_SIZE_SP = 12;
-    private float FLOAT_TEXT_SIZE_SP = 12;
-    private float TEXT_RIGHT_PADDING = 6;
+    private float TEXT_SIZE_SP = 12 * Dppx.Dp2Px(getContext(), 1);
+    private float FLOAT_TEXT_SIZE_SP = 12 * Dppx.Dp2Px(getContext(), 1);
+    private float TEXT_RIGHT_PADDING = 6 * Dppx.Dp2Px(getContext(), 1);
 
     /* Vars for static text */
     private Paint textPaint;
@@ -52,6 +52,7 @@ public class ThumbTextButton extends ImageButton {
         init();
     }
 
+    /* 如果有需要则覆盖掉相应的参数 */
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ThumbTextButton);
         TEXT_COLOR = typedArray.getColor(R.styleable.ThumbTextButton_ttb_textColor, TEXT_COLOR);
@@ -59,10 +60,8 @@ public class ThumbTextButton extends ImageButton {
         typedArray.recycle();
     }
 
+    /* 初始化参数 */
     private void init() {
-
-        TEXT_SIZE_SP = TEXT_SIZE_SP * Dppx.Dp2Px(getContext(), 1);
-        FLOAT_TEXT_SIZE_SP = FLOAT_TEXT_SIZE_SP * Dppx.Dp2Px(getContext(), 1);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setColor(TEXT_COLOR);

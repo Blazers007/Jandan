@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
+              android:background="#fff"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <RelativeLayout
+    <View
+            android:id="@+id/background"
+            android:background="?colorPrimary"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#fff"
+            android:layout_height="128dp"
             />
-</LinearLayout>
+    <ImageView
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:id="@+id/imageView" android:src="@drawable/nav_jandan" android:layout_below="@+id/background"
+            android:layout_marginTop="8dp" android:layout_marginLeft="12dp"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="16dp"
+            android:text="煎蛋"
+            android:id="@+id/textView2" android:textColor="#333"
+            android:layout_marginLeft="8dp" android:layout_toRightOf="@+id/imageView"
+            android:layout_alignTop="@+id/imageView" android:gravity="center"/>
+    <com.blazers.jandan.views.widget.AutoLayoutLinearLayout
+            android:id="@+id/cata"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="8dp"
+            >
+        <com.blazers.jandan.views.widget.SelectableTextView
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:textColor="#000"
+                android:gravity="center"
+                android:text="新鲜事"
+                android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_margin="8dp"/>
+        <com.blazers.jandan.views.widget.SelectableTextView
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:textColor="#000"
+                android:gravity="center"
+                android:text="无聊图"
+                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
+                android:layout_margin="8dp"/>
+        <com.blazers.jandan.views.widget.SelectableTextView
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:textColor="#000"
+                android:gravity="center"
+                android:text="段子"
+                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
+                android:layout_margin="8dp"/>
+        <com.blazers.jandan.views.widget.SelectableTextView
+                android:layout_width="72dp"
+                android:layout_height="32dp"
+                android:textColor="#000"
+                android:gravity="center"
+                android:text="妹子图"
+                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
+                android:layout_margin="8dp"/>
+    </com.blazers.jandan.views.widget.AutoLayoutLinearLayout>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="离线"
+            android:id="@+id/button" android:layout_alignParentBottom="true"/>
+</RelativeLayout>

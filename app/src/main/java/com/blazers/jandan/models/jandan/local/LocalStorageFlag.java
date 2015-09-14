@@ -1,4 +1,4 @@
-package com.blazers.jandan.models.jandan;
+package com.blazers.jandan.models.jandan.local;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
@@ -39,5 +39,10 @@ public class LocalStorageFlag extends RealmObject {
     /* API */
     public static LocalStorageFlag getFlag(Realm realm, long page, String type) {
         return realm.where(LocalStorageFlag.class).equalTo("page", page).equalTo("type", type).findFirst();
+    }
+
+    public static boolean isLocalStorageComplete(Realm realm, long page, String type) {
+        LocalStorageFlag flag = getFlag(realm, page, type);
+        return flag != null && flag.isComplete();
     }
 }

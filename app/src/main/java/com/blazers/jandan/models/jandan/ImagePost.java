@@ -14,7 +14,7 @@ import java.util.List;
  * JSON 转数据库持久化
  *
  */
-public class ImagePosts extends RealmObject {
+public class ImagePost extends RealmObject {
 
     /* From JSON */
     @PrimaryKey
@@ -120,13 +120,13 @@ public class ImagePosts extends RealmObject {
     }
 
     /* APIs */
-    public static List<ImagePosts> getImagePosts(Realm realm, long page, String type) {
-        return realm.where(ImagePosts.class).equalTo("page", page).equalTo("type", type).findAllSorted("comment_ID", false);
+    public static List<ImagePost> getImagePosts(Realm realm, long page, String type) {
+        return realm.where(ImagePost.class).equalTo("page", page).equalTo("type", type).findAllSorted("comment_ID", false);
     }
 
     public static List<Image> getAllImages(Realm realm, long page, String type) {
         List<Image> imageList = new ArrayList<>();
-        for (ImagePosts posts : getImagePosts(realm, page, type)) {
+        for (ImagePost posts : getImagePosts(realm, page, type)) {
             imageList.addAll(posts.getImages());
         }
         return imageList;

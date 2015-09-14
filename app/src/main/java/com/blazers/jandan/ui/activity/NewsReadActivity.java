@@ -12,9 +12,13 @@ import android.webkit.WebViewClient;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.JandanParser;
+import com.blazers.jandan.models.jandan.NewsPost;
+import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.widget.ObservableWebView;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class NewsReadActivity extends BaseActivity {
 
@@ -25,6 +29,9 @@ public class NewsReadActivity extends BaseActivity {
     private static final int HIDE_THRESHOLD = 256;
     private int scrolledDistance = 0;
     private boolean controlsVisible = true;
+
+    /* Vars */
+    private NewsPost post;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,18 +71,14 @@ public class NewsReadActivity extends BaseActivity {
         webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.getSettings().setLoadsImagesAutomatically(true);
 
-        new AsyncTask<Void, Void, String>() {
-
-            @Override
-            protected String doInBackground(Void... params) {
-                return JandanParser.getInstance().parseNewsContent(id);
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                webView.loadDataWithBaseURL("file:///android_asset", s, "text/html; charset=UTF-8", null, null);
-            }
-        }.execute();
+        Parser parser = Parser.getInstance();
+        parser.getNewsContentData(id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(data -> {
+                    post = data;
+                    webView.loadDataWithBaseURL("file:///android_asset", data.getHtml(), "text/html; charset=UTF-8", null, null);
+                });
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -106,9 +109,13 @@ public class NewsReadActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            webView.loadUrl("javascript:loadCssFile('night')");
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                webView.loadUrl("javascript:loadCssFile('night')");
+                return true;
+            case R.id.action_share:
+                ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl());
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

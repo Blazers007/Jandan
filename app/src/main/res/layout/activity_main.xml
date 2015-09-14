@@ -8,6 +8,7 @@
         tools:context=".MainActivity"
         android:fitsSystemWindows="true"
         >
+    <!-- Use fitsSystemWindows to make sure that drawerLayout layout behind status bar-->
     <!-- Fragments container-->
     <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -58,7 +59,7 @@
             class="com.blazers.jandan.ui.fragment.app.RightDownloadingFragment"
             android:id="@+id/right_downloading"
             android:layout_gravity="end"
-            android:layout_width="224dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
     </fragment>

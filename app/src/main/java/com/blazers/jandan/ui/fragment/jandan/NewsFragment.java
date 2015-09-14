@@ -3,13 +3,11 @@ package com.blazers.jandan.ui.fragment.jandan;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +15,18 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.NewsPosts;
+import com.blazers.jandan.models.jandan.NewsPost;
+import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.network.JandanParser;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import io.realm.Realm;
-import io.realm.RealmResults;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+import java.util.ArrayList;
 
 /**
  * Created by Blazers on 2015/8/27.
@@ -39,10 +39,9 @@ public class NewsFragment extends Fragment {
     @Bind(R.id.recycler_list) LoadMoreRecyclerView newsList;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private Realm mRealm;
     private NewsAdapter adapter;
-    private RealmResults<NewsPosts> newsListRealmResults;
-    private int listSize;
+    private ArrayList<NewsPost> mNewsPostArrayList = new ArrayList<>();
+    private int mPage = 1;
 
 
     @Nullable
@@ -51,7 +50,6 @@ public class NewsFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
         ButterKnife.bind(this, root);
         initRecyclerView();
-        initNews();
         return root;
     }
 
@@ -63,23 +61,8 @@ public class NewsFragment extends Fragment {
         /* Loadmore */
         newsList.setLoadMoreListener(() -> {
             smoothProgressBar.setVisibility(View.VISIBLE);
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseMeiziAPI(false);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    long last = newsListRealmResults.last().getId();
-                    newsListRealmResults.addAll(newsListRealmResults.size(), mRealm.where(NewsPosts.class).lessThan("id", last).findAllSorted("id", false));
-                    adapter.notifyDataSetChanged();
-                    newsList.endLoading();
-                    smoothProgressBar.setVisibility(View.GONE);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            mPage++;
+            getData();
         });
 
         /* Set Adapter */
@@ -89,59 +72,22 @@ public class NewsFragment extends Fragment {
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseNewsAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    /* 应该首先缓存到数据库 然后仅仅加载部分 如果数据库没有则更新数据库并显示 */
-                    newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
-                    listSize = newsListRealmResults.size();
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
+            mPage = 1;
+            getData();
         });
+        getData();
     }
 
-
-
-    void initNews() {
-        mRealm = Realm.getInstance(getActivity());
-        newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
-        listSize = newsListRealmResults.size();
-        Log.e("SIZE", "= " + newsListRealmResults.size());
-        /* Update 需要整合 以及更智能的自动更新判断 */
-        if (listSize == 0) {
-            swipeRefreshLayout.setRefreshing(true);
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    JandanParser.getInstance().parseNewsAPI(true);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    newsListRealmResults = mRealm.where(NewsPosts.class).findAllSorted("id", false);
-                    listSize = newsListRealmResults.size();
+    private void getData() {
+        /* TODO: 首先加载上次最后看到的？还是上次缓存的最新的一页数据 */
+        Parser parser = Parser.getInstance();
+        parser.getNewsData(mPage)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(data -> {
+                    mNewsPostArrayList.addAll(data);
                     adapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                    super.onPostExecute(aVoid);
-                }
-            }.execute();
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (mRealm != null)
-            mRealm.close();
-        super.onDestroyView();
+                }, throwable -> throwable.printStackTrace());
     }
 
     class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder>{
@@ -154,14 +100,14 @@ public class NewsFragment extends Fragment {
 
         @Override
         public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.item_news, parent, false);
+            View v = inflater.inflate(R.layout.item_jandan_news_list, parent, false);
             return new NewsHolder(v);
         }
 
 
         @Override
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
-            NewsPosts newsList = newsListRealmResults.get(i);
+            NewsPost newsList = mNewsPostArrayList.get(i);
             newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
             newsHolder.title.setText(newsList.getTitle());
             newsHolder.content.setText(newsList.getAuthor() + "  @ " + newsList.getDate());
@@ -169,7 +115,7 @@ public class NewsFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return listSize;
+            return mNewsPostArrayList.size();
         }
 
         class NewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -188,7 +134,7 @@ public class NewsFragment extends Fragment {
 
             @Override
             public void onClick(View view) {
-                NewsPosts newsList = newsListRealmResults.get(getAdapterPosition());
+                NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
                 startActivity(
                         new Intent(getActivity(), NewsReadActivity.class)
                                 .putExtra("id", newsList.getId())
