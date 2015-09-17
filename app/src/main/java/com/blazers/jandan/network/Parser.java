@@ -1,6 +1,7 @@
 package com.blazers.jandan.network;
 
 import android.content.Context;
+import android.util.Log;
 import com.blazers.jandan.common.URL;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.models.jandan.ImagePost;
@@ -20,6 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -307,4 +311,48 @@ public class Parser {
         realm.close();
         return jokePostList;
     }
+
+
+    /* Offline Download Meizi */
+    public void offlineNews() {
+
+    }
+
+    public void offlinePics() {
+
+    }
+
+    private int offline = 0;
+    public void offlineMeizi(int start, int pages) {
+        /* 根据页码更新数据库 */
+        List<Observable<List<Image>>> requestList = new ArrayList<>();
+        for (int i = start ; i < pages; i ++) {
+            requestList.add(getPictureData(i, "meizi"));
+        }
+        Observable.from(requestList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    download(result);
+                }, throwable -> {
+                    Log.e("DOWNLOAD", throwable.toString());
+                });
+
+    }
+
+    public void offlineJokes() {}
+
+    public void download(Observable<List<Image>>  images) {
+        images
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(sub -> {
+                    for (Image image : sub) {
+                        Log.e("IMAGE ---> ","[" + ++offline + "] " + image.getUrl());
+                    }
+                }, throwable -> {
+                    Log.e("DOWNLOAD", throwable.toString());
+                });
+    }
+
 }

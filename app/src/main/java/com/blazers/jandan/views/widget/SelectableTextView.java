@@ -115,14 +115,14 @@ public class SelectableTextView extends TextView implements View.OnClickListener
               * */
             canvas.drawBitmap(icon, null, iconRect, null);
             /* Progress */
-            canvas.drawRect(0, 0, (width * progress/100), height, paint);
-            canvas.save();
+//            canvas.drawRect(0, 0, (width * progress/100), height, paint);
+//            canvas.save();
 
-            float length = overlayPaint.measureText("无聊图");
-            int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
-            canvas.drawText("无聊图", width / 2.0f - length/2.0f, baseline, overlayPaint);
-            Rect rect = new Rect(0, 0, (int)(width * progress/100), (int)height);
-            canvas.drawRect(rect, eraser);
+//            float length = overlayPaint.measureText("无聊图");
+//            int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+//            canvas.drawText("无聊图", width / 2.0f - length/2.0f, baseline, overlayPaint);
+//            Rect rect = new Rect(0, 0, (int)(width * progress/100), (int)height);
+//            canvas.drawRect(rect, eraser);
         }
     }
 

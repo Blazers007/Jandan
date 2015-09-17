@@ -45,14 +45,14 @@ public class AutoLayoutLinearLayout extends LinearLayout {
 //            child.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
             int width = child.getMeasuredWidth();
             int height = child.getMeasuredHeight();
-            Log.i("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + index);
+//            Log.i("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + index);
             x += width + TEXT_MARGIN;
             if(x > actualWidth){//换行
                 x = width;
                 rows++;
             }
             y = rows * (height + TEXT_MARGIN);
-            Log.i("Measured Row", "" + rows);
+//            Log.i("Measured Row", "" + rows);
         }
         setMeasuredDimension(actualWidth, y);
     }
@@ -68,7 +68,7 @@ public class AutoLayoutLinearLayout extends LinearLayout {
             View view = getChildAt(i);
             int width = view.getMeasuredWidth();
             int height = view.getMeasuredHeight();
-            Log.e("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + i);
+//            Log.e("Child Measured", "w ->" + width + "  h->" + height + "  ID->" + i);
             x += width + TEXT_MARGIN;
             if(x > autualWidth){
                 x = width + SIDE_MARGIN;
