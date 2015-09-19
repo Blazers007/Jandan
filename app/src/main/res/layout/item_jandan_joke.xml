@@ -7,6 +7,7 @@
         android:layout_height="wrap_content"
         style="@style/CardBase"
         app:cardCornerRadius="4dp"
+        app:cardElevation="8dp"
         >
     <RelativeLayout
             android:orientation="vertical"

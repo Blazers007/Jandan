@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Blazers on 2015/8/28.
@@ -22,6 +23,7 @@ public class ImageDownloader {
 
     private ImageDownloader(){
         client = new OkHttpClient();
+        client.setConnectTimeout(10, TimeUnit.SECONDS);
     }
 
     public static ImageDownloader getInstance() {

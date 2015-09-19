@@ -83,7 +83,7 @@ public class BaseActivity extends AppCompatActivity {
         // handle toolbar
         if (null != toolbar) {
             toolbar.animate()
-                    .translationY(0) //TODO: 如果Toolbar比较厚 如何动态获取toolbar高度
+                    .translationY(0)
                     .setDuration(400)
                     .setStartDelay(200).start();
         }
@@ -101,7 +101,7 @@ public class BaseActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         // handle toolbar
         if (null != toolbar) {
-            toolbar.animate()
+            toolbar.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度
                     .translationY(- getStatusBarHeight() - Dppx.Dp2Px(this, 56))
                     .setDuration(400)
                     .setStartDelay(200).start();

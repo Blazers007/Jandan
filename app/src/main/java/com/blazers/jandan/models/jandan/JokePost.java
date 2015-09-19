@@ -4,12 +4,13 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Blazers on 2015/9/7.
  */
-public class JokePost extends RealmObject {
+public class JokePost extends RealmObject implements Serializable{
     @PrimaryKey
     private long comment_ID;
     private String comment_content;

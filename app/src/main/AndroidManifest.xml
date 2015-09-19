@@ -43,6 +43,7 @@
 
         <!-- Service -->
         <service android:name=".services.NetworkService" />
+        <service android:name=".services.DownloadService"/>
     </application>
 
 </manifest>

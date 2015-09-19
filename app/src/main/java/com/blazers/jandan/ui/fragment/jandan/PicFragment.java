@@ -18,6 +18,7 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.ui.fragment.app.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
+import com.blazers.jandan.views.GreySpaceItemDerocation;
 import com.blazers.jandan.views.adapters.JandanImageAdapter;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
@@ -67,7 +68,8 @@ public class PicFragment extends BaseFragment {
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        meiziList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
+//        meiziList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
+        meiziList.addItemDecoration(new GreySpaceItemDerocation());
         meiziList.setItemAnimator(new FadeInUpAnimator());
         mAdapter = new JandanImageAdapter(getActivity(), mImageArrayList);
         meiziList.setAdapter(mAdapter);

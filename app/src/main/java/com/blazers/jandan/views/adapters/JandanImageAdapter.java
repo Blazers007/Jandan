@@ -61,10 +61,10 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         }
 
         if (comment.trim().equals(""))
-            holder.comment.setVisibility(View.GONE);
+            holder.text.setVisibility(View.GONE);
         else {
             holder.text.setVisibility(View.VISIBLE);
-            holder.text.setText(comment);
+            holder.text.setText(comment.trim());
         }
     }
 

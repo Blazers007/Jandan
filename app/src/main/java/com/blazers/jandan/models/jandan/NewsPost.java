@@ -4,13 +4,14 @@ import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Blazers on 2015/9/1.
  */
-public class NewsPost extends RealmObject {
+public class NewsPost extends RealmObject implements Serializable {
     @PrimaryKey
     private long id;
     private String thumbUrl;

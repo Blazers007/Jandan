@@ -1,12 +1,14 @@
 package com.blazers.jandan.network;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.models.jandan.ImagePost;
 import com.blazers.jandan.models.jandan.JokePost;
 import com.blazers.jandan.models.jandan.NewsPost;
+import com.blazers.jandan.services.DownloadService;
 import com.blazers.jandan.util.NetworkHelper;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -215,7 +217,9 @@ public class Parser {
         return newsPostList;
     }
 
-
+    /**
+     * 根据文章的ID读取文章的信息
+     * */
     public Observable<NewsPost> getNewsContentData(long id) {
         return Observable.create(subscriber -> {
             subscriber.onNext(getNewsContent(id));
@@ -263,8 +267,7 @@ public class Parser {
 
 
     /**
-     *
-     *
+     * 按照页码读取段子信息
      * */
     public Observable<List<JokePost>> getJokeData(int page) {
         return Observable.create(subscriber -> {
@@ -313,7 +316,9 @@ public class Parser {
     }
 
 
-    /* Offline Download Meizi */
+    /**
+     * 离线下载的API <测试中>
+     * */
     public void offlineNews() {
 
     }
@@ -345,10 +350,13 @@ public class Parser {
     public void download(Observable<List<Image>>  images) {
         images
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(sub -> {
                     for (Image image : sub) {
-                        Log.e("IMAGE ---> ","[" + ++offline + "] " + image.getUrl());
+                        Intent intent = new Intent(context, DownloadService.class);
+                        intent.putExtra("id", image.getId());
+                        intent.putExtra("url", image.getUrl());
+                        context.startService(intent);
                     }
                 }, throwable -> {
                     Log.e("DOWNLOAD", throwable.toString());

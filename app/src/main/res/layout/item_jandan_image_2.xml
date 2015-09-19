@@ -7,29 +7,28 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="4dp"
+        android:background="#fcfcfc"
         >
     <TextView
             android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/author"
-            android:layout_marginTop="12dp"
-            tools:text="@string/longText"
+            android:layout_below="@+id/content"
+            android:layout_marginTop="4dp"
+            tools:text="开车吧，他在不会来了。。。"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="12dp"
             android:lineSpacingExtra="4dp"
             android:textColor="#444"
-            android:layout_marginBottom="-4dp"/>
+            android:layout_marginBottom="4dp"/>
     <com.blazers.jandan.views.widget.DownloadFrescoView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             fresco:actualImageScaleType="fitCenter"
-            android:layout_below="@+id/text"
+            android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="4dp"
-            />
+            android:layout_marginBottom="4dp"/>
     <!-- Title and time-->
     <TextView
             android:id="@+id/author"
@@ -58,7 +57,7 @@
     <com.blazers.jandan.views.widget.ThumbTextButton
             style="@style/ThumbButtonBase"
             android:id="@+id/btn_oo"
-            android:layout_below="@+id/content"
+            android:layout_below="@+id/divider_upper"
             android:src="@drawable/selector_thumb_up"
             app:ttb_floatTextColor="@color/thumbUp"
             android:layout_marginLeft="8dp"
@@ -96,4 +95,22 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
             />
+    <!-- Divider -->
+    <View
+            android:id="@+id/top"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#e5e7e9" android:layout_alignParentTop="true"/>
+    <View
+            android:id="@+id/divider_upper"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#f3f3f3"
+            android:layout_below="@+id/text" android:layout_marginTop="4dp"/>
+    <View
+            android:id="@+id/divider_lower"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="#e5e7e9"
+            android:layout_below="@+id/btn_oo"/>
 </RelativeLayout>
