@@ -18,6 +18,7 @@ import com.blazers.jandan.models.jandan.JokePost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.views.GreySpaceItemDerocation;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
@@ -54,6 +55,7 @@ public class JokeFragment extends Fragment{
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         jokeList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+        jokeList.addItemDecoration(new GreySpaceItemDerocation());
         jokeList.setItemAnimator(new SlideInUpAnimator());
         /* Loadmore */
         jokeList.setLoadMoreListener(() -> {

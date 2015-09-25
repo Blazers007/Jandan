@@ -39,6 +39,15 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         return new JandanHolder(itemView);
     }
 
+    /*TODO: Totally important !!!! https://github.com/06peng/FrescoDemo/blob/master/app/src/main/java/com/mzba/fresco/ui/ImageListFragment.java  */
+    @Override
+    public void onViewRecycled(JandanHolder holder) {
+        if (holder.draweeView.getController() != null)
+            holder.draweeView.getController().onDetach();
+        if (holder.draweeView.getTopLevelDrawable() != null)
+            holder.draweeView.getTopLevelDrawable().setCallback(null);
+    }
+
     @Override
     public void onBindViewHolder(JandanHolder holder, int position) {
         /* Get data */

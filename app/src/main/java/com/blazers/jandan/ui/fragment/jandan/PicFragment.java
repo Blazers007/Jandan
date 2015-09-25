@@ -68,7 +68,6 @@ public class PicFragment extends BaseFragment {
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
         meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-//        meiziList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
         meiziList.addItemDecoration(new GreySpaceItemDerocation());
         meiziList.setItemAnimator(new FadeInUpAnimator());
         mAdapter = new JandanImageAdapter(getActivity(), mImageArrayList);
