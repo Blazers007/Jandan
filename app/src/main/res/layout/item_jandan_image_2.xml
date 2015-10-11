@@ -14,21 +14,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             tools:text="开车吧，他在不会来了。。。"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="12dp"
             android:lineSpacingExtra="4dp"
             android:textColor="#444"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="8dp"/>
     <com.blazers.jandan.views.widget.DownloadFrescoView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             fresco:actualImageScaleType="fitCenter"
+            fresco:viewAspectRatio="1.318"
             android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
-            android:layout_marginBottom="4dp"/>
+            />
     <!-- Title and time-->
     <TextView
             android:id="@+id/author"
@@ -95,6 +96,18 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
             />
+    <!-- Hint -->
+    <TextView
+            android:id="@+id/hint"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:layout_alignBottom="@+id/content"
+            android:gravity="center"
+            android:background="#33000000"
+            android:textColor="#fafafa"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"/>
     <!-- Divider -->
     <View
             android:id="@+id/top"
@@ -106,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="2px"
             android:background="#f3f3f3"
-            android:layout_below="@+id/text" android:layout_marginTop="4dp"/>
+            android:layout_below="@+id/text"/>
     <View
             android:id="@+id/divider_lower"
             android:layout_width="match_parent"

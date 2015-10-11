@@ -28,8 +28,7 @@ import com.facebook.imagepipeline.image.ImageInfo;
  */
 public class ImageViewerFragment extends DialogFragment {
 
-    @Bind(R.id.viewer)
-    ZoomableDraweeView view;
+    @Bind(R.id.viewer) ZoomableDraweeView view;
     private Uri uri;
 
 
@@ -51,7 +50,6 @@ public class ImageViewerFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_image_viewer, container, false);
         ButterKnife.bind(this, root);
-
         DraweeController ctrl = Fresco.newDraweeControllerBuilder()
                 .setUri(uri)
                 .setTapToRetryEnabled(true)
@@ -80,6 +78,10 @@ public class ImageViewerFragment extends DialogFragment {
             if (imageInfo == null) {
                 return;
             }
+            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048)
+                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            else
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
             if (asp <= 0.4) {
                 draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);

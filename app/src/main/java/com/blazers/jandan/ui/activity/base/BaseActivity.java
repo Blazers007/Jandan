@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.Dppx;
 
@@ -25,9 +27,27 @@ public class BaseActivity extends AppCompatActivity {
 
     /* Vars */
     private Toolbar toolbar;
+    private ViewGroup toolbarWithShadow;
 
     /* Init functions */
     public void initToolbarByType(Toolbar toolbar, ToolbarType type) {
+        this.toolbar = toolbar;
+        setSupportActionBar(toolbar);
+        switch (type) {
+            case NORMAL:
+                getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                break;
+            case FINISH:
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                toolbar.setNavigationOnClickListener(v -> finish());
+                break;
+        }
+    }
+
+    /* Init functions */
+    public void initToolbarByTypeWithShadow(ViewGroup holder, Toolbar toolbar, ToolbarType type) {
+        this.toolbarWithShadow = holder;
         this.toolbar = toolbar;
         setSupportActionBar(toolbar);
         switch (type) {
@@ -81,8 +101,9 @@ public class BaseActivity extends AppCompatActivity {
         }
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         // handle toolbar
-        if (null != toolbar) {
-            toolbar.animate()
+        View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
+        if (null != animate) {
+            animate.animate()
                     .translationY(0)
                     .setDuration(400)
                     .setStartDelay(200).start();
@@ -100,8 +121,9 @@ public class BaseActivity extends AppCompatActivity {
         }
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
         // handle toolbar
-        if (null != toolbar) {
-            toolbar.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度
+        View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
+        if (null != animate) {
+            animate.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度
                     .translationY(- getStatusBarHeight() - Dppx.Dp2Px(this, 56))
                     .setDuration(400)
                     .setStartDelay(200).start();

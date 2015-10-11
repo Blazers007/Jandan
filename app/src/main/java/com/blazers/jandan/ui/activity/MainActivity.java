@@ -22,7 +22,6 @@ import com.blazers.jandan.ui.fragment.jandan.JokeFragment;
 import com.blazers.jandan.ui.fragment.jandan.MeiziFragment;
 import com.blazers.jandan.ui.fragment.jandan.NewsFragment;
 import com.blazers.jandan.ui.fragment.jandan.PicFragment;
-import com.blazers.jandan.ui.fragment.huaban.PinFragment;
 import com.blazers.jandan.util.Dppx;
 
 import java.util.ArrayList;
@@ -61,9 +60,26 @@ public class MainActivity extends BaseActivity {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tabLayout.setTabTextColors(Color.rgb(221, 221, 221), Color.WHITE);
         viewPager.setPageMargin(Dppx.Dp2Px(this, 12));
-        viewPager.setOffscreenPageLimit(1);
+        viewPager.setOffscreenPageLimit(4);
         /* 读取上次最后访问的 */
         navigationView.setCheckedItem(R.id.nav_jandan);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     void initDrawerWithToolbar() {

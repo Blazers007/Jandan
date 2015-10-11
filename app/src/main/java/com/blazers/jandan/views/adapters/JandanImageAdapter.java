@@ -1,11 +1,15 @@
 package com.blazers.jandan.views.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,11 +30,12 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
 
     private LayoutInflater inflater;
     private ArrayList<Image> imageArrayList;
-    private int page;
+    private Context context;
 
     public JandanImageAdapter(Context context, ArrayList<Image> imagePostsArrayList) {
         this.inflater = LayoutInflater.from(context);
         this.imageArrayList = imagePostsArrayList;
+        this.context = context;
     }
 
     @Override
@@ -46,6 +51,8 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
             holder.draweeView.getController().onDetach();
         if (holder.draweeView.getTopLevelDrawable() != null)
             holder.draweeView.getTopLevelDrawable().setCallback(null);
+//        holder.imageView.setImageBitmap(null);
+        Log.i("Recycled Pos ->", holder.date.getText().toString());
     }
 
     @Override
@@ -54,12 +61,11 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         Image image = imageArrayList.get(position);
         String comment = image.getPost().getText_content();
         /* Set data */
-        holder.draweeView.setAspectRatio(1.318f);
-        holder.author.setText("@" + image.getPost().getComment_author());
+        holder.author.setText(String.format("@+%s", image.getPost().getComment_author()));
         holder.date.setText(image.getPost().getComment_date());
         holder.oo.setThumbText(image.getPost().getVote_positive());
         holder.xx.setThumbText(image.getPost().getVote_negative());
-        holder.comment.setThumbText(image.getPost().getImage_size()+"");
+        holder.comment.setThumbText(String.format("%s", image.getPost().getImage_size()));
 
         if (image.getLocalUrl() != null && !image.getLocalUrl().equals("")) {
             holder.draweeView.showImage(image.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
@@ -69,12 +75,21 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
             holder.save.setImageResource(R.drawable.selector_download);
         }
 
+        holder.draweeView.setImageInfoListener((width, height) -> {
+            if (width > 2048 || height > 2048) {
+                holder.hint.setText("长图片 喵喵 ~");
+                holder.hint.setVisibility(View.VISIBLE);
+            } else
+                holder.hint.setVisibility(View.GONE);
+        });
+
         if (comment.trim().equals(""))
             holder.text.setVisibility(View.GONE);
         else {
             holder.text.setVisibility(View.VISIBLE);
             holder.text.setText(comment.trim());
         }
+        Log.i("Bind Pos ->", position+"");
     }
 
     @Override
@@ -93,10 +108,15 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         @Bind(R.id.btn_oo) ThumbTextButton oo;
         @Bind(R.id.btn_xx) ThumbTextButton xx;
         @Bind(R.id.btn_comment) ThumbTextButton comment;
+        @Bind(R.id.hint) TextView hint;
 
         public JandanHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public interface ImageInfo {
+        void onLoaded(int width, int height);
     }
 }

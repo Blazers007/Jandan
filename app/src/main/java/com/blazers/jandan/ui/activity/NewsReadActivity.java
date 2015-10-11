@@ -9,6 +9,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
@@ -22,6 +23,7 @@ import rx.schedulers.Schedulers;
 
 public class NewsReadActivity extends BaseActivity {
 
+    @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.webView) ObservableWebView webView;
 
@@ -39,7 +41,7 @@ public class NewsReadActivity extends BaseActivity {
         setContentView(R.layout.activity_news_read);
         ButterKnife.bind(this);
         /* Init Toolbar */
-        initToolbarByType(toolbar, ToolbarType.FINISH);
+        initToolbarByTypeWithShadow(toolbarWrapper, toolbar, ToolbarType.FINISH);
         setToolbarTitle(getIntent().getStringExtra("title"));
         setContentFloatingModeEnabled(true);
 

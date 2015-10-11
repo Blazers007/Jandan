@@ -16,6 +16,7 @@ import android.view.View;
 import com.blazers.jandan.ui.activity.ImageViewerActivity;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
+import com.blazers.jandan.views.adapters.JandanImageAdapter;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -36,6 +37,8 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
 
     /* Vars */
     private ControllerListener<ImageInfo> listener;
+
+    private JandanImageAdapter.ImageInfo imageInfoListener;
 
     public DownloadFrescoView(Context context) {
         super(context);
@@ -88,6 +91,10 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
 //        ActivityCompat.startActivity((MainActivity)getContext(), intent, optionsCompat.toBundle());
     }
 
+    public void setImageInfoListener (JandanImageAdapter.ImageInfo listener) {
+        this.imageInfoListener = listener;
+    }
+
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 
         private DownloadFrescoView draweeView;
@@ -103,11 +110,18 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
             if (imageInfo == null) {
                 return;
             }
+            if (imageInfoListener != null)
+                imageInfoListener.onLoaded(imageInfo.getWidth(), imageInfo.getHeight());
+            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048)
+                setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            else
+                setLayerType(View.LAYER_TYPE_HARDWARE, null);
             // 加载完毕 可以下载
             trigger.setVisibility(View.VISIBLE);
             float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
             draweeView.setAspectRatio(asp);
-            if (asp <= 0.4) {draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
+            if (asp <= 0.4) {
+                draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
                 draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
                 draweeView.setAspectRatio(1.118f);
             }
