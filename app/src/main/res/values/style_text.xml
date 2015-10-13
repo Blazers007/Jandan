@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AuthorNameTextStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">#030303</item>
+    </style>
+
+    <style name="DateTimeTextStyle">
+        <item name="android:textColor">#666</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="CommentTextStyle">
+        <item name="android:lineSpacingExtra">4dp</item>
+        <item name="android:textColor">#444</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.NewsPost;
+import com.blazers.jandan.models.jandan.news.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
@@ -108,9 +108,9 @@ public class NewsFragment extends Fragment {
         @Override
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
             NewsPost newsList = mNewsPostArrayList.get(i);
-            newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
-            newsHolder.title.setText(newsList.getTitle());
-            newsHolder.content.setText(newsList.getAuthor() + "  @ " + newsList.getDate());
+            newsHolder.draweeView.setImageURI(Uri.parse(newsList.thumbUrl));
+            newsHolder.title.setText(newsList.title);
+            newsHolder.content.setText(newsList.author + "  @ " + newsList.date);
         }
 
         @Override
@@ -137,8 +137,8 @@ public class NewsFragment extends Fragment {
                 NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
                 startActivity(
                         new Intent(getActivity(), NewsReadActivity.class)
-                                .putExtra("id", newsList.getId())
-                                .putExtra("title", newsList.getTitle())
+                                .putExtra("id", newsList.id)
+                                .putExtra("title", newsList.title)
                 );
             }
         }

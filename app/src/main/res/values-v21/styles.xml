@@ -1,9 +1,14 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Other attributes like colorPrimary, colorAccent etc. -->
-        <item name="colorPrimary">#328bff</item>
-        <item name="colorPrimaryDark">#2c70d7</item>
-        <item name="colorAccent">#ff5722</item>
+        <!--<item name="colorPrimary">#328bff</item>-->
+        <!--<item name="colorPrimaryDark">#2c70d7</item>-->
+        <!--<item name="colorAccent">#ff5722</item>-->
+
+        <item name="colorPrimary">#fafafa</item>
+        <item name="colorPrimaryDark">#5f5f5f</item>
+        <item name="colorAccent">#3c4043</item>
+
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowContentTransitions">true</item>
     </style>

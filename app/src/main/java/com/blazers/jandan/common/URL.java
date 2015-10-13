@@ -18,6 +18,10 @@ public class URL {
     public static final String JANDAN_JOKE_API = "http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments&page=";
 
 
+    /* Comment */
+    public static final String JANDAN_COMMENT_COUNT = "http://jandan.duoshuo.com/api/threads/counts.json?"; //comment-2957362,
+    public static final String JANDAN_COMMENT_API = "http://jandan.duoshuo.com/api/threads/listPosts.json?thread_key="; //comment-2957362
+
     public static String getJandanNewsAtPage(long page) {
         return JANDAN_NEWS_API_PREFIX + page + JANDAN_NEWS_API_END;
     }
@@ -37,26 +41,4 @@ public class URL {
         return JANDAN_JOKE_API + page;
     }
 
-
-    /* Other restful api */
-
-    /* Huaban http://huaban.com */
-    public enum HUABAN_QULITY {
-        FULL, SQ75W, FW192W;
-        @Override
-        public String toString() {
-            if(this.equals(FULL)) {
-                return "";
-            } else {
-                return "_" + super.toString().toLowerCase();
-            }
-        }
-    }
-    public static final String HUABAN_QUERY_API = "http://api.HuabanPin.com/search/?q=%E5%A6%B9%E5%AD%90&page=1&per_page=20";
-    public static String huabanQuerySthAtPage (String key, int page) {
-        return "http://api.HuabanPin.com/search/?q=" + key + "&page=" + page + "&per_page=20";
-    }
-    public static String getHuabanPiCByQuality(String id, HUABAN_QULITY qulity) {
-        return "http://img.hb.aicdn.com/" + id + qulity.toString();
-    }
 }

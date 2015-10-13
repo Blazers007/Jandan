@@ -30,23 +30,7 @@ public class BaseActivity extends AppCompatActivity {
     private ViewGroup toolbarWithShadow;
 
     /* Init functions */
-    public void initToolbarByType(Toolbar toolbar, ToolbarType type) {
-        this.toolbar = toolbar;
-        setSupportActionBar(toolbar);
-        switch (type) {
-            case NORMAL:
-                getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                break;
-            case FINISH:
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                toolbar.setNavigationOnClickListener(v -> finish());
-                break;
-        }
-    }
-
-    /* Init functions */
-    public void initToolbarByTypeWithShadow(ViewGroup holder, Toolbar toolbar, ToolbarType type) {
+    protected void initToolbarByTypeWithShadow(ViewGroup holder, Toolbar toolbar, ToolbarType type) {
         this.toolbarWithShadow = holder;
         this.toolbar = toolbar;
         setSupportActionBar(toolbar);

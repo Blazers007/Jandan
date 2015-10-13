@@ -1,12 +1,9 @@
 package com.blazers.jandan.ui.fragment.jandan;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,17 +13,16 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.Image;
-import com.blazers.jandan.ui.fragment.app.BaseFragment;
+import com.blazers.jandan.ui.fragment.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.GreySpaceItemDerocation;
-import com.blazers.jandan.views.adapters.JandanImageAdapter;
+import com.blazers.jandan.ui.adapters.JandanImageAdapter;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.imagepipeline.image.ImageInfo;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import io.realm.Realm;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
 
 import java.util.ArrayList;
@@ -93,7 +89,7 @@ public class PicFragment extends BaseFragment {
         super.onDestroyView();
     }
 
-    /* ImagePost Adapter */
+    /* Post Adapter */
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
 

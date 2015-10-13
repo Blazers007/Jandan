@@ -1,20 +1,19 @@
-package com.blazers.jandan.views.adapters;
+package com.blazers.jandan.ui.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.ThumbTextButton;
 
@@ -51,7 +50,6 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
             holder.draweeView.getController().onDetach();
         if (holder.draweeView.getTopLevelDrawable() != null)
             holder.draweeView.getTopLevelDrawable().setCallback(null);
-//        holder.imageView.setImageBitmap(null);
         Log.i("Recycled Pos ->", holder.date.getText().toString());
     }
 
@@ -59,19 +57,19 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
     public void onBindViewHolder(JandanHolder holder, int position) {
         /* Get data */
         Image image = imageArrayList.get(position);
-        String comment = image.getPost().getText_content();
+        String comment = image.post.text_content;
         /* Set data */
-        holder.author.setText(String.format("@+%s", image.getPost().getComment_author()));
-        holder.date.setText(image.getPost().getComment_date());
-        holder.oo.setThumbText(image.getPost().getVote_positive());
-        holder.xx.setThumbText(image.getPost().getVote_negative());
-        holder.comment.setThumbText(String.format("%s", image.getPost().getImage_size()));
+        holder.author.setText(String.format("@+%s", image.post.comment_author));
+        holder.date.setText(image.post.comment_date);
+        holder.oo.setThumbText(image.post.vote_positive);
+        holder.xx.setThumbText(image.post.vote_negative);
+//        holder.comment.setThumbText(String.format("%s", image.post.getImage_size()));
 
-        if (image.getLocalUrl() != null && !image.getLocalUrl().equals("")) {
-            holder.draweeView.showImage(image.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
+        if (image.localUrl != null && !image.localUrl.equals("")) {
+            holder.draweeView.showImage(image.localUrl, holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
             holder.save.setImageResource(R.mipmap.ic_publish_16dp);
         } else {
-            holder.draweeView.showImage(image.getUrl(), holder.save);
+            holder.draweeView.showImage(image.url, holder.save);
             holder.save.setImageResource(R.drawable.selector_download);
         }
 
@@ -97,7 +95,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         return imageArrayList.size();
     }
 
-    class JandanHolder extends RecyclerView.ViewHolder {
+    class JandanHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.content) DownloadFrescoView draweeView;
         @Bind(R.id.author) TextView author;
@@ -113,6 +111,15 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         public JandanHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            //
+            comment.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            long id = imageArrayList.get(getAdapterPosition()).post.comment_ID;
+            ((MainActivity)context).pushInCommentFragment(id);
         }
     }
 

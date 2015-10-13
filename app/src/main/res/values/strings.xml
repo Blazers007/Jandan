@@ -9,6 +9,7 @@
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
 
+    <!-- NAV -->
     <string name="sec_jandan">煎蛋</string>
     <string name="sec_huaban">花瓣</string>
     <string name="sec_iplay">异次元软件</string>
@@ -16,6 +17,8 @@
     <string name="sec_zhihu">知乎日报</string>
     <string name="setting">设置</string>
 
+    <!-- 煎蛋 -->
+    <string name="offline">离线阅读</string>
 
     <!-- Menu -->
     <string name="action_share">分享</string>

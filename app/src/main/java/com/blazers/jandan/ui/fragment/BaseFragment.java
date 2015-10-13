@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment.app;
+package com.blazers.jandan.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,7 +7,7 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import com.blazers.jandan.models.jandan.Image;
 import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.views.adapters.JandanImageAdapter;
+import com.blazers.jandan.ui.adapters.JandanImageAdapter;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

@@ -1,6 +1,5 @@
 package com.blazers.jandan.ui.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,7 +12,7 @@ import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.NewsPost;
+import com.blazers.jandan.models.jandan.news.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.ShareHelper;

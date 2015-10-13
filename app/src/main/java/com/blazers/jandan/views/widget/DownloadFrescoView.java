@@ -1,22 +1,17 @@
 package com.blazers.jandan.views.widget;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import com.blazers.jandan.ui.activity.ImageViewerActivity;
-import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
-import com.blazers.jandan.views.adapters.JandanImageAdapter;
+import com.blazers.jandan.ui.adapters.JandanImageAdapter;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
