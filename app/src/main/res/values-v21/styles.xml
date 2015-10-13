@@ -8,6 +8,7 @@
         <item name="colorPrimary">#fafafa</item>
         <item name="colorPrimaryDark">#5f5f5f</item>
         <item name="colorAccent">#3c4043</item>
+        <!--<item name="android:textColorPrimary">#3c4043</item>-->
 
         <item name="windowActionModeOverlay">true</item>
         <item name="android:windowContentTransitions">true</item>

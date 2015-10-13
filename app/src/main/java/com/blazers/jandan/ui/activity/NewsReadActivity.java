@@ -2,6 +2,7 @@ package com.blazers.jandan.ui.activity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebChromeClient;
@@ -76,12 +77,13 @@ public class NewsReadActivity extends BaseActivity {
         parser.getNewsContentData(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    post = data;
-                    webView.loadDataWithBaseURL("file:///android_asset", data.getHtml(), "text/html; charset=UTF-8", null, null);
-                }, throwable -> {
-                    throwable.printStackTrace();
-                });
+                .subscribe(
+                        data -> {
+                            post = data;
+                            webView.loadDataWithBaseURL("file:///android_asset", data.getHtml(), "text/html; charset=UTF-8", null, null);
+                        },
+                        throwable -> Log.e("err", throwable.toString())
+                );
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override

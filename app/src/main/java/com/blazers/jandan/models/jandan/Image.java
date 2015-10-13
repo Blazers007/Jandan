@@ -13,13 +13,54 @@ import java.util.List;
 public class Image extends RealmObject {
 
     @PrimaryKey
-    public long id;
-    public String url;
-    public String localUrl;
-    public String size;
+    private long id;
+    private String url;
+    private String localUrl;
+    private String size;
     // Relationship
-    public Post post;
+    private Post post;
 
+    /* Getter & Setter */
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getLocalUrl() {
+        return localUrl;
+    }
+
+    public void setLocalUrl(String localUrl) {
+        this.localUrl = localUrl;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 
     /* APIS */
     public static List<Image> findAllSortDesc(Realm realm, String type) { // default get 20

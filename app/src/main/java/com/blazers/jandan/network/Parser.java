@@ -106,47 +106,44 @@ public class Parser {
     public Observable<List<Image>> getPictureData(int page, String type) {
         return Observable.create(subscriber -> {
             Realm realm = Realm.getInstance(context);
+            realm.beginTransaction();
                 try {
-                    List<Image> imageList = new ArrayList<>();
                     String json = simpleHttpRequest(URL.getJandanAPIByPageAndType(page, type));
                     List<Post> postses = new ArrayList<>();
+                    List<Image> imageList = new ArrayList<>();
                     JSONObject object = new JSONObject(json);
                     JSONArray comments = object.getJSONArray("comments");
-
+                    String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                     for (int i = 0 ; i < comments.length() ; i ++) {
                     /* Post */
                         JSONObject comment = comments.getJSONObject(i);
                         Post post = gson.fromJson(comment.toString(), Post.class);
+                        commentInfoUrl += ("comment-" + post.getComment_ID() + ",");
                     /* Image */
                         JSONArray pics = comment.getJSONArray("pics");
                         RealmList<Image> images = new RealmList<>();
                         for (int pi = 0 ; pi < pics.length() ; pi ++) {
                             Image image = new Image();
-                            image.id = Long.parseLong(post.comment_ID + (type.equals("wuliao")?"0":"1") +String.format("%02d", pi));
-                            image.url = pics.getString(pi);
+                            image.setId(Long.parseLong(post.getComment_ID() + (type.equals("wuliao") ? "0" : "1") + String.format("%02d", pi)));
+                            image.setUrl(pics.getString(pi));
                             images.add(image);
-                            image.post = post;
+                            image.setPost(post);
                         }
-                        post.images = images;
+                        realm.copyToRealmOrUpdate(images);
+                        post.setImages(images);
                         postses.add(post);
+                        // 将图片放入List中
                         imageList.addAll(images);
                     }
+                    realm.copyToRealmOrUpdate(postses);
+                    // 请求数量
+                    String commentInfo = simpleHttpRequest(commentInfoUrl);
+                    Log.i("INFO", commentInfo);
                     subscriber.onNext(imageList);
-                    new Thread(()->{
-                        Realm threadRealm = Realm.getInstance(context);
-                        threadRealm.beginTransaction();
-                        for (Post post : postses) {
-                            threadRealm.copyToRealmOrUpdate(post);
-                            for (Image image : post.images) {
-                                threadRealm.copyToRealmOrUpdate(image);
-                            }
-                        }
-                        threadRealm.commitTransaction();
-                        threadRealm.close();
-                    }).start();
                 } catch (IOException | JSONException e) {
                     subscriber.onError(e);
                 }
+            realm.commitTransaction();
             realm.close();
             subscriber.onCompleted();
         });
@@ -168,13 +165,12 @@ public class Parser {
                     List<NewsPost> newsPostListTemp = new ArrayList<>();
                     for (int i = 0 ; i < posts.length() ; i ++) {
                         JSONObject post = posts.getJSONObject(i);
-
                         NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
-                        newsPost.page = page;
-                        newsPost.author = post.getJSONObject("author").getString("name");
-                        newsPost.tagTitle = post.getJSONArray("tags").getJSONObject(0).getString("title");
-                        newsPost.thumbUrl = post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0);
-                        newsPost.views = post.getJSONObject("custom_fields").getJSONArray("views").getLong(0);
+                        newsPost.setPage(page);
+                        newsPost.setAuthorName(post.getJSONObject("author").getString("name"));
+                        newsPost.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));
+                        newsPost.setThumbUrl(post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0));
+                        newsPost.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
                         newsPostListTemp.add(newsPost);
                     }
                     newsPostList.addAll(newsPostListTemp);
@@ -199,7 +195,6 @@ public class Parser {
     }
 
 
-
     /**
      * 根据文章的ID读取文章的信息
      * */
@@ -210,10 +205,9 @@ public class Parser {
             if (post == null) {
                 throw new IllegalStateException("Couldn't find news post relate to id : " + id);
             }
-            String html = post.html;
+            String html = post.getHtml();
             if (html == null || html.equals("")) {
                 try {
-
                     String json = simpleHttpRequest(URL.getJandanNewsContentById(id));
                     JSONObject object = new JSONObject(json);
                     String body = object.getJSONObject("post").getString("content");
@@ -229,16 +223,16 @@ public class Parser {
                     sb.append("</body></html>");
                     html = sb.toString();
                     realm.beginTransaction();
-                    post.html = html;
+                    post.setHtml(html);
                     realm.commitTransaction();
-                    post = NewsPost.copySimplePost(post); // RealmObject which create by Realm can not cross thread and context
                 } catch (JSONException | IOException e) {
-                    e.printStackTrace();
+                    subscriber.onError(e);
                 }
             }
-            realm.close();
+            post = NewsPost.copySimplePost(post); // RealmObject which create by Realm can not cross thread and context
             subscriber.onNext(post);
             subscriber.onCompleted();
+            realm.close();
         });
     }
 
@@ -318,11 +312,10 @@ public class Parser {
         Observable.from(requestList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    download(result);
-                }, throwable -> {
-                    Log.e("DOWNLOAD", throwable.toString());
-                });
+                .subscribe(
+                        this::download
+                        , throwable -> Log.e("DOWNLOAD", throwable.toString())
+                );
 
     }
 
@@ -335,8 +328,8 @@ public class Parser {
                 .subscribe(sub -> {
                     for (Image image : sub) {
                         Intent intent = new Intent(context, DownloadService.class);
-                        intent.putExtra("id", image.id);
-                        intent.putExtra("url", image.url);
+                        intent.putExtra("id", image.getId());
+                        intent.putExtra("url", image.getUrl());
                         context.startService(intent);
                     }
                 }, throwable -> {

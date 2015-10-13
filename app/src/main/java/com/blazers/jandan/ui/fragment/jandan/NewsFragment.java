@@ -108,9 +108,9 @@ public class NewsFragment extends Fragment {
         @Override
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
             NewsPost newsList = mNewsPostArrayList.get(i);
-            newsHolder.draweeView.setImageURI(Uri.parse(newsList.thumbUrl));
-            newsHolder.title.setText(newsList.title);
-            newsHolder.content.setText(newsList.author + "  @ " + newsList.date);
+            newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
+            newsHolder.title.setText(newsList.getTitle());
+            newsHolder.content.setText(newsList.getAuthorName() + "  @ " + newsList.getDate());
         }
 
         @Override
@@ -137,8 +137,8 @@ public class NewsFragment extends Fragment {
                 NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
                 startActivity(
                         new Intent(getActivity(), NewsReadActivity.class)
-                                .putExtra("id", newsList.id)
-                                .putExtra("title", newsList.title)
+                                .putExtra("id", newsList.getId())
+                                .putExtra("title", newsList.getTitle())
                 );
             }
         }

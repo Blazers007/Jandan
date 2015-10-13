@@ -19,7 +19,7 @@ public class URL {
 
 
     /* Comment */
-    public static final String JANDAN_COMMENT_COUNT = "http://jandan.duoshuo.com/api/threads/counts.json?"; //comment-2957362,
+    public static final String JANDAN_COMMENT_COUNT = "http://jandan.duoshuo.com/api/threads/counts.json?threads="; //comment-2957362,
     public static final String JANDAN_COMMENT_API = "http://jandan.duoshuo.com/api/threads/listPosts.json?thread_key="; //comment-2957362
 
     public static String getJandanNewsAtPage(long page) {
