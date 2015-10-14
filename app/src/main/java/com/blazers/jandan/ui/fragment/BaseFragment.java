@@ -92,32 +92,4 @@ public class BaseFragment extends Fragment {
         super.onDetach();
         Log.i(TAG, "OnDetach");
     }
-
-
-    private static final Parser parser = Parser.getInstance();
-    private CompositeSubscription compositeSubscription;
-    private List<Image> imageList;
-
-    /* APIs */
-
-    public void getData(boolean refresh, int page, String type, ArrayList<Image> imageList, JandanImageAdapter adapter) {
-        /* 排序与保存不放在此处进行 */
-        Subscription s = parser.getPictureData(page, type)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    if (refresh)
-                        imageList.clear();
-                    imageList.addAll(data);
-                    adapter.notifyDataSetChanged();
-                }, throwable -> throwable.printStackTrace());
-        addSubscription(s);
-    }
-
-    public void addSubscription(Subscription s) {
-        if (compositeSubscription == null) {
-            compositeSubscription = new CompositeSubscription();
-        }
-        compositeSubscription.add(s);
-    }
 }

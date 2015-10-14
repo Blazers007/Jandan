@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.Parser;
+import io.realm.Realm;
 
 /**
  * Created by Blazers on 2015/9/2.
@@ -29,6 +31,13 @@ import com.blazers.jandan.network.Parser;
 
 public class RightDownloadingFragment extends Fragment {
 
+    private Realm realm;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        realm = Realm.getInstance(context);
+    }
 
     @Nullable
     @Override
@@ -41,5 +50,11 @@ public class RightDownloadingFragment extends Fragment {
     @OnClick(R.id.button)
     public void download() {
         Parser.getInstance().offlineMeizi(1, 10);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        realm.close();
     }
 }

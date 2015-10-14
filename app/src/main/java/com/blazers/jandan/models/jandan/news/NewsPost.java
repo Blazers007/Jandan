@@ -22,7 +22,7 @@ public class NewsPost extends RealmObject implements Serializable {
     private long views;
     private String tagTitle; // tags 可为多个 因为是JSONArray形式存在
     private String authorName;
-    private String html;
+    private String html;        // 应当做成本地缓存 便于清理
     private long page;               // 所属的页码
 
 

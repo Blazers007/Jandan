@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.comment.Comments;
 import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.adapters.JandanCommentAdapter;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,9 +25,8 @@ import rx.schedulers.Schedulers;
  */
 public class JandanCommentFragment extends Fragment {
 
-
+    @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
-
 
     public static JandanCommentFragment NewInstance(long commentId) {
         JandanCommentFragment fragment = new JandanCommentFragment();
@@ -44,6 +45,11 @@ public class JandanCommentFragment extends Fragment {
         }
         View root = inflater.inflate(R.layout.fragment_comment, container, false);
         ButterKnife.bind(this, root);
+
+        toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_black_24dp);
+        toolbar.setTitle("评论");
+        toolbar.setNavigationOnClickListener(v -> ((MainActivity)getActivity()).popupFragment());
+
         loadCommentById(getArguments().getLong("commentId", -1));
         return root;
     }

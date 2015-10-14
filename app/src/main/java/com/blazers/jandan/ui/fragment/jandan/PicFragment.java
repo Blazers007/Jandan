@@ -1,8 +1,7 @@
 package com.blazers.jandan.ui.fragment.jandan;
 
+import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -13,132 +12,158 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.models.jandan.Post;
+import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.fragment.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.GreySpaceItemDerocation;
 import com.blazers.jandan.ui.adapters.JandanImageAdapter;
-import com.blazers.jandan.views.widget.DownloadFrescoView;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.imagepipeline.image.ImageInfo;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import io.realm.Realm;
 import jp.wasabeef.recyclerview.animators.FadeInUpAnimator;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Blazers on 15/9/8.
  */
 public class PicFragment extends BaseFragment {
 
+    private Realm realm;
+
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.recycler_list) LoadMoreRecyclerView meiziList;
+    @Bind(R.id.recycler_list) LoadMoreRecyclerView recyclerView;
     @Bind(R.id.load_more_progress) SmoothProgressBar smoothProgressBar;
 
-    private JandanImageAdapter mAdapter;
-    private ArrayList<Image> mImageArrayList = new ArrayList<>();
-    private int mPage = 1;
+    private JandanImageAdapter adapter;
+    private ArrayList<Image> imageArrayList = new ArrayList<>();
+    private int page = 1;
+    private String type;
 
-    public PicFragment() {
-        super();
-        setTAG("Pic Fragment");
+    /* Constructor */
+    public static PicFragment newInstance(String type) {
+        Bundle data = new Bundle();
+        data.putString("type", type);
+        PicFragment picFragment = new PicFragment();
+        picFragment.setTAG(type);
+        picFragment.setArguments(data);
+        return picFragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        realm = Realm.getInstance(context);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i("Pic Fragment", "OnCreateView");
         View root = inflater.inflate(R.layout.fragment_refresh_load, container, false);
-        ButterKnife.bind(this, root);
-        initRecyclerView();
+        if (getArguments() != null && getArguments().getString("type") != null) {
+            ButterKnife.bind(this, root);
+            type = getArguments().getString("type");
+            initRecyclerView();
+        }
         return root;
     }
 
 
-
-    /**
-     * 从现有的数据库中读取 若没有数据库(首次进入)则建立数据库
-     * 保存 首/尾 标志位ID
-     * 并随后调用一次刷新 刷新后对比 若最新ID比当前ID大则更新
-     * */
     void initRecyclerView() {
         /* 从数据库中读取 有两个标志位标志当前的第一个跟最后一个 然后从数据库中读取  顺便发起请求Service更新数据库 */
-        meiziList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        meiziList.addItemDecoration(new GreySpaceItemDerocation());
-        meiziList.setItemAnimator(new FadeInUpAnimator());
-        mAdapter = new JandanImageAdapter(getActivity(), mImageArrayList);
-        meiziList.setAdapter(mAdapter);
-
-        /* Loadmore */
-        meiziList.setLoadMoreListener(() -> {
-            smoothProgressBar.setVisibility(View.VISIBLE);
-            getData(false, ++mPage, "wuliao", mImageArrayList, mAdapter);
-        });
-        /* Set Adapter */
+        recyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+        recyclerView.addItemDecoration(new GreySpaceItemDerocation());
+        recyclerView.setItemAnimator(new FadeInUpAnimator());
+        adapter = new JandanImageAdapter(getActivity(), imageArrayList);
+        recyclerView.setAdapter(adapter);
+        /* 初始化加载更多 */
+        recyclerView.setLoadMoreListener(this::loadMore);
+        /* 初始化下拉刷新 */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
-        swipeRefreshLayout.setOnRefreshListener(() -> {
+        swipeRefreshLayout.setOnRefreshListener(this::refresh);
+        // 首先从数据库读取 在判断是否需要加载
+        List<Image> localImageList = Post.getAllImages(realm, 1, type);
+        imageArrayList.addAll(localImageList);
+        adapter.notifyItemRangeInserted(0, localImageList.size());
+        // 如果数据为空 或 时间大于30分钟 则更新
+        if (localImageList.size() == 0
+            || TimeHelper.getThatTimeOffsetByNow(localImageList.get(0).getPost().getComment_date()) > 30 * TimeHelper.ONE_MIN) {
+            refresh();
+        }
+    }
 
-        });
-
-        getData(true, mPage, "wuliao", mImageArrayList, mAdapter);
+    void refresh() {
         swipeRefreshLayout.setRefreshing(true);
+        Parser.getInstance().getPictureData(page = 1, type)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                list -> {
+                    swipeRefreshLayout.setRefreshing(false);
+                    imageArrayList.clear();
+                    adapter.notifyDataSetChanged();
+                    // 写入数据库
+                    realm.beginTransaction();
+                    for (Post post : list) {
+                        Post saved = realm.copyToRealmOrUpdate(post);
+                        for (Image image : post.getTempImages()) {
+                            Image savedImage = realm.copyToRealmOrUpdate(image);
+                            saved.getImages().add(savedImage);
+                        }
+                    }
+                    realm.commitTransaction();
+                    // 取出图片
+                    List<Image> imageList = Post.getAllImages(list);
+                    int size = imageList.size();
+                    imageArrayList.addAll(imageList);
+                    adapter.notifyItemRangeInserted(0, size);
+
+                },
+                throwable -> Log.e("Refresh", throwable.toString())
+            );
+    }
+
+    void loadMore() {
+        smoothProgressBar.setVisibility(View.VISIBLE);
+        Parser.getInstance().getPictureData(++page, type)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                list -> {
+                    smoothProgressBar.setVisibility(View.GONE);
+                    // 写入数据库
+                    realm.beginTransaction();
+                    for (Post post : list) {
+                        Post saved = realm.copyToRealmOrUpdate(post);
+                        for (Image image : post.getTempImages()) {
+                            Image savedImage = realm.copyToRealmOrUpdate(image);
+                            saved.getImages().add(savedImage);
+                        }
+                    }
+                    realm.commitTransaction();
+                    // 取出图片
+                    List<Image> imageList = Post.getAllImages(list);
+                    int start = imageArrayList.size();
+                    int size = imageList.size();
+                    imageArrayList.addAll(imageList);
+                    adapter.notifyItemRangeInserted(start, size);
+                },
+                throwable -> Log.e("LoadMore", throwable.toString())
+            );
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        realm.close();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
-
-    /* Post Adapter */
-
-    class FrescoControlListener extends BaseControllerListener<ImageInfo> {
-
-        private DownloadFrescoView draweeView;
-        private View trigger;
-
-        public FrescoControlListener(DownloadFrescoView draweeView, View trigger) {
-            this.draweeView = draweeView;
-            this.trigger = trigger;
-        }
-
-        @Override
-        public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
-            if (imageInfo == null) {
-                return;
-            }
-            // 加载完毕 可以下载
-            trigger.setVisibility(View.VISIBLE);
-            float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
-            draweeView.setAspectRatio(asp);
-            if (asp <= 0.4) {
-                draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
-                draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
-                draweeView.setAspectRatio(1.118f);
-            }
-
-        }
-
-        @Override
-        public void onFailure(String s, Throwable throwable) {
-//            Image picture = draweeView.getPicture();
-//            if (!picture.getLocalUrl().equals("")) { // 从本地加载图片失败 删除数据库缓存地址
-//                Realm realm = Realm.getInstance(getActivity());
-//                realm.beginTransaction();
-//                picture.setLocalUrl("");
-//                realm.commitTransaction();
-//                realm.close();
-//                /* 重新从网络加载图片 此时 localUrl已经被赋值为空 */
-//                draweeView.showImage(picture);
-//            } else { // 从网络加载图片失败 检查网络连接
-//
-//            }
-        }
-
-        @Override
-        public void onRelease(String s) {
-            Log.i("Release Image", s);
-        }
-    }
-
-
 }

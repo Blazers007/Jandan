@@ -3,10 +3,14 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent" android:background="#fafafa">
+    <include
+            android:id="@+id/toolbar_with_shadow"
+            layout="@layout/toolbar_with_shadow"/>
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/comment_swipe_refresh"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="?actionBarSize"
             >
         <android.support.v7.widget.RecyclerView
                 android:id="@+id/comment_recycler_view"

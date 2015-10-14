@@ -57,9 +57,9 @@ public class JandanFragmentHolder extends Fragment {
     void initJandanFragments() {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
-        fragments.add(new PicFragment());
+        fragments.add(PicFragment.newInstance("wuliao"));
         fragments.add(new JokeFragment());
-        fragments.add(new MeiziFragment());
+        fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(adapter = new FragmentAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         /* TODO: 根据屏幕尺寸设置TabMode */

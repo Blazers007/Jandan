@@ -18,10 +18,14 @@ import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.widget.ObservableWebView;
+import io.realm.Realm;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class NewsReadActivity extends BaseActivity {
+
+    /* Realm数据库 */
+    private Realm realm;
 
     @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -38,13 +42,18 @@ public class NewsReadActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm = Realm.getInstance(this);
+        long id = getIntent().getLongExtra("id", -1);
+        post = NewsPost.getPostById(realm, id);
+        if (post == null)
+            finish();
         setContentView(R.layout.activity_news_read);
         ButterKnife.bind(this);
+
         /* Init Toolbar */
         initToolbarByTypeWithShadow(toolbarWrapper, toolbar, ToolbarType.FINISH);
         setToolbarTitle(getIntent().getStringExtra("title"));
         setContentFloatingModeEnabled(true);
-
         /* Init Appbar listener */
         webView.setListener(((left, top, oldLeft, oldTop) -> {
             int distance = top - oldTop;
@@ -62,8 +71,6 @@ public class NewsReadActivity extends BaseActivity {
                 scrolledDistance += distance;
             }
         }));
-        /* Init Webview */
-        long id = getIntent().getLongExtra("id", -1);
         /* 更合理的提示与判断 */
         if (id == -1)
             finish();
@@ -73,17 +80,24 @@ public class NewsReadActivity extends BaseActivity {
         webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.getSettings().setLoadsImagesAutomatically(true);
 
-        Parser parser = Parser.getInstance();
-        parser.getNewsContentData(id)
+        //
+        if (post.getHtml() != null && !post.getHtml().equals("")) {
+
+        } else {
+            Parser parser = Parser.getInstance();
+            parser.getNewsContentData(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        data -> {
-                            post = data;
-                            webView.loadDataWithBaseURL("file:///android_asset", data.getHtml(), "text/html; charset=UTF-8", null, null);
-                        },
-                        throwable -> Log.e("err", throwable.toString())
+                    data -> {
+                        realm.beginTransaction();
+                        post.setHtml(data);
+                        realm.commitTransaction();
+                        webView.loadDataWithBaseURL("file:///android_asset", data, "text/html; charset=UTF-8", null, null);
+                    },
+                    throwable -> Log.e("err", throwable.toString())
                 );
+        }
 
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -123,5 +137,11 @@ public class NewsReadActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

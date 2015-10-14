@@ -1,37 +1,32 @@
 package com.blazers.jandan.ui.activity;
 
-import android.graphics.Color;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.FrameLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.ui.fragment.FavoriteFragment;
+import com.blazers.jandan.ui.fragment.SettingFragment;
 import com.blazers.jandan.ui.fragment.jandan.*;
-import com.blazers.jandan.util.Dppx;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends BaseActivity {
-
 
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.left_nav) NavigationView navigationView;
 
     private int nowSelectedNavId = R.id.nav_jandan;
+
+    public static final String JANDAN_TAG = "fragment_jandan";
+    public static final String FAV_TAG = "fragment_fav";
+    public static final String SETTING_TAG = "fragment_setting";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,16 +37,36 @@ public class MainActivity extends BaseActivity {
         /* 根据需要填充主界面所加载的Fragment */
         getSupportFragmentManager()
             .beginTransaction()
-                .add(R.id.fragment_wrapper, new JandanFragmentHolder())
+                .add(R.id.fragment_wrapper, new JandanFragmentHolder(), JANDAN_TAG)
             .commit();
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
-            if (menuItem.getItemId() == nowSelectedNavId)
-                return true;
-            switch (menuItem.getItemId()) {
-                case R.id.nav_jandan:
-
-                    break;
+            if (menuItem.getItemId() != nowSelectedNavId){
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_jandan: // Bottom Fragment
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                            if (fragment != getSupportFragmentManager().findFragmentByTag(JANDAN_TAG))
+                                transaction.remove(fragment);
+                        }
+                        nowSelectedNavId = R.id.nav_jandan;
+                        break;
+                    case R.id.nav_fav:
+                        transaction.setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out,
+                            R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
+                        transaction.add(R.id.fragment_wrapper, new FavoriteFragment(), FAV_TAG);
+                        transaction.addToBackStack(null);
+                        nowSelectedNavId = R.id.nav_fav;
+                        break;
+                    case R.id.nav_setting:
+                        transaction.setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out,
+                            R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
+                        transaction.add(R.id.fragment_wrapper, new SettingFragment(), FAV_TAG);
+                        transaction.addToBackStack(null);
+                        nowSelectedNavId = R.id.nav_setting;
+                        break;
+                }
+                transaction.commit();
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
@@ -74,6 +89,10 @@ public class MainActivity extends BaseActivity {
             .add(R.id.fragment_wrapper, JandanCommentFragment.NewInstance(id))
             .addToBackStack(null)
             .commit();
+    }
+
+    public void popupFragment() {
+        getSupportFragmentManager().popBackStack();
     }
 
 

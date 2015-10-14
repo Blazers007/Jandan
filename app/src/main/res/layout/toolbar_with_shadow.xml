@@ -6,17 +6,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:paddingRight="16dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorPrimary"
-            android:minHeight="?actionBarSize"
-            />
-    <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="@drawable/shadow_top_to_bottom"
-            />
+        <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:paddingRight="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?colorPrimary"
+                android:minHeight="?actionBarSize"
+                />
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@drawable/shadow_top_to_bottom"
+                />
 </LinearLayout>

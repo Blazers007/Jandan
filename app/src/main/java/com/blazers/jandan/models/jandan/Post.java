@@ -4,6 +4,7 @@ import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 import java.util.ArrayList;
@@ -29,9 +30,11 @@ public class Post extends RealmObject {
     /* By Setter */
     private int image_size;          // 含有的图片数量
     private String type;                // 所属的类型 或joke 图片 或 妹子图
-    private RealmList<Image> images; // 包含的图片
     private long page;
     private int commentNumber;
+    private RealmList<Image> images; // 包含的图片
+    @Ignore
+    private List<Image> tempImages;
     /* Getter & Setter */
 
     public long getComment_ID() {
@@ -130,13 +133,17 @@ public class Post extends RealmObject {
         this.commentNumber = commentNumber;
     }
 
+    public List<Image> getTempImages() {
+        return tempImages;
+    }
+
+    public void setTempImages(List<Image> tempImages) {
+        this.tempImages = tempImages;
+    }
+
     /* APIs */
     public static List<Post> getImagePosts(Realm realm, long page, String type) {
-        RealmResults<Post> onePage =  realm.where(Post.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_ID", false);
-        if (onePage != null && onePage.size() > 0) {
-            return onePage.subList(0, onePage.size() > 20 ? 20 : onePage.size());
-        }
-        return null;
+        return realm.where(Post.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_ID", false);
     }
 
     public static List<Image> getAllImages(Realm realm, long page, String type) {
@@ -145,6 +152,15 @@ public class Post extends RealmObject {
         if (results != null){
             for (Post post : results)
                 imageList.addAll(post.getImages());
+        }
+        return imageList;
+    }
+
+    public static List<Image> getAllImages(List<Post> posts) {
+        List<Image> imageList = new ArrayList<>();
+        if (posts != null){
+            for (Post post : posts)
+                imageList.addAll(post.getTempImages()); // 数据库时异步保存的 所以此时可能还未NUL
         }
         return imageList;
     }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="read_setting"
+        android:title="阅读设置T"
+        android:summary="阅读设置S">
+        <CheckBoxPreference
+            android:key="show_meizi"
+            android:title="显示妹子图T"
+            android:summary="显示妹子图S"/>
+        <CheckBoxPreference
+                android:key="cb_filter"
+                android:title="@string/setting_auto_filter"
+                android:summary="@string/setting_auto_filter_describe"/>
+        <EditTextPreference
+                android:key="et_filter_dislike_more_than"
+                android:inputType="number"
+                android:title="XX数量大于"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:key="extra"
+            android:title="其他"
+            android:summary="关于">
+    </PreferenceCategory>
+</PreferenceScreen>

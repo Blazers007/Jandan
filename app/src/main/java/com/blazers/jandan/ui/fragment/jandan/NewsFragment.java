@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment.jandan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -15,18 +16,23 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.models.jandan.Post;
 import com.blazers.jandan.models.jandan.news.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import io.realm.Realm;
 import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Blazers on 2015/8/27.
@@ -34,6 +40,7 @@ import java.util.ArrayList;
 public class NewsFragment extends Fragment {
 
     public static final String TAG = NewsFragment.class.getSimpleName();
+    private Realm realm;
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) LoadMoreRecyclerView newsList;
@@ -43,6 +50,11 @@ public class NewsFragment extends Fragment {
     private ArrayList<NewsPost> mNewsPostArrayList = new ArrayList<>();
     private int mPage = 1;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        realm = Realm.getInstance(context);
+    }
 
     @Nullable
     @Override
@@ -58,36 +70,60 @@ public class NewsFragment extends Fragment {
         newsList.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
         newsList.addItemDecoration(RecyclerViewHelper.getDefaultVeriticalDivider(getActivity()));
         newsList.setItemAnimator(new SlideInLeftAnimator());
-        /* Loadmore */
-        newsList.setLoadMoreListener(() -> {
-            smoothProgressBar.setVisibility(View.VISIBLE);
-            mPage++;
-            getData();
-        });
-
-        /* Set Adapter */
         adapter = new NewsAdapter();
         newsList.setAdapter(adapter);
+        /* Loadmore */
+        newsList.setLoadMoreListener(this::loadMore);
         /* */
         swipeRefreshLayout.setColorSchemeColors(Color.parseColor("#FF9900"), Color.parseColor("#009900"), Color.parseColor("#000099"));
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            /* 发起加载 加载后从数据库加载 然后显示 然后隐藏 */
-            mPage = 1;
-            getData();
-        });
-        getData();
+        swipeRefreshLayout.setOnRefreshListener(this::refresh);
+        //
+        List<NewsPost> localNewsList = NewsPost.getAllPost(realm, 1);
+        mNewsPostArrayList.addAll(localNewsList);
+        adapter.notifyItemRangeInserted(0, localNewsList.size());
+        // 如果数据为空 或 时间大于30分钟 则更新
+        if (localNewsList.size() == 0
+            || TimeHelper.getThatTimeOffsetByNow(localNewsList.get(0).getDate()) > 30 * TimeHelper.ONE_MIN) {
+            refresh();
+        }
     }
 
-    private void getData() {
-        /* TODO: 首先加载上次最后看到的？还是上次缓存的最新的一页数据 */
+    void refresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        mPage = 1;
         Parser parser = Parser.getInstance();
         parser.getNewsData(mPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(data -> {
-                    mNewsPostArrayList.addAll(data);
-                    adapter.notifyDataSetChanged();
-                }, throwable -> throwable.printStackTrace());
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(data -> {
+                swipeRefreshLayout.setRefreshing(false);
+                // 写入数据库
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(data);
+                realm.commitTransaction();
+                // 更新UI
+                mNewsPostArrayList.addAll(data);
+                adapter.notifyDataSetChanged();
+            }, throwable -> throwable.printStackTrace());
+    }
+
+    void loadMore() {
+        smoothProgressBar.setVisibility(View.VISIBLE);
+        mPage++;
+        Parser parser = Parser.getInstance();
+        parser.getNewsData(mPage)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(data -> {
+                smoothProgressBar.setVisibility(View.GONE);
+                // 写入数据库
+                realm.beginTransaction();
+                realm.copyToRealmOrUpdate(data);
+                realm.commitTransaction();
+                // 更新UI
+                mNewsPostArrayList.addAll(data);
+                adapter.notifyDataSetChanged();
+            }, throwable -> throwable.printStackTrace());
     }
 
     class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder>{
@@ -142,5 +178,11 @@ public class NewsFragment extends Fragment {
                 );
             }
         }
+    }
+
+    @Override
+    public void onDetach() {
+        realm.close();
+        super.onDetach();
     }
 }

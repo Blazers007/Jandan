@@ -63,7 +63,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         holder.date.setText(image.getPost().getComment_date());
         holder.oo.setThumbText(image.getPost().getVote_positive());
         holder.xx.setThumbText(image.getPost().getVote_negative());
-//        holder.comment.setThumbText(String.format("%s", image.post.getImage_size()));
+        holder.comment.setThumbText(String.format("%s", image.getPost().getCommentNumber()));
 
         if (image.getLocalUrl() != null && !image.getLocalUrl().equals("")) {
             holder.draweeView.showImage(image.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
