@@ -6,6 +6,7 @@ import io.realm.RealmObject;
 import io.realm.RealmResults;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * JSON 转数据库持久化
  *
  */
+@RealmClass
 public class Post extends RealmObject {
 
     /* From JSON */

@@ -42,6 +42,8 @@ public class RecyclerViewPositionHelper {
      * there aren't any visible items.
      */
     public int findFirstVisibleItemPosition() {
+        if (layoutManager == null)
+            return NO_POSITION;
         final View child = findOneVisibleChild(0, layoutManager.getChildCount(), false, true);
         return child == null ? NO_POSITION : recyclerView.getChildAdapterPosition(child);
     }

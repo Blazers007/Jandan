@@ -16,6 +16,7 @@
         <item name="android:lineSpacingExtra">4dp</item>
         <item name="android:textColor">#444</item>
         <item name="android:textSize">14sp</item>
+        <item name="android:textIsSelectable">true</item>
     </style>
 
     <!--  设置页面的文本 Preference -->

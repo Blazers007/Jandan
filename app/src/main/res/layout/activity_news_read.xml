@@ -11,5 +11,5 @@
             />
     <include
             android:id="@+id/toolbar_with_shadow"
-            layout="@layout/toolbar_with_shadow"/>
+            layout="@layout/layout_toolbar_with_shadow"/>
 </RelativeLayout>

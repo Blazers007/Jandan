@@ -1,9 +1,13 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.blazers.jandan.R;
 import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.services.DownloadService;
 import io.realm.Realm;
 
 /**
@@ -49,6 +54,13 @@ public class RightDownloadingFragment extends Fragment {
 
     @OnClick(R.id.button)
     public void download() {
+        // 取消缓存PendingIntent
+        PendingIntent cancelIntent = PendingIntent.getService(getActivity(), 500, new Intent(getActivity(), DownloadService.class), PendingIntent.FLAG_ONE_SHOT);
+        //
+        Notification notification = new NotificationCompat.Builder(getActivity())
+            .setTicker("开始缓存")
+            .addAction(R.mipmap.ic_cancel_grey600_24dp, "取消缓存", cancelIntent)
+            .build();
         Parser.getInstance().offlineMeizi(1, 10);
     }
 

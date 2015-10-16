@@ -84,7 +84,7 @@ public class BaseActivity extends AppCompatActivity {
             uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
         }
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-        // handle toolbar
+        // handle layout_toolbar
         View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
         if (null != animate) {
             animate.animate()
@@ -104,7 +104,7 @@ public class BaseActivity extends AppCompatActivity {
             uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
         }
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
-        // handle toolbar
+        // handle layout_toolbar
         View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
         if (null != animate) {
             animate.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度

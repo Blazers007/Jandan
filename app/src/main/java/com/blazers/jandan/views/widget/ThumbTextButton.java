@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.widget.ImageButton;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.Dppx;
-import org.jsoup.helper.StringUtil;
 
 import java.util.ArrayList;
 
@@ -82,11 +81,9 @@ public class ThumbTextButton extends ImageButton {
     }
 
     public void addThumbText(int addition) {
-        if (StringUtil.isNumeric(textString)) {
-            textString = String.valueOf(Integer.parseInt(textString) + addition);
-            invalidate();
-            playAnimation(addition);
-        }
+        textString = String.valueOf(Integer.parseInt(textString) + addition);
+        invalidate();
+        playAnimation(addition);
     }
 
 

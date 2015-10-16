@@ -13,8 +13,9 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.FavoriteFragment;
+import com.blazers.jandan.ui.fragment.CommentFragment;
+import com.blazers.jandan.ui.fragment.ReadingFragment;
 import com.blazers.jandan.ui.fragment.SettingFragment;
-import com.blazers.jandan.ui.fragment.jandan.*;
 
 
 public class MainActivity extends BaseActivity {
@@ -23,6 +24,7 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.left_nav) NavigationView navigationView;
 
     private int nowSelectedNavId = R.id.nav_jandan;
+    private ReadingFragment defaultFragment;
 
     public static final String JANDAN_TAG = "fragment_jandan";
     public static final String FAV_TAG = "fragment_fav";
@@ -37,32 +39,37 @@ public class MainActivity extends BaseActivity {
         /* 根据需要填充主界面所加载的Fragment */
         getSupportFragmentManager()
             .beginTransaction()
-                .add(R.id.fragment_wrapper, new JandanFragmentHolder(), JANDAN_TAG)
+                .add(R.id.fragment_wrapper, defaultFragment = ReadingFragment.getInstance(), JANDAN_TAG)
             .commit();
 
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             if (menuItem.getItemId() != nowSelectedNavId){
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 switch (menuItem.getItemId()) {
-                    case R.id.nav_jandan: // Bottom Fragment
-                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                            if (fragment != getSupportFragmentManager().findFragmentByTag(JANDAN_TAG))
-                                transaction.remove(fragment);
-                        }
+                    case R.id.nav_jandan:
+                        for (Fragment fragment : getSupportFragmentManager().getFragments())
+                            transaction.hide(fragment);
+                        transaction.show(defaultFragment);
                         nowSelectedNavId = R.id.nav_jandan;
                         break;
                     case R.id.nav_fav:
-                        transaction.setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out,
-                            R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
-                        transaction.add(R.id.fragment_wrapper, new FavoriteFragment(), FAV_TAG);
-                        transaction.addToBackStack(null);
+                        if (getSupportFragmentManager().findFragmentByTag(FAV_TAG) == null) {
+                            transaction.add(R.id.fragment_wrapper, FavoriteFragment.getInstance(), FAV_TAG);
+                        } else {
+                            for (Fragment fragment : getSupportFragmentManager().getFragments())
+                                transaction.hide(fragment);
+                            transaction.show(FavoriteFragment.getInstance());
+                        }
                         nowSelectedNavId = R.id.nav_fav;
                         break;
                     case R.id.nav_setting:
-                        transaction.setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out,
-                            R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
-                        transaction.add(R.id.fragment_wrapper, new SettingFragment(), FAV_TAG);
-                        transaction.addToBackStack(null);
+                        if (getSupportFragmentManager().findFragmentByTag(SETTING_TAG) == null) {
+                            transaction.add(R.id.fragment_wrapper, SettingFragment.getInstance(), SETTING_TAG);
+                        } else {
+                            for (Fragment fragment : getSupportFragmentManager().getFragments())
+                                transaction.hide(fragment);
+                            transaction.show(SettingFragment.getInstance());
+                        }
                         nowSelectedNavId = R.id.nav_setting;
                         break;
                 }
@@ -86,12 +93,12 @@ public class MainActivity extends BaseActivity {
     public void pushInCommentFragment(long id) {
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out, R.anim.activity_slide_right_in, R.anim.activity_slide_right_out)
-            .add(R.id.fragment_wrapper, JandanCommentFragment.NewInstance(id))
+            .add(R.id.fragment_wrapper, CommentFragment.NewInstance(id))
             .addToBackStack(null)
             .commit();
     }
 
-    public void popupFragment() {
+    public void popupCommentFragment() {
         getSupportFragmentManager().popBackStack();
     }
 

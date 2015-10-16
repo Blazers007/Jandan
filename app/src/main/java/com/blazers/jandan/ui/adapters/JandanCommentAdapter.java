@@ -100,7 +100,7 @@ public class JandanCommentAdapter extends RecyclerView.Adapter<RecyclerView.View
                     holder.userHead.setImageURI(Uri.parse(post.author.avatar_url));
                 if (post.parents.size() > 0) {
                     holder.quoteView.setVisibility(View.VISIBLE);
-                    holder.quoteView.setUpQuoteLink(gson, comments, post.parents, 0);
+                    holder.quoteView.setUpQuoteLink(gson, comments, post.parents, post.parents.size()-1);
                 } else {
                     holder.quoteView.setVisibility(View.GONE);
                 }

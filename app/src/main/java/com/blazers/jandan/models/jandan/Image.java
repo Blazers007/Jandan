@@ -3,13 +3,16 @@ package com.blazers.jandan.models.jandan;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
 
 import java.util.List;
 
 /**
  * Created by Blazers on 2015/8/27.
  */
+@RealmClass
 public class Image extends RealmObject {
 
     @PrimaryKey

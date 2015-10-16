@@ -121,9 +121,10 @@ public class Parser {
                             Image image = new Image();
                             image.setId(Long.parseLong(post.getComment_ID() + (type.equals("wuliao") ? "0" : "1") + String.format("%02d", pi)));
                             image.setUrl(pics.getString(pi));
-                            image.setPost(post);
                             tempImages.add(image);
                         }
+                        post.setPage(page);
+                        post.setType(type);
                         post.setTempImages(tempImages);
                         postses.add(post);
                     }
@@ -218,6 +219,7 @@ public class Parser {
                 JSONArray comments = object.getJSONArray("comments");
                 for (int i = 0 ; i < comments.length() ; i ++) {
                     JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
+                    jokePost.setPage(page);
                     jokePostList.add(jokePost);
                 }
                 subscriber.onNext(jokePostList);

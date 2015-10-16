@@ -37,10 +37,10 @@ public class ImageViewerActivity extends BaseActivity {
         setContentView(R.layout.activity_image_viewer);
         ButterKnife.bind(this);
         /* Init Toolbar */
-//        initToolbarByType(toolbar, ToolbarType.FINISH);
+//        initToolbarByType(layout_toolbar, ToolbarType.FINISH);
 //        setToolbarTitle("Picture");
 //        setContentFloatingModeEnabled(true);
-//        hideNavigationBar(toolbar);
+//        hideNavigationBar(layout_toolbar);
         /* */
         ViewCompat.setTransitionName(zoomableDraweeView, TRANSIT_PIC);
 

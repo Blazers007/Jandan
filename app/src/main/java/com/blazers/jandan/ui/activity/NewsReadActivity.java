@@ -82,7 +82,7 @@ public class NewsReadActivity extends BaseActivity {
 
         //
         if (post.getHtml() != null && !post.getHtml().equals("")) {
-
+            webView.loadDataWithBaseURL("file:///android_asset", post.getHtml(), "text/html; charset=UTF-8", null, null);
         } else {
             Parser parser = Parser.getInstance();
             parser.getNewsContentData(id)

@@ -4,13 +4,12 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/quote_background"
         android:padding="8dp">
     <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/user_head"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginLeft="4dp"/>
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            />
     <TextView
             android:id="@+id/user_name"
             android:layout_width="wrap_content"
@@ -19,19 +18,25 @@
             tools:text="@Blazers"
             android:layout_alignTop="@+id/user_head"
             android:layout_toRightOf="@+id/user_head"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="8dp"
             />
-    <com.blazers.jandan.views.QuoteView
-            android:id="@+id/parent_quote"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_below="@id/user_head"
             android:layout_toRightOf="@id/user_head"
-            android:layout_marginTop="8dp" android:layout_marginLeft="8dp"/>
-    <TextView
-            android:id="@+id/message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/parent_quote"
-            android:layout_alignLeft="@+id/parent_quote" android:layout_marginTop="8dp"/>
+            android:layout_marginLeft="8dp"
+            >
+        <FrameLayout
+                android:id="@+id/parent_quote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"/>
+    </LinearLayout>
 </RelativeLayout>
