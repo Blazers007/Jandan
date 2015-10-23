@@ -1,9 +1,12 @@
 package com.blazers.jandan.network;
 
 import android.util.Log;
-import com.blazers.jandan.util.sdcard.SdcardHelper;
+import com.blazers.jandan.models.db.local.LocalImage;
+import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
+import com.blazers.jandan.util.SdcardHelper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import rx.Observable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -33,7 +36,8 @@ public class ImageDownloader {
         return INSTANCE;
     }
 
-    public String doDownloading(String url) {
+    public LocalImage doDownloadingImage(ImageRelateToPost imageRelateToPost) {
+        String url = imageRelateToPost.url;
         String type = url.substring(url.lastIndexOf(".")+1);
         Request request = new Request.Builder()
                 .url(url)
@@ -52,7 +56,11 @@ public class ImageDownloader {
             }
             inputStream.close();
             fos.close();
-            return file.getAbsolutePath();
+            // 直接获取图片宽高?
+            LocalImage localImage = new LocalImage();
+            localImage.setUrl(url);
+            localImage.setLocalUrl(file.getAbsolutePath());
+            return localImage;
         } catch (IOException e) {
             e.printStackTrace();
         }

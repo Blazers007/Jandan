@@ -6,8 +6,10 @@ import android.os.Environment;
 import com.facebook.cache.disk.DiskCacheConfig;
 import com.facebook.common.internal.Supplier;
 import com.facebook.common.util.ByteConstants;
+import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.io.File;
 
@@ -18,7 +20,7 @@ public class ImagePipelineConfigFactory {
     private static final String IMAGE_PIPELINE_CACHE_DIR = "imagepipeline_cache";
 
     private static ImagePipelineConfig sImagePipelineConfig;
-//    private static ImagePipelineConfig sOkHttpImagePipelineConfig;
+    private static ImagePipelineConfig sOkHttpImagePipelineConfig;
 
     private static final int MAX_HEAP_SIZE = (int) Runtime.getRuntime().maxMemory();
 
@@ -40,16 +42,16 @@ public class ImagePipelineConfigFactory {
     /**
      * Creates config using OkHttp as network backed.
      */
-/*  public static ImagePipelineConfig getOkHttpImagePipelineConfig(Context context) {
-    if (sOkHttpImagePipelineConfig == null) {
-      OkHttpClient okHttpClient = new OkHttpClient();
-      ImagePipelineConfig.Builder configBuilder =
-        OkHttpImagePipelineConfigFactory.newBuilder(context, okHttpClient);
-      configureCaches(configBuilder, context);
-      sOkHttpImagePipelineConfig = configBuilder.build();
+    public static ImagePipelineConfig getOkHttpImagePipelineConfig(Context context) {
+        if (sOkHttpImagePipelineConfig == null) {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            ImagePipelineConfig.Builder configBuilder =
+                OkHttpImagePipelineConfigFactory.newBuilder(context, okHttpClient);
+            configureCaches(configBuilder, context);
+            sOkHttpImagePipelineConfig = configBuilder.build();
+        }
+        return sOkHttpImagePipelineConfig;
     }
-    return sOkHttpImagePipelineConfig;
-  }*/
 
     /**
      * Configures disk and memory cache not to exceed common limits

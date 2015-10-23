@@ -1,35 +1,22 @@
 package com.blazers.jandan.ui.fragment.sub;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.news.NewsPost;
+import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
-import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
 import com.facebook.drawee.view.SimpleDraweeView;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import io.realm.Realm;
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -74,6 +61,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
         // 如果数据为空 或 时间大于30分钟 则更新
         if (localNewsList.size() == 0
             || TimeHelper.getThatTimeOffsetByNow(localNewsList.get(0).getDate()) > 30 * TimeHelper.ONE_MIN) {
+            swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }
     }

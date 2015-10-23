@@ -2,6 +2,7 @@ package com.blazers.jandan.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
 
 /**
  * Created by Blazers on 2015/10/12.
@@ -20,6 +22,9 @@ public class FavoriteFragment extends BaseFragment {
     private static FavoriteFragment INSTANCE;
 
     @Bind(R.id.toolbar) Toolbar toolbar;
+
+    /* For test */
+    @Bind(R.id.fav) LoadMoreRecyclerView loadMoreRecyclerView;
 
     public static FavoriteFragment getInstance() {
         if (null == INSTANCE) {
@@ -35,7 +40,12 @@ public class FavoriteFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
         ButterKnife.bind(this, root);
         initToolbarAndLeftDrawer(toolbar, "收藏");
+        initTest();
         return root;
+    }
+
+    void initTest() {
+        loadMoreRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
     }
 
 }

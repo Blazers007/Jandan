@@ -3,7 +3,6 @@ package com.blazers.jandan.util;
 import android.app.Activity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import com.blazers.jandan.util.divider.DividerItemDecoration;
 
 /**
  * Created by Blazers on 2015/9/7.

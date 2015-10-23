@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'checkstyle'
 
 android {
     compileSdkVersion 23
@@ -16,8 +17,9 @@ android {
         release {
             // 不显示Log
             buildConfigField "boolean", "LOG_DEBUG", "false"
-            minifyEnabled true
+            minifyEnabled false
             debuggable false
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,18 +41,23 @@ android {
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
 }
 
+checkstyle {
+    toolVersion '6.1.1'
+    showViolations true
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.0.1'
 //    compile 'com.android.support:preference-v7:23.0.1'
-//    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
     compile 'com.facebook.fresco:fresco:0.7.0+'
+    compile "com.facebook.fresco:imagepipeline-okhttp:0.7.0+"
     compile 'io.realm:realm-android:0.82.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.squareup.okhttp:okhttp:2.4.0'
-    compile 'io.reactivex:rxandroid:1.0.1'
     compile 'io.reactivex:rxandroid:1.0.1'
 //    compile 'org.jsoup:jsoup:1.8.3' // 解析HTML用的
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'

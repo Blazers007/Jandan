@@ -1,22 +1,18 @@
 package com.blazers.jandan.ui.fragment;
 
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
-import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.services.DownloadService;
-import io.realm.Realm;
+import com.blazers.jandan.ui.activity.MainActivity;
+
 
 /**
  * Created by Blazers on 2015/9/2.
@@ -36,14 +32,6 @@ import io.realm.Realm;
 
 public class RightDownloadingFragment extends Fragment {
 
-    private Realm realm;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        realm = Realm.getInstance(context);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,19 +42,25 @@ public class RightDownloadingFragment extends Fragment {
 
     @OnClick(R.id.button)
     public void download() {
-        // 取消缓存PendingIntent
-        PendingIntent cancelIntent = PendingIntent.getService(getActivity(), 500, new Intent(getActivity(), DownloadService.class), PendingIntent.FLAG_ONE_SHOT);
-        //
-        Notification notification = new NotificationCompat.Builder(getActivity())
-            .setTicker("开始缓存")
-            .addAction(R.mipmap.ic_cancel_grey600_24dp, "取消缓存", cancelIntent)
-            .build();
-        Parser.getInstance().offlineMeizi(1, 10);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        realm.close();
+//        /* 首先把请求发送至Service由其负责调用Parser以及下载 */
+//        Notification notification = new NotificationCompat.Builder(getActivity())
+//            .setVisibility(Notification.VISIBILITY_PUBLIC)
+////            .setSmallIcon(R.mipmap.ic_launcher)
+////            .setFullScreenIntent(pendingIntent, false)  // 设置Heads up
+////            .setUsesChronometer(true)                   // 设置Heads up
+////            .setContentTitle("这是标题")
+////            .setContentText("这是内容")
+////            .addAction(R.drawable.ic_launcher, "菜单1", peddingIntent1)
+//            .build();
+////        notificationManager.notify(1, notification);
+//        Parser.getInstance().offlineMeizi(1, 5);
+        IOfflineDownloadInterface binder = ((MainActivity) getActivity()).getOfflineBinder();
+        if (binder != null) {
+            try {
+                binder.startDownloadPicture("meizi", 1, 3);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

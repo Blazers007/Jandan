@@ -6,24 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import com.blazers.jandan.models.jandan.Image;
-import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.MainActivity;
-import com.blazers.jandan.ui.adapters.JandanImageAdapter;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Blazers on 2015/9/11.
  */
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment {
 
     public String TAG = "BaseFragment";
+    private Toolbar toolbar;
+    private String title;
 
     public void setTAG(String TAG) {
         this.TAG = TAG;
@@ -100,7 +92,17 @@ public class BaseFragment extends Fragment {
      * 将该Fragment持有的Toolbar与主界面的Drawer关联
      * */
     protected void initToolbarAndLeftDrawer(Toolbar toolbar, String title) {
+        this.toolbar = toolbar;
+        this.title = title;
         ((MainActivity)getActivity()).initDrawerWithToolbar(toolbar);
         toolbar.setTitle(title);
+    }
+
+    /**
+     *
+     * */
+    public void reboundToolbar() {
+        if (null != toolbar && title != null)
+            initToolbarAndLeftDrawer(toolbar, title);
     }
 }

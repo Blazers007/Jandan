@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.comment.Comments;
+import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.adapters.JandanCommentAdapter;

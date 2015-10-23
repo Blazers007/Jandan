@@ -45,7 +45,7 @@
             android:gravity="center"
             android:layout_alignBottom="@+id/author"
             android:layout_marginBottom="1dp"/>
-    <com.blazers.jandan.views.widget.ThumbTextButton
+    <com.blazers.jandan.views.ThumbTextButton
             style="@style/ThumbButtonBase"
             android:id="@+id/btn_oo"
             android:layout_below="@+id/divider_upper"
@@ -53,7 +53,7 @@
             app:ttb_floatTextColor="@color/thumbUp"
             android:layout_marginLeft="8dp"
             />
-    <com.blazers.jandan.views.widget.ThumbTextButton
+    <com.blazers.jandan.views.ThumbTextButton
             style="@style/ThumbDownSpec"
             android:id="@+id/btn_xx"
             app:ttb_floatTextColor="@color/thumbDown"
@@ -62,7 +62,7 @@
             android:src="@drawable/selector_thumb_down"
             android:layout_marginLeft="8dp"
             />
-    <com.blazers.jandan.views.widget.ThumbTextButton
+    <com.blazers.jandan.views.ThumbTextButton
             style="@style/ThumbDownSpec"
             android:id="@+id/btn_comment"
             android:layout_toRightOf="@+id/btn_xx"

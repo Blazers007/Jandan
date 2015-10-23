@@ -3,7 +3,6 @@ package com.blazers.jandan.views;
 import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,8 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.comment.CommentPost;
-import com.blazers.jandan.models.jandan.comment.Comments;
+import com.blazers.jandan.models.pojo.comment.CommentPost;
+import com.blazers.jandan.models.pojo.comment.Comments;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 

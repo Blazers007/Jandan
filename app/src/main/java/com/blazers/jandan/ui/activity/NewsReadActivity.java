@@ -13,11 +13,12 @@ import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.news.NewsPost;
+import com.blazers.jandan.models.db.local.LocalArticleHtml;
+import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.ShareHelper;
-import com.blazers.jandan.views.widget.ObservableWebView;
+import com.blazers.jandan.views.ObservableWebView;
 import io.realm.Realm;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -79,10 +80,10 @@ public class NewsReadActivity extends BaseActivity {
         webView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
         webView.getSettings().setDefaultTextEncodingName("utf-8");
         webView.getSettings().setLoadsImagesAutomatically(true);
-
-        //
-        if (post.getHtml() != null && !post.getHtml().equals("")) {
-            webView.loadDataWithBaseURL("file:///android_asset", post.getHtml(), "text/html; charset=UTF-8", null, null);
+        // 查看有无本地缓存
+        LocalArticleHtml articleHtml = realm.where(LocalArticleHtml.class).equalTo("id", post.getId()).findFirst();
+        if (null != articleHtml && !articleHtml.getHtml().isEmpty()) {
+            webView.loadDataWithBaseURL("file:///android_asset", articleHtml.getHtml(), "text/html; charset=UTF-8", null, null);
         } else {
             Parser parser = Parser.getInstance();
             parser.getNewsContentData(id)
@@ -91,7 +92,10 @@ public class NewsReadActivity extends BaseActivity {
                 .subscribe(
                     data -> {
                         realm.beginTransaction();
-                        post.setHtml(data);
+                        LocalArticleHtml localArticleHtml = new LocalArticleHtml();
+                        localArticleHtml.setId(post.getId());
+                        localArticleHtml.setHtml(data);
+                        realm.copyToRealmOrUpdate(localArticleHtml);
                         realm.commitTransaction();
                         webView.loadDataWithBaseURL("file:///android_asset", data, "text/html; charset=UTF-8", null, null);
                     },

@@ -2,7 +2,6 @@ package com.blazers.jandan.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.Image;
+import com.blazers.jandan.models.db.local.LocalImage;
+import com.blazers.jandan.models.db.sync.ImagePost;
+import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.ui.activity.MainActivity;
-import com.blazers.jandan.views.widget.DownloadFrescoView;
-import com.blazers.jandan.views.widget.ThumbTextButton;
+import com.blazers.jandan.util.FileHelper;
+import com.blazers.jandan.views.DownloadFrescoView;
+import com.blazers.jandan.views.ThumbTextButton;
+import io.realm.Realm;
 
 import java.util.ArrayList;
 
@@ -28,13 +31,15 @@ import java.util.ArrayList;
 public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.JandanHolder> {
 
     private LayoutInflater inflater;
-    private ArrayList<Image> imageArrayList;
+    private ArrayList<ImageRelateToPost> imageArrayList;
     private Context context;
+    private Realm realm; // 持有该Recycler的线程持有
 
-    public JandanImageAdapter(Context context, ArrayList<Image> imagePostsArrayList) {
+    public JandanImageAdapter(Context context, Realm realm, ArrayList<ImageRelateToPost> imagePostsArrayList) {
         this.inflater = LayoutInflater.from(context);
         this.imageArrayList = imagePostsArrayList;
         this.context = context;
+        this.realm = realm;
     }
 
     @Override
@@ -50,29 +55,39 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
             holder.draweeView.getController().onDetach();
         if (holder.draweeView.getTopLevelDrawable() != null)
             holder.draweeView.getTopLevelDrawable().setCallback(null);
-        Log.i("Recycled Pos ->", holder.date.getText().toString());
     }
 
     @Override
     public void onBindViewHolder(JandanHolder holder, int position) {
         /* Get data */
-        Image image = imageArrayList.get(position);
-        String comment = image.getPost().getText_content();
+        ImageRelateToPost image = imageArrayList.get(position);
+        ImagePost post = image.holder;
         /* Set data */
-        holder.author.setText(String.format("@+%s", image.getPost().getComment_author()));
-        holder.date.setText(image.getPost().getComment_date());
-        holder.oo.setThumbText(image.getPost().getVote_positive());
-        holder.xx.setThumbText(image.getPost().getVote_negative());
-        holder.comment.setThumbText(String.format("%s", image.getPost().getCommentNumber()));
-
-        if (image.getLocalUrl() != null && !image.getLocalUrl().equals("")) {
-            holder.draweeView.showImage(image.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
+        holder.author.setText(String.format("@+%s", post.getComment_author()));
+        holder.date.setText(post.getComment_date());
+        holder.oo.setThumbText(post.getVote_positive());
+        holder.xx.setThumbText(post.getVote_negative());
+        holder.comment.setThumbText(String.format("%s", post.getCommentNumber()));
+        // 填入评论文字
+        String comment = post.getText_content();
+        if (comment.trim().equals(""))
+            holder.text.setVisibility(View.GONE);
+        else {
+            holder.text.setVisibility(View.VISIBLE);
+            holder.text.setText(comment.trim());
+        }
+        // 加载图片 首先判断本地是否有
+        LocalImage localImage = realm.where(LocalImage.class).equalTo("url", image.url).findFirst();
+        if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
+            holder.draweeView.showImage("file://" + localImage.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
+            holder.save.setVisibility(View.VISIBLE);
             holder.save.setImageResource(R.mipmap.ic_publish_16dp);
         } else {
-            holder.draweeView.showImage(image.getUrl(), holder.save);
+            holder.draweeView.showImage(image.url, holder.save);
+            holder.save.setVisibility(View.INVISIBLE);
             holder.save.setImageResource(R.drawable.selector_download);
         }
-
+        // 根据尺寸显示图片信息
         holder.draweeView.setImageInfoListener((width, height) -> {
             if (width > 2048 || height > 2048) {
                 holder.hint.setText("长图片 喵喵 ~");
@@ -80,14 +95,6 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
             } else
                 holder.hint.setVisibility(View.GONE);
         });
-
-        if (comment.trim().equals(""))
-            holder.text.setVisibility(View.GONE);
-        else {
-            holder.text.setVisibility(View.VISIBLE);
-            holder.text.setText(comment.trim());
-        }
-        Log.i("Bind Pos ->", position+"");
     }
 
     @Override
@@ -95,7 +102,7 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         return imageArrayList.size();
     }
 
-    class JandanHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class JandanHolder extends RecyclerView.ViewHolder {
 
         @Bind(R.id.content) DownloadFrescoView draweeView;
         @Bind(R.id.author) TextView author;
@@ -105,22 +112,25 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         @Bind(R.id.btn_share) ImageButton share;
         @Bind(R.id.btn_oo) ThumbTextButton oo;
         @Bind(R.id.btn_xx) ThumbTextButton xx;
-        @Bind(R.id.btn_comment) ThumbTextButton comment;
         @Bind(R.id.hint) TextView hint;
+        @Bind(R.id.btn_comment) ThumbTextButton comment;
 
         public JandanHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
-            //
-            comment.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            long id = imageArrayList.get(getAdapterPosition()).getPost().getComment_ID();
+        @OnClick(R.id.btn_comment)
+        public void showComment() {
+            long id = imageArrayList.get(getAdapterPosition()).holder.getComment_ID();
             ((MainActivity)context).pushInCommentFragment(id);
         }
+
+        @OnClick(R.id.btn_save)
+        public void doDownload() {
+
+        }
+
     }
 
     public interface ImageInfo {

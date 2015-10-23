@@ -11,7 +11,8 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.GreySpaceItemDecoration;
-import com.blazers.jandan.views.widget.LoadMoreRecyclerView;
+import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
+import com.blazers.jandan.views.loadmore.PullCallback;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
@@ -25,7 +26,10 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
     @Bind(R.id.recycler_list) public LoadMoreRecyclerView loadMoreRecyclerView;
     @Bind(R.id.load_more_progress) public SmoothProgressBar smoothProgressBar;
 
+    /* Vars */
     public Realm realm;
+    private boolean isLoading = false;
+    private boolean isLoadAllItems = false;
 
     @Override
     public void onAttach(Context context) {
@@ -50,7 +54,7 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
      * */
     public void trySetupSwipeRefreshLayout() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.setOnRefreshListener(this::refresh);
+            swipeRefreshLayout.setOnRefreshListener(this::invokeRefresh);
         }
     }
 
@@ -59,7 +63,24 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
             loadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
             loadMoreRecyclerView.addItemDecoration(new GreySpaceItemDecoration());
             loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
-            loadMoreRecyclerView.setLoadMoreListener(this::loadMore);
+            loadMoreRecyclerView.setPullCallback(new PullCallback() {
+                @Override
+                public void onLoadMore() {
+                    Log.i(TAG, "开始刷新");
+                    isLoading = true;
+                    invokeLoadMore();
+                }
+
+                @Override
+                public boolean isLoading() {
+                    return isLoading;
+                }
+
+                @Override
+                public boolean hasLoadedAllItems() {
+                    return isLoadAllItems;
+                }
+            });
             loadMoreRecyclerView.setAdapter(adapter);
         }
     }
@@ -68,18 +89,22 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
     /**
      * 下拉刷新
      * */
+    private void invokeRefresh() {
+        refresh();
+    }
+
     public abstract void refresh();
 
     public void refreshComplete() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 2000);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
             Log.i(TAG, "刷新成功");
         }
     }
 
     public void refreshError() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 2000);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
             Log.i(TAG, "刷新失败");
         }
     }
@@ -87,18 +112,28 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
     /**
      * 上拉加载更多
      * */
+    private void invokeLoadMore() {
+        smoothProgressBar.setVisibility(View.VISIBLE);
+        loadMore();
+    }
+
+    /**
+     * 将Rx逻辑部分整理至该模块中 便于精简代码
+     * */
     public abstract void loadMore();
 
     public void loadMoreComplete() {
         if (null != smoothProgressBar && null != loadMoreRecyclerView) {
-            loadMoreRecyclerView.endLoading();
+            smoothProgressBar.setVisibility(View.GONE);
+            isLoading = false;
             Log.i(TAG, "加载更多完毕");
         }
     }
 
     public void loadMoreError() {
         if (null != smoothProgressBar && null != loadMoreRecyclerView) {
-            loadMoreRecyclerView.endLoading();
+            smoothProgressBar.setVisibility(View.GONE);
+            isLoading = false;
             Log.i(TAG, "加载更多失败");
         }
     }

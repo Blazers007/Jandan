@@ -1,5 +1,8 @@
 package com.blazers.jandan.util;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import rx.functions.Func1;
 
 /**
@@ -75,5 +78,12 @@ public enum NetworkHelper {
 
     public static boolean isPhoneInOfflineMode() {
         return false;
+    }
+
+
+    public static boolean netWorkAvailable(Context context) {
+        ConnectivityManager nw = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = nw.getActiveNetworkInfo();
+        return networkInfo != null;
     }
 }

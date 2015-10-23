@@ -4,12 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.models.jandan.Image;
-import com.blazers.jandan.models.jandan.Post;
-import com.blazers.jandan.models.jandan.JokePost;
-import com.blazers.jandan.models.jandan.news.NewsPost;
-import com.blazers.jandan.models.jandan.comment.Comments;
-import com.blazers.jandan.services.DownloadService;
+import com.blazers.jandan.models.db.sync.ImagePost;
+import com.blazers.jandan.models.db.sync.JokePost;
+import com.blazers.jandan.models.db.sync.NewsPost;
+import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.util.NetworkHelper;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -18,6 +16,7 @@ import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import io.realm.Realm;
 import io.realm.RealmObject;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,49 +100,61 @@ public class Parser {
      *@param type 获取的类型 目前仅有 无聊图 妹子图
      *
      * */
-    public Observable<List<Post>> getPictureData(int page, String type) {
-        return Observable.create(subscriber -> {
+    public Observable<List<ImagePost>> getPictureData(Realm realm,int page, String type) {
+        if (!NetworkHelper.netWorkAvailable(context)) {
+            return Observable.create(subscriber -> {
+                // 若无网络连接 从数据库读取 Realm暂不支持对象的跨Thread访问
+                subscriber.onNext(ImagePost.getImagePosts(realm, page, type));
+                subscriber.onCompleted();
+            }).observeOn(AndroidSchedulers.mainThread());
+        } else {
+            return Observable.create(subscriber -> {
+                // 否则请求网络
                 try {
                     String json = simpleHttpRequest(URL.getJandanAPIByPageAndType(page, type));
-                    List<Post> postses = new ArrayList<>();
+                    List<ImagePost> postses = new ArrayList<>();
                     JSONObject object = new JSONObject(json);
                     JSONArray comments = object.getJSONArray("comments");
                     String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                     for (int i = 0 ; i < comments.length() ; i ++) {
-                    /* Post */
+                    /* ImagePost */
                         JSONObject comment = comments.getJSONObject(i);
-                        Post post = gson.fromJson(comment.toString(), Post.class);
+                        ImagePost post = gson.fromJson(comment.toString(), ImagePost.class);
                         commentInfoUrl += ("comment-" + post.getComment_ID() + ",");
                     /* Image */
+                        StringBuilder sb = new StringBuilder();
                         JSONArray pics = comment.getJSONArray("pics");
-                        List<Image> tempImages = new ArrayList<>();
                         for (int pi = 0 ; pi < pics.length() ; pi ++) {
-                            Image image = new Image();
-                            image.setId(Long.parseLong(post.getComment_ID() + (type.equals("wuliao") ? "0" : "1") + String.format("%02d", pi)));
-                            image.setUrl(pics.getString(pi));
-                            tempImages.add(image);
+                            sb.append(pics.getString(pi));
+                            if (pi != pics.length() - 1)
+                                sb.append(",");
                         }
                         post.setPage(page);
                         post.setType(type);
-                        post.setTempImages(tempImages);
+                        post.setPicsArray(sb.toString());
                         postses.add(post);
                     }
                     /* 请求评论数量 */
                     String commentInfo = simpleHttpRequest(commentInfoUrl);
                     JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
-                    for (Post post : postses) {
+                    for (ImagePost post : postses) {
                         String key = "comment-" + post.getComment_ID();
                         if (commentJSON.has(key)) {
                             int commentNumber = commentJSON.getJSONObject(key).getInt("comments");
                             post.setCommentNumber(commentNumber);
                         }
                     }
+                    // 写入数据库
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(postses);
+                    realm.commitTransaction();
                     subscriber.onNext(postses);
                 } catch (IOException | JSONException e) {
                     subscriber.onError(e);
                 }
-            subscriber.onCompleted();
-        });
+                subscriber.onCompleted();
+            });
+        }
     }
 
 
@@ -246,53 +257,4 @@ public class Parser {
             subscriber.onCompleted();
         });
     }
-
-    /**
-     * 离线下载的API <测试中>
-     * */
-    public void offlineNews() {
-
-    }
-
-    public void offlinePics() {
-
-    }
-
-    private int offline = 0;
-    public void offlineMeizi(int start, int pages) {
-        /* 根据页码更新数据库 */
-        List<Observable<List<Post>>> requestList = new ArrayList<>();
-        for (int i = start ; i < pages; i ++) {
-            requestList.add(getPictureData(i, "meizi"));
-        }
-        Observable.from(requestList)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        this::download
-                        , throwable -> Log.e("DOWNLOAD", throwable.toString())
-                );
-
-    }
-
-    public void offlineJokes() {}
-
-    public void download(Observable<List<Post>> postes) {
-        postes
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(sub -> {
-                    for (Post post : sub) {
-                        for (Image image : post.getImages()) {
-                            Intent intent = new Intent(context, DownloadService.class);
-                            intent.putExtra("id", image.getId());
-                            intent.putExtra("url", image.getUrl());
-                            context.startService(intent);
-                        }
-                    }
-                }, throwable -> {
-                    Log.e("DOWNLOAD", throwable.toString());
-                });
-    }
-
 }

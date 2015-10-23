@@ -5,6 +5,7 @@
     <!-- Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:name=".JandanApp"
@@ -40,8 +41,7 @@
         </activity>
 
         <!-- Service -->
-        <service android:name=".services.NetworkService" />
-        <service android:name=".services.DownloadService"/>
+        <service android:name=".services.OfflineDownloadService"/>
     </application>
 
 </manifest>

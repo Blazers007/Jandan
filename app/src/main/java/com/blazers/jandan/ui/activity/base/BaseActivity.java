@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.activity.base;
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.blazers.jandan.util.Dppx;
 /**
  * Created by Blazers on 2015/8/31.
  */
+@SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
 
     /* Static */

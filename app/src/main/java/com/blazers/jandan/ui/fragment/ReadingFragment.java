@@ -6,12 +6,15 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.sub.JokeFragment;
 import com.blazers.jandan.ui.fragment.sub.NewsFragment;
@@ -31,6 +34,7 @@ public class ReadingFragment extends BaseFragment {
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.tab_layout) TabLayout tabLayout;
     @Bind(R.id.container) ViewPager viewPager;
+    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 
 
     private ArrayList<Fragment> fragments;
@@ -51,8 +55,8 @@ public class ReadingFragment extends BaseFragment {
         ButterKnife.bind(this, root);
         initDownloadFragment();
         initJandanFragments();
-        setHasOptionsMenu(true);
         initToolbarAndLeftDrawer(toolbar, "煎蛋");
+        setHasOptionsMenu(true);
         return root;
     }
 
@@ -107,6 +111,11 @@ public class ReadingFragment extends BaseFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case R.id.offline:
+                drawerLayout.openDrawer(GravityCompat.END);
+                break;
+        }
+        return true;
     }
 }

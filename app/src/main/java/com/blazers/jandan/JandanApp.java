@@ -14,13 +14,12 @@ public class JandanApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // 初始化CrashHandler
         CrashHandler.getInstance().init(this);
-        Fresco.initialize(this, ImagePipelineConfigFactory.getImagePipelineConfig(this));
+        // 初始化Fresco
+        Fresco.initialize(this, ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
+        // 初始化OKHTTP解析
         Parser.init(this);
-
-//        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-//        .build();
-//        ImageLoader.getInstance().init(config);
     }
 
 }

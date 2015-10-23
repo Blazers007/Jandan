@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.jandan.JokePost;
+import com.blazers.jandan.models.db.sync.JokePost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.views.widget.ThumbTextButton;
+import com.blazers.jandan.views.ThumbTextButton;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -58,6 +58,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
         // 如果数据为空 或 时间大于30分钟 则更新
         if (localImageList.size() == 0
             || TimeHelper.getThatTimeOffsetByNow(localImageList.get(0).getComment_date()) > 30 * TimeHelper.ONE_MIN) {
+            swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }
     }

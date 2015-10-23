@@ -4,4 +4,10 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <include layout="@layout/layout_toolbar"/>
+    <!-- RecyclerView -->
+    <com.blazers.jandan.views.loadmore.LoadMoreRecyclerView
+            android:id="@+id/fav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 </LinearLayout>

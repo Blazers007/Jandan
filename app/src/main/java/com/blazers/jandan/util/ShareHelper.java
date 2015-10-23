@@ -2,9 +2,7 @@ package com.blazers.jandan.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import com.blazers.jandan.R;
-import com.blazers.jandan.util.sdcard.ResourceHelper;
 
 /**
  * Created by Blazers on 2015/9/14.
