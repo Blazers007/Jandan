@@ -70,40 +70,40 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
     public void refresh() {
         mPage = 1;
         Parser parser = Parser.getInstance();
-        parser.getNewsData(mPage)
-            .subscribeOn(Schedulers.io())
+        parser.getNewsData(realm, mPage)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(data -> {
-                refreshComplete();
-                // 写入数据库
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(data);
-                realm.commitTransaction();
-                // 更新UI
-                mNewsPostArrayList.addAll(data);
+                .doOnNext(list -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(list);
+                    realm.commitTransaction();
+                })
+                .subscribe(data -> {
+                    refreshComplete();
+                    // 更新UI
+                    mNewsPostArrayList.addAll(data);
                 adapter.notifyDataSetChanged();
             }, throwable -> {
                 refreshComplete();
                 Log.e("News", throwable.toString());
-            });
+                });
     }
 
     @Override
     public void loadMore() {
         mPage++;
         Parser parser = Parser.getInstance();
-        parser.getNewsData(mPage)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(data -> {
-                loadMoreComplete();
-                // 写入数据库
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(data);
-                realm.commitTransaction();
-                // 更新UI
-                mNewsPostArrayList.addAll(data);
-                adapter.notifyDataSetChanged();
+        parser.getNewsData(realm, mPage)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(list -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(list);
+                    realm.commitTransaction();
+                })
+                .subscribe(data -> {
+                            loadMoreComplete();
+                            // 更新UI
+                            mNewsPostArrayList.addAll(data);
+                            adapter.notifyDataSetChanged();
             }, throwable -> {
                     loadMoreError();
                     Log.e("News LoadMore", throwable.toString());

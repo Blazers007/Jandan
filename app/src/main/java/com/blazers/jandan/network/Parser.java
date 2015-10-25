@@ -1,7 +1,6 @@
 package com.blazers.jandan.network;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
 import com.blazers.jandan.models.db.sync.ImagePost;
@@ -22,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import rx.Observable;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -81,12 +81,12 @@ public class Parser {
 
     /**
      * 根据URL采用OkHttp访问网络并返回字符串数据
-     * */
+     */
     private String simpleHttpRequest(String url) throws IOException {
         Log.i("[Connecting]", url);
         Request request = new Request.Builder()
-            .url(url)
-            .build();
+                .url(url)
+                .build();
         Response response = client.newCall(request).execute();
         String str = response.body().string();
 //        Log.i("[Response]", str);
@@ -94,37 +94,30 @@ public class Parser {
     }
 
     /**
-     *
-     *@param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
-     *
-     *@param type 获取的类型 目前仅有 无聊图 妹子图
-     *
-     * */
-    public Observable<List<ImagePost>> getPictureData(Realm realm,int page, String type) {
+     * @param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
+     * @param type 获取的类型 目前仅有 无聊图 妹子图
+     */
+    public Observable<List<ImagePost>> getPictureData(Realm realm, int page, String type) {
         if (!NetworkHelper.netWorkAvailable(context)) {
-            return Observable.create(subscriber -> {
-                // 若无网络连接 从数据库读取 Realm暂不支持对象的跨Thread访问
-                subscriber.onNext(ImagePost.getImagePosts(realm, page, type));
-                subscriber.onCompleted();
-            }).observeOn(AndroidSchedulers.mainThread());
+            return Observable.just(ImagePost.getImagePosts(realm, page, type)).subscribeOn(AndroidSchedulers.mainThread());
         } else {
-            return Observable.create(subscriber -> {
+            return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
                 // 否则请求网络
+                List<ImagePost> postses = new ArrayList<>();
                 try {
                     String json = simpleHttpRequest(URL.getJandanAPIByPageAndType(page, type));
-                    List<ImagePost> postses = new ArrayList<>();
                     JSONObject object = new JSONObject(json);
                     JSONArray comments = object.getJSONArray("comments");
                     String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
-                    for (int i = 0 ; i < comments.length() ; i ++) {
-                    /* ImagePost */
+                    for (int i = 0; i < comments.length(); i++) {
+                        /* ImagePost */
                         JSONObject comment = comments.getJSONObject(i);
                         ImagePost post = gson.fromJson(comment.toString(), ImagePost.class);
                         commentInfoUrl += ("comment-" + post.getComment_ID() + ",");
-                    /* Image */
+                        /* Image */
                         StringBuilder sb = new StringBuilder();
                         JSONArray pics = comment.getJSONArray("pics");
-                        for (int pi = 0 ; pi < pics.length() ; pi ++) {
+                        for (int pi = 0; pi < pics.length(); pi++) {
                             sb.append(pics.getString(pi));
                             if (pi != pics.length() - 1)
                                 sb.append(",");
@@ -144,32 +137,30 @@ public class Parser {
                             post.setCommentNumber(commentNumber);
                         }
                     }
-                    // 写入数据库
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(postses);
-                    realm.commitTransaction();
                     subscriber.onNext(postses);
                 } catch (IOException | JSONException e) {
                     subscriber.onError(e);
                 }
                 subscriber.onCompleted();
-            });
+            }).subscribeOn(Schedulers.io());
         }
     }
 
 
     /**
-     *@param page 读取新鲜事的页码
-     *
-     * */
-    public Observable<List<NewsPost>> getNewsData(int page) {
-        return Observable.create(subscriber -> {
+     * @param page 读取新鲜事的页码
+     */
+    public Observable<List<NewsPost>> getNewsData(Realm realm, int page) {
+        if (!NetworkHelper.netWorkAvailable(context)) {
+            return Observable.just(NewsPost.getAllPost(realm, page)).subscribeOn(AndroidSchedulers.mainThread());
+        } else {
+            return Observable.create((Subscriber<? super List<NewsPost>> subscriber) -> {
                 List<NewsPost> newsPostList = new ArrayList<>();
                 try {
                     String json = simpleHttpRequest(URL.getJandanNewsAtPage(page));
                     JSONObject object = new JSONObject(json);
                     JSONArray posts = object.getJSONArray("posts");
-                    for (int i = 0 ; i < posts.length() ; i ++) {
+                    for (int i = 0; i < posts.length(); i++) {
                         JSONObject post = posts.getJSONObject(i);
                         NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
                         newsPost.setPage(page);
@@ -183,14 +174,17 @@ public class Parser {
                 } catch (IOException | JSONException e) {
                     subscriber.onError(e);
                 }
-            subscriber.onCompleted();
-        });
+                subscriber.onCompleted();
+            }).subscribeOn(Schedulers.io());
+        }
     }
 
 
     /**
      * 根据文章的ID读取文章的信息
-     * */
+     * <p>
+     * 如果是离线模式则在Fragment中进行处理?
+     */
     public Observable<String> getNewsContentData(long id) {
         return Observable.create(subscriber -> {
             try {
@@ -216,29 +210,31 @@ public class Parser {
     }
 
 
-
-
     /**
      * 按照页码读取段子信息
-     * */
-    public Observable<List<JokePost>> getJokeData(int page) {
-        return Observable.create(subscriber -> {
-            List<JokePost> jokePostList = new ArrayList<>();
-            try {
-                String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
-                JSONObject object = new JSONObject(json);
-                JSONArray comments = object.getJSONArray("comments");
-                for (int i = 0 ; i < comments.length() ; i ++) {
-                    JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
-                    jokePost.setPage(page);
-                    jokePostList.add(jokePost);
+     */
+    public Observable<List<JokePost>> getJokeData(Realm realm, int page) {
+        if (!NetworkHelper.netWorkAvailable(context)) {
+            return Observable.just(JokePost.getAllPost(realm, page)).subscribeOn(AndroidSchedulers.mainThread());
+        } else {
+            return Observable.create((Subscriber<? super List<JokePost>> subscriber) -> {
+                List<JokePost> jokePostList = new ArrayList<>();
+                try {
+                    String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
+                    JSONObject object = new JSONObject(json);
+                    JSONArray comments = object.getJSONArray("comments");
+                    for (int i = 0; i < comments.length(); i++) {
+                        JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
+                        jokePost.setPage(page);
+                        jokePostList.add(jokePost);
+                    }
+                    subscriber.onNext(jokePostList);
+                } catch (IOException | JSONException e) {
+                    subscriber.onError(e);
                 }
-                subscriber.onNext(jokePostList);
-            } catch (IOException | JSONException e) {
-                subscriber.onError(e);
-            }
-            subscriber.onCompleted();
-        });
+                subscriber.onCompleted();
+            }).subscribeOn(Schedulers.io());
+        }
     }
 
 

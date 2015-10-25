@@ -42,6 +42,11 @@ public class OfflineDownloadService extends Service {
                     threadRealm = Realm.getInstance(OfflineDownloadService.this);
                     return Parser.getInstance().getPictureData(threadRealm, page, type);
                 }) // 获取该页码的数据
+                    .doOnNext(list -> {
+                        realm.beginTransaction();
+                        realm.copyToRealmOrUpdate(list);
+                        realm.commitTransaction();
+                    })
                 .map(ImagePost::getAllImageFromList)                              // 解析出图片信息
                 .flatMap(Observable::from)
                 .map(ImageDownloader.getInstance()::doDownloadingImage)

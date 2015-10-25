@@ -68,21 +68,24 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
     @Override
     public void refresh() {
-        Parser.getInstance().getPictureData(realm, page = 1, type)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                list -> {
-                    refreshComplete();
-                    // 处理数据
-                    imageArrayList.clear();
-                    adapter.notifyDataSetChanged();
-                    // 取出图片
-                    List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImagesFromDB(realm, page, type);
-                    int size  = imageRelateToPostList.size();
-                    imageArrayList.addAll(imageRelateToPostList);
-                    adapter.notifyItemRangeInserted(0, size);
-
+        Parser.getInstance().getPictureData(realm, page = 1, type) // 是IO线程还是Main县城由该方法确定
+            .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
+                .doOnNext(list -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(list);
+                    realm.commitTransaction();
+                })
+                .subscribe(
+                        list -> {
+                            refreshComplete();
+                            // 处理数据
+                            imageArrayList.clear();
+                            adapter.notifyDataSetChanged();
+                            // 取出图片
+                            List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                            int size = imageRelateToPostList.size();
+                            imageArrayList.addAll(imageRelateToPostList);
+                            adapter.notifyItemRangeInserted(0, size);
                 },
                 throwable -> {
                     refreshError();
@@ -94,24 +97,24 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
     @Override
     public void loadMore() {
         Parser.getInstance().getPictureData(realm, ++page, type)
-            .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                list -> {
-                    loadMoreComplete();
-                    // 写入数据库
+                .doOnNext(list -> {
                     realm.beginTransaction();
                     realm.copyToRealmOrUpdate(list);
                     realm.commitTransaction();
-                    // 取出图片
-                    List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImagesFromDB(realm, page, type);
-                    int start = imageArrayList.size();
-                    int size = imageRelateToPostList.size();
-                    imageArrayList.addAll(imageRelateToPostList);
-                    adapter.notifyItemRangeInserted(start, size);
-                },
-                throwable -> {
-                    loadMoreError();
+                })
+                .subscribe(
+                        list -> {
+                            loadMoreComplete();
+                            // 取出图片
+                            List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                            int start = imageArrayList.size();
+                            int size = imageRelateToPostList.size();
+                            imageArrayList.addAll(imageRelateToPostList);
+                            adapter.notifyItemRangeInserted(start, size);
+                        },
+                        throwable -> {
+                            loadMoreError();
                     Log.e("LoadMore", throwable.toString());
                 }
             );

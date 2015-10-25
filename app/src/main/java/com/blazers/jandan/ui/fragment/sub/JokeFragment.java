@@ -67,26 +67,26 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
     public void refresh() {
         mPage = 1;
         Parser parser = Parser.getInstance();
-        parser.getJokeData(mPage)
-            .subscribeOn(Schedulers.io())
+        parser.getJokeData(realm, mPage)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(data -> {
-                refreshComplete();
-                //
-                mJokePostArrayList.clear();
-                adapter.notifyDataSetChanged();
-                // 写入数据库
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(data);
-                realm.commitTransaction();
-                // 插入数据
-                int size = data.size();
-                mJokePostArrayList.addAll(data);
-                adapter.notifyItemRangeInserted(0 ,size);
-            }, throwable -> {
-                refreshError();
-                Log.e("Joke", throwable.toString());
-            });
+                .doOnNext(list -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(list);
+                    realm.commitTransaction();
+                })
+                .subscribe(data -> {
+                    refreshComplete();
+                    //
+                    mJokePostArrayList.clear();
+                    adapter.notifyDataSetChanged();
+                    // 插入数据
+                    int size = data.size();
+                    mJokePostArrayList.addAll(data);
+                    adapter.notifyItemRangeInserted(0, size);
+                }, throwable -> {
+                    refreshError();
+                    Log.e("Joke", throwable.toString());
+                });
     }
 
     @Override
@@ -98,20 +98,20 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
         smoothProgressBar.setVisibility(View.VISIBLE);
         mPage ++;
         Parser parser = Parser.getInstance();
-        parser.getJokeData(mPage)
-            .subscribeOn(Schedulers.io())
+        parser.getJokeData(realm, mPage)
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(data -> {
-                loadMoreComplete();
-                // 写入数据库
-                realm.beginTransaction();
-                realm.copyToRealmOrUpdate(data);
-                realm.commitTransaction();
-                // 插入数据
-                int start = mJokePostArrayList.size();
-                int size = data.size();
-                mJokePostArrayList.addAll(data);
-                adapter.notifyItemRangeInserted(start, size);
+                .doOnNext(list -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(list);
+                    realm.commitTransaction();
+                })
+                .subscribe(data -> {
+                    loadMoreComplete();
+                    // 插入数据
+                    int start = mJokePostArrayList.size();
+                    int size = data.size();
+                    mJokePostArrayList.addAll(data);
+                    adapter.notifyItemRangeInserted(start, size);
             }, throwable -> {
                 loadMoreError();
                 Log.e("Joke", throwable.toString());
