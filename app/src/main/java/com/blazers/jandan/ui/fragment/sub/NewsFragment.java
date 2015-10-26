@@ -10,11 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
+import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.facebook.drawee.view.SimpleDraweeView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -69,46 +72,68 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
     @Override
     public void refresh() {
         mPage = 1;
-        Parser parser = Parser.getInstance();
-        parser.getNewsData(realm, mPage)
-            .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
-                .subscribe(data -> {
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            Parser parser = Parser.getInstance();
+            parser.getNewsData(mPage)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .subscribe(list -> {
                     refreshComplete();
                     // 更新UI
-                    mNewsPostArrayList.addAll(data);
-                adapter.notifyDataSetChanged();
-            }, throwable -> {
-                refreshComplete();
-                Log.e("News", throwable.toString());
+                    mNewsPostArrayList.clear();
+                    adapter.notifyDataSetChanged();
+                    //
+                    mNewsPostArrayList.addAll(list);
+                    adapter.notifyItemRangeInserted(0, list.size());
+                }, throwable -> {
+                    refreshComplete();
+                    Log.e("News", throwable.toString());
                 });
+        } else {
+            List<NewsPost> list = NewsPost.getAllPost(realm, mPage);
+            if (null != list && list.size() > 0) {
+                mNewsPostArrayList.clear();
+                //
+                mNewsPostArrayList.addAll(list);
+                adapter.notifyItemRangeInserted(0, list.size());
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            refreshComplete();
+        }
     }
 
     @Override
     public void loadMore() {
         mPage++;
-        Parser parser = Parser.getInstance();
-        parser.getNewsData(realm, mPage)
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            Parser parser = Parser.getInstance();
+            parser.getNewsData(mPage)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
                 .subscribe(data -> {
-                            loadMoreComplete();
-                            // 更新UI
-                            mNewsPostArrayList.addAll(data);
-                            adapter.notifyDataSetChanged();
-            }, throwable -> {
+                    loadMoreComplete();
+                    // 更新UI
+                    int start = mNewsPostArrayList.size();
+                    mNewsPostArrayList.addAll(data);
+//                    adapter.notifyItemRangeInserted(start, data.size());
+                    adapter.notifyDataSetChanged();
+                }, throwable -> {
                     loadMoreError();
                     Log.e("News LoadMore", throwable.toString());
-                }
-            );
+                });
+        } else {
+            List<NewsPost> list = NewsPost.getAllPost(realm, mPage);
+            if (null != list && list.size() > 0) {
+                int start = mNewsPostArrayList.size();
+                mNewsPostArrayList.addAll(list);
+//                adapter.notifyItemRangeInserted(start, list.size());
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            loadMoreComplete();
+        }
     }
 
     class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsHolder>{

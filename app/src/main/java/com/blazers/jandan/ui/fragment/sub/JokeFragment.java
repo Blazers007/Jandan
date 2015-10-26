@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.sync.JokePost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
+import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.ThumbTextButton;
 import rx.android.schedulers.AndroidSchedulers;
@@ -66,27 +69,37 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
     @Override
     public void refresh() {
         mPage = 1;
-        Parser parser = Parser.getInstance();
-        parser.getJokeData(realm, mPage)
-            .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
-                .subscribe(data -> {
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            Parser parser = Parser.getInstance();
+            parser.getJokeData(mPage)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .subscribe(list -> {
                     refreshComplete();
                     //
                     mJokePostArrayList.clear();
                     adapter.notifyDataSetChanged();
                     // 插入数据
-                    int size = data.size();
-                    mJokePostArrayList.addAll(data);
-                    adapter.notifyItemRangeInserted(0, size);
+                    mJokePostArrayList.addAll(list);
+                    adapter.notifyItemRangeInserted(0, list.size());
                 }, throwable -> {
                     refreshError();
                     Log.e("Joke", throwable.toString());
                 });
+        } else {
+            List<JokePost> list = JokePost.getAllPost(realm, mPage);
+            if (null != list && list.size() > 0) {
+                // 清空
+                mJokePostArrayList.clear();
+                adapter.notifyDataSetChanged();
+                // 添加
+                mJokePostArrayList.addAll(list);
+                adapter.notifyItemRangeInserted(0, list.size());
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            refreshComplete();
+        }
     }
 
     @Override
@@ -95,27 +108,38 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
             Log.i(TAG, "正在刷新中,所以无法加载更多");
             return;
         }
-        smoothProgressBar.setVisibility(View.VISIBLE);
         mPage ++;
-        Parser parser = Parser.getInstance();
-        parser.getJokeData(realm, mPage)
-            .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
-                .subscribe(data -> {
+        /* 判断网络状态 */
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            smoothProgressBar.setVisibility(View.VISIBLE);
+            Parser parser = Parser.getInstance();
+            parser.getJokeData(mPage)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .subscribe(list -> {
                     loadMoreComplete();
                     // 插入数据
                     int start = mJokePostArrayList.size();
-                    int size = data.size();
-                    mJokePostArrayList.addAll(data);
-                    adapter.notifyItemRangeInserted(start, size);
-            }, throwable -> {
-                loadMoreError();
-                Log.e("Joke", throwable.toString());
-            });
+                    mJokePostArrayList.addAll(list);
+//                    adapter.notifyItemRangeInserted(start, list.size());
+                    adapter.notifyDataSetChanged();
+                }, throwable -> {
+                    loadMoreError();
+                    Log.e("Joke", throwable.toString());
+                });
+        } else {
+            // 尝试从本地数据库读取
+            List<JokePost> list = JokePost.getAllPost(realm, mPage);
+            if (null != list && list.size() > 0) {
+                int start = mJokePostArrayList.size();
+                mJokePostArrayList.addAll(list);
+//                adapter.notifyItemRangeInserted(start, list.size());
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            loadMoreComplete();
+        }
     }
 
 

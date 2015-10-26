@@ -5,14 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.ui.adapters.JandanImageAdapter;
+import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.NetworkHelper;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
     private JandanImageAdapter adapter;
     private ArrayList<ImageRelateToPost> imageArrayList = new ArrayList<>();
-    private int page = 1;
+    private int mPage = 1;
     private String type;
 
     /* Constructor */
@@ -68,55 +70,72 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
     @Override
     public void refresh() {
-        Parser.getInstance().getPictureData(realm, page = 1, type) // 是IO线程还是Main县城由该方法确定
-            .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
-                .subscribe(
-                        list -> {
-                            refreshComplete();
-                            // 处理数据
-                            imageArrayList.clear();
-                            adapter.notifyDataSetChanged();
-                            // 取出图片
-                            List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
-                            int size = imageRelateToPostList.size();
-                            imageArrayList.addAll(imageRelateToPostList);
-                            adapter.notifyItemRangeInserted(0, size);
-                },
-                throwable -> {
+        mPage = 1;
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            Parser.getInstance().getPictureData(mPage, type) // 是IO线程还是Main县城由该方法确定
+                .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .subscribe(list -> {
+                    refreshComplete();
+                    // 处理数据
+                    imageArrayList.clear();
+                    adapter.notifyDataSetChanged();
+                    // 取出图片
+                    List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                    int size = imageRelateToPostList.size();
+                    imageArrayList.addAll(imageRelateToPostList);
+                    adapter.notifyItemRangeInserted(0, size);
+                }, throwable -> {
                     refreshError();
                     Log.e("Refresh", throwable.toString());
-                }
-            );
+                });
+        } else {
+            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
+            if (null != list && list.size() > 0) {
+                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                int size = imageRelateToPostList.size();
+                imageArrayList.addAll(imageRelateToPostList);
+                adapter.notifyItemRangeInserted(0, size);
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            refreshComplete();
+        }
     }
 
     @Override
     public void loadMore() {
-        Parser.getInstance().getPictureData(realm, ++page, type)
-            .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(list -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(list);
-                    realm.commitTransaction();
-                })
-                .subscribe(
-                        list -> {
-                            loadMoreComplete();
-                            // 取出图片
-                            List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
-                            int start = imageArrayList.size();
-                            int size = imageRelateToPostList.size();
-                            imageArrayList.addAll(imageRelateToPostList);
-                            adapter.notifyItemRangeInserted(start, size);
-                        },
-                        throwable -> {
-                            loadMoreError();
+        mPage++;
+        if (NetworkHelper.netWorkAvailable(getActivity())) {
+            Parser.getInstance().getPictureData(mPage, type)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .subscribe(list -> {
+                    loadMoreComplete();
+                    // 取出图片
+                    List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                    int start = imageArrayList.size();
+                    int size = imageRelateToPostList.size();
+                    imageArrayList.addAll(imageRelateToPostList);
+//                    adapter.notifyItemRangeInserted(start, size);
+                    adapter.notifyDataSetChanged();
+                }, throwable -> {
+                    loadMoreError();
                     Log.e("LoadMore", throwable.toString());
-                }
-            );
+                });
+        } else {
+            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
+            if (null != list && list.size() > 0) {
+                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                int start = imageArrayList.size();
+                int size = imageRelateToPostList.size();
+                imageArrayList.addAll(imageRelateToPostList);
+//                adapter.notifyItemRangeInserted(start, size);
+                adapter.notifyDataSetChanged();
+            } else {
+                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+            }
+            loadMoreComplete();
+        }
     }
 }

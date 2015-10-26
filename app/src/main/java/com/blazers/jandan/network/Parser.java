@@ -97,86 +97,78 @@ public class Parser {
      * @param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
      * @param type 获取的类型 目前仅有 无聊图 妹子图
      */
-    public Observable<List<ImagePost>> getPictureData(Realm realm, int page, String type) {
-        if (!NetworkHelper.netWorkAvailable(context)) {
-            return Observable.just(ImagePost.getImagePosts(realm, page, type)).subscribeOn(AndroidSchedulers.mainThread());
-        } else {
-            return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
-                // 否则请求网络
-                List<ImagePost> postses = new ArrayList<>();
-                try {
-                    String json = simpleHttpRequest(URL.getJandanAPIByPageAndType(page, type));
-                    JSONObject object = new JSONObject(json);
-                    JSONArray comments = object.getJSONArray("comments");
-                    String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
-                    for (int i = 0; i < comments.length(); i++) {
+    public Observable<List<ImagePost>> getPictureData(int page, String type) {
+        return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
+            // 否则请求网络
+            List<ImagePost> postses = new ArrayList<>();
+            try {
+                String json = simpleHttpRequest(URL.getJandanAPIByPageAndType(page, type));
+                JSONObject object = new JSONObject(json);
+                JSONArray comments = object.getJSONArray("comments");
+                String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
+                for (int i = 0; i < comments.length(); i++) {
                         /* ImagePost */
-                        JSONObject comment = comments.getJSONObject(i);
-                        ImagePost post = gson.fromJson(comment.toString(), ImagePost.class);
-                        commentInfoUrl += ("comment-" + post.getComment_ID() + ",");
+                    JSONObject comment = comments.getJSONObject(i);
+                    ImagePost post = gson.fromJson(comment.toString(), ImagePost.class);
+                    commentInfoUrl += ("comment-" + post.getComment_ID() + ",");
                         /* Image */
-                        StringBuilder sb = new StringBuilder();
-                        JSONArray pics = comment.getJSONArray("pics");
-                        for (int pi = 0; pi < pics.length(); pi++) {
-                            sb.append(pics.getString(pi));
-                            if (pi != pics.length() - 1)
-                                sb.append(",");
-                        }
-                        post.setPage(page);
-                        post.setType(type);
-                        post.setPicsArray(sb.toString());
-                        postses.add(post);
+                    StringBuilder sb = new StringBuilder();
+                    JSONArray pics = comment.getJSONArray("pics");
+                    for (int pi = 0; pi < pics.length(); pi++) {
+                        sb.append(pics.getString(pi));
+                        if (pi != pics.length() - 1)
+                            sb.append(",");
                     }
-                    /* 请求评论数量 */
-                    String commentInfo = simpleHttpRequest(commentInfoUrl);
-                    JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
-                    for (ImagePost post : postses) {
-                        String key = "comment-" + post.getComment_ID();
-                        if (commentJSON.has(key)) {
-                            int commentNumber = commentJSON.getJSONObject(key).getInt("comments");
-                            post.setCommentNumber(commentNumber);
-                        }
-                    }
-                    subscriber.onNext(postses);
-                } catch (IOException | JSONException e) {
-                    subscriber.onError(e);
+                    post.setPage(page);
+                    post.setType(type);
+                    post.setPicsArray(sb.toString());
+                    postses.add(post);
                 }
-                subscriber.onCompleted();
-            }).subscribeOn(Schedulers.io());
-        }
+                    /* 请求评论数量 */
+                String commentInfo = simpleHttpRequest(commentInfoUrl);
+                JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
+                for (ImagePost post : postses) {
+                    String key = "comment-" + post.getComment_ID();
+                    if (commentJSON.has(key)) {
+                        int commentNumber = commentJSON.getJSONObject(key).getInt("comments");
+                        post.setCommentNumber(commentNumber);
+                    }
+                }
+                subscriber.onNext(postses);
+            } catch (IOException | JSONException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        }).subscribeOn(Schedulers.io());
     }
 
 
     /**
      * @param page 读取新鲜事的页码
      */
-    public Observable<List<NewsPost>> getNewsData(Realm realm, int page) {
-        if (!NetworkHelper.netWorkAvailable(context)) {
-            return Observable.just(NewsPost.getAllPost(realm, page)).subscribeOn(AndroidSchedulers.mainThread());
-        } else {
-            return Observable.create((Subscriber<? super List<NewsPost>> subscriber) -> {
-                List<NewsPost> newsPostList = new ArrayList<>();
-                try {
-                    String json = simpleHttpRequest(URL.getJandanNewsAtPage(page));
-                    JSONObject object = new JSONObject(json);
-                    JSONArray posts = object.getJSONArray("posts");
-                    for (int i = 0; i < posts.length(); i++) {
-                        JSONObject post = posts.getJSONObject(i);
-                        NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
-                        newsPost.setPage(page);
-                        newsPost.setAuthorName(post.getJSONObject("author").getString("name"));
-                        newsPost.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));
-                        newsPost.setThumbUrl(post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0));
-                        newsPost.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
-                        newsPostList.add(newsPost);
-                    }
-                    subscriber.onNext(newsPostList);
-                } catch (IOException | JSONException e) {
-                    subscriber.onError(e);
+    public Observable<List<NewsPost>> getNewsData(int page) {
+        return Observable.create((Subscriber<? super List<NewsPost>> subscriber) -> {
+            List<NewsPost> newsPostList = new ArrayList<>();
+            try {
+                String json = simpleHttpRequest(URL.getJandanNewsAtPage(page));
+                JSONObject object = new JSONObject(json);
+                JSONArray posts = object.getJSONArray("posts");
+                for (int i = 0; i < posts.length(); i++) {
+                    JSONObject post = posts.getJSONObject(i);
+                    NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
+                    newsPost.setPage(page);
+                    newsPost.setAuthorName(post.getJSONObject("author").getString("name"));
+                    newsPost.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));
+                    newsPost.setThumbUrl(post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0));
+                    newsPost.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
+                    newsPostList.add(newsPost);
                 }
-                subscriber.onCompleted();
-            }).subscribeOn(Schedulers.io());
-        }
+                subscriber.onNext(newsPostList);
+            } catch (IOException | JSONException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        }).subscribeOn(Schedulers.io());
     }
 
 
@@ -213,28 +205,24 @@ public class Parser {
     /**
      * 按照页码读取段子信息
      */
-    public Observable<List<JokePost>> getJokeData(Realm realm, int page) {
-        if (!NetworkHelper.netWorkAvailable(context)) {
-            return Observable.just(JokePost.getAllPost(realm, page)).subscribeOn(AndroidSchedulers.mainThread());
-        } else {
-            return Observable.create((Subscriber<? super List<JokePost>> subscriber) -> {
-                List<JokePost> jokePostList = new ArrayList<>();
-                try {
-                    String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
-                    JSONObject object = new JSONObject(json);
-                    JSONArray comments = object.getJSONArray("comments");
-                    for (int i = 0; i < comments.length(); i++) {
-                        JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
-                        jokePost.setPage(page);
-                        jokePostList.add(jokePost);
-                    }
-                    subscriber.onNext(jokePostList);
-                } catch (IOException | JSONException e) {
-                    subscriber.onError(e);
+    public Observable<List<JokePost>> getJokeData(int page) {
+        return Observable.create((Subscriber<? super List<JokePost>> subscriber) -> {
+            List<JokePost> jokePostList = new ArrayList<>();
+            try {
+                String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
+                JSONObject object = new JSONObject(json);
+                JSONArray comments = object.getJSONArray("comments");
+                for (int i = 0; i < comments.length(); i++) {
+                    JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
+                    jokePost.setPage(page);
+                    jokePostList.add(jokePost);
                 }
-                subscriber.onCompleted();
-            }).subscribeOn(Schedulers.io());
-        }
+                subscriber.onNext(jokePostList);
+            } catch (IOException | JSONException e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        }).subscribeOn(Schedulers.io());
     }
 
 

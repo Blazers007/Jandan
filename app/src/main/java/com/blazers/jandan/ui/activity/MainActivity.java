@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         /* 绑定离线下载服务 */
+        startService(new Intent(this, OfflineDownloadService.class));
         bindService(new Intent(this, OfflineDownloadService.class), serviceConnection, BIND_AUTO_CREATE);
         /* 根据需要填充主界面所加载的Fragment */
         getSupportFragmentManager()
