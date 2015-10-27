@@ -44,6 +44,7 @@ public class ReadingFragment extends BaseFragment {
         if (null == INSTANCE) {
             INSTANCE = new ReadingFragment();
             INSTANCE.setTAG(TAG);
+            INSTANCE.setNeedUmengStatic(false);
         }
         return INSTANCE;
     }
@@ -62,7 +63,7 @@ public class ReadingFragment extends BaseFragment {
 
 
     void initDownloadFragment() {
-
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 
     void initJandanFragments() {
@@ -114,8 +115,14 @@ public class ReadingFragment extends BaseFragment {
         switch (item.getItemId()) {
             case R.id.offline:
                 drawerLayout.openDrawer(GravityCompat.END);
+                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
                 break;
         }
         return true;
+    }
+
+    public void closeDrawer() {
+        drawerLayout.closeDrawer(GravityCompat.END);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 }

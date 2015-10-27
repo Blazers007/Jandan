@@ -24,6 +24,7 @@ import com.blazers.jandan.ui.fragment.CommentFragment;
 import com.blazers.jandan.ui.fragment.ReadingFragment;
 import com.blazers.jandan.ui.fragment.SettingFragment;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.umeng.analytics.MobclickAgent;
 
 
 public class MainActivity extends BaseActivity {
@@ -41,6 +42,7 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MobclickAgent.openActivityDurationTrack(false);
         ButterKnife.bind(this);
         /* 绑定离线下载服务 */
         startService(new Intent(this, OfflineDownloadService.class));
@@ -52,7 +54,7 @@ public class MainActivity extends BaseActivity {
             .commit();
         navigationView.setCheckedItem(R.id.nav_jandan);
         navigationView.setNavigationItemSelectedListener(menuItem -> {
-            if (menuItem.getItemId() != nowSelectedNavId){
+            if (menuItem.getItemId() != nowSelectedNavId) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 BaseFragment choosen = null;
                 switch (menuItem.getItemId()) {
@@ -92,6 +94,16 @@ public class MainActivity extends BaseActivity {
             return true;
         });
     }
+
+    /**
+     * Umeng统计
+     * */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
 
     /**
      * 将呈现的Fragment的Toolbar绑定到Drawer上去
@@ -149,6 +161,18 @@ public class MainActivity extends BaseActivity {
         return offlineBinder;
     }
 
+    /**
+     * Umeng统计
+     * */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
+    /**
+     * 释放
+     * */
     @Override
     protected void onDestroy() {
         super.onDestroy();

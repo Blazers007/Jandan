@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -78,22 +79,27 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         }
         // 加载图片 首先判断本地是否有
         LocalImage localImage = realm.where(LocalImage.class).equalTo("url", image.url).findFirst();
+        String url;
         if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
             holder.draweeView.showImage("file://" + localImage.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
             holder.save.setVisibility(View.VISIBLE);
             holder.save.setImageResource(R.mipmap.ic_publish_16dp);
+            url = localImage.getLocalUrl();
         } else {
             holder.draweeView.showImage(image.url, holder.save);
             holder.save.setVisibility(View.INVISIBLE);
             holder.save.setImageResource(R.drawable.selector_download);
+            url = image.url;
         }
         // 根据尺寸显示图片信息
+        holder.typeHint.setImageDrawable(null);
+        // 是否是GIF
+        if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
+            holder.typeHint.setImageResource(R.mipmap.ic_gif_corner_24dp);
         holder.draweeView.setImageInfoListener((width, height) -> {
             if (width > 2048 || height > 2048) {
-                holder.hint.setText("长图片 喵喵 ~");
-                holder.hint.setVisibility(View.VISIBLE);
-            } else
-                holder.hint.setVisibility(View.GONE);
+                holder.typeHint.setImageResource(R.mipmap.ic_more_corner_24dp);
+            }
         });
     }
 
@@ -112,8 +118,8 @@ public class JandanImageAdapter extends RecyclerView.Adapter<JandanImageAdapter.
         @Bind(R.id.btn_share) ImageButton share;
         @Bind(R.id.btn_oo) ThumbTextButton oo;
         @Bind(R.id.btn_xx) ThumbTextButton xx;
-        @Bind(R.id.hint) TextView hint;
         @Bind(R.id.btn_comment) ThumbTextButton comment;
+        @Bind(R.id.type_hint) ImageView typeHint;
 
         public JandanHolder(View itemView) {
             super(itemView);

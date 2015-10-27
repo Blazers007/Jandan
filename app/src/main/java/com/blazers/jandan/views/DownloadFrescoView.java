@@ -79,11 +79,6 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         DialogFragment fragment = new ImageViewerFragment();
         fragment.setArguments(args);
         fragment.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "tag");
-//        Intent intent = new Intent(getContext(), ImageViewerActivity.class);
-//        intent.putExtra("url", url);
-//        ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-//                (MainActivity)getContext(), this, ImageViewerActivity.TRANSIT_PIC);
-//        ActivityCompat.startActivity((MainActivity)getContext(), intent, optionsCompat.toBundle());
     }
 
     public void setImageInfoListener (JandanImageAdapter.ImageInfo listener) {

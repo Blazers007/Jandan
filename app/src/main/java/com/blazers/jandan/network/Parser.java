@@ -3,6 +3,7 @@ package com.blazers.jandan.network;
 import android.content.Context;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
+import com.blazers.jandan.models.db.local.LocalArticleHtml;
 import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.models.db.sync.JokePost;
 import com.blazers.jandan.models.db.sync.NewsPost;
@@ -177,7 +178,7 @@ public class Parser {
      * <p>
      * 如果是离线模式则在Fragment中进行处理?
      */
-    public Observable<String> getNewsContentData(long id) {
+    public Observable<LocalArticleHtml> getNewsContentData(long id) {
         return Observable.create(subscriber -> {
             try {
                 String json = simpleHttpRequest(URL.getJandanNewsContentById(id));
@@ -193,7 +194,11 @@ public class Parser {
                 sb.append("</head>");
                 sb.append(body);
                 sb.append("</body></html>");
-                subscriber.onNext(sb.toString());
+                //
+                LocalArticleHtml localArticleHtml = new LocalArticleHtml();
+                localArticleHtml.setId(id);
+                localArticleHtml.setHtml(sb.toString());
+                subscriber.onNext(localArticleHtml);
             } catch (JSONException | IOException e) {
                 subscriber.onError(e);
             }

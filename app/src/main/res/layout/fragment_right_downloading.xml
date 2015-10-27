@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:background="#fff"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        android:background="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
     <View
             android:id="@+id/background"
             android:background="?colorPrimary"
@@ -14,34 +17,46 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="无聊图"
-            android:id="@+id/textView3" android:textColor="#fff" android:layout_marginLeft="16dp"
+            android:id="@+id/textView3" android:textColor="#666" android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="17331"
-            android:id="@+id/textView4" android:textColor="#fff" android:layout_below="@+id/textView3"
+            android:id="@+id/textView4" android:textColor="#666" android:layout_below="@+id/textView3"
             android:layout_marginLeft="16dp" android:layout_marginTop="8dp"/>
+
+    <!-- 下载设置区域 -->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择离线板块"
+            android:id="@+id/title"
+            android:textColor="#555"
+            android:layout_marginLeft="12dp"
+            android:layout_below="@id/background"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:textSize="13sp"/>
+
     <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
-            android:id="@+id/imageView" android:src="@drawable/nav_jandan" android:layout_below="@+id/background"
-            android:layout_marginTop="8dp" android:layout_marginLeft="12dp"/>
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="16dp"
-            android:text="煎蛋"
-            android:id="@+id/textView2" android:textColor="#333"
-            android:layout_marginLeft="8dp" android:layout_toRightOf="@+id/imageView"
-            android:layout_alignTop="@+id/imageView" android:gravity="center"/>
+            android:id="@+id/imageView"
+            android:src="@drawable/nav_jandan"
+            android:layout_alignTop="@id/title"
+            android:layout_toRightOf="@id/title"
+            android:layout_marginLeft="12dp"/>
+
     <com.blazers.jandan.views.AutoLayoutLinearLayout
             android:id="@+id/cata"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView2"
-            android:layout_marginTop="8dp"
+            android:layout_below="@+id/title"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="12dp"
             >
         <com.blazers.jandan.views.SelectableTextView
                 android:layout_width="72dp"
@@ -49,36 +64,97 @@
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="新鲜事"
-                android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:layout_margin="8dp"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/border_grey"
+                />
         <com.blazers.jandan.views.SelectableTextView
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="无聊图"
-                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-                android:layout_margin="8dp"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/border_grey"
+                />
         <com.blazers.jandan.views.SelectableTextView
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="段子"
-                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-                android:layout_margin="8dp"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/border_grey"
+                />
         <com.blazers.jandan.views.SelectableTextView
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="妹子图"
-                android:layout_alignParentLeft="true" android:layout_alignParentTop="true"
-                android:layout_margin="8dp"/>
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/border_grey"
+                />
     </com.blazers.jandan.views.AutoLayoutLinearLayout>
-
+    <!-- 设置区域 -->
+    <TextView
+            android:id="@+id/filter_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cata"
+            android:textColor="#555"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="12dp"
+            android:text="过滤设置"
+            android:textSize="13sp"
+            />
+    <android.support.v7.widget.SwitchCompat
+            android:id="@+id/filter"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_below="@id/filter_title"
+            android:textSize="15sp"
+            android:text="沿用设置的过滤条件进行离线"
+            android:layout_marginBottom="8dp"
+            app:theme="@style/Color1SwitchStyle"
+            />
+    <TextView
+            android:id="@+id/page_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/filter"
+            android:textColor="#555"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="12dp"
+            android:text="离线页数"
+            android:textSize="13sp"
+            />
+    <com.blazers.jandan.views.InfiniteSeekBar
+            android:id="@+id/page_seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/page_title"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            />
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="离线"
-            android:id="@+id/button" android:layout_alignParentBottom="true"/>
+            android:text="开始离线"
+            android:id="@+id/button"
+            android:layout_alignParentBottom="true"
+            android:background="#3288ff"
+            android:textColor="#fff"
+            />
 </RelativeLayout>

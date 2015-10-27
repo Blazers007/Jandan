@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import com.blazers.jandan.ui.activity.MainActivity;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by Blazers on 2015/9/11.
@@ -17,8 +18,15 @@ public abstract class BaseFragment extends Fragment {
     private Toolbar toolbar;
     private String title;
 
+    /* Umeng */
+    private boolean needUmengStatic = true;
+
     public void setTAG(String TAG) {
         this.TAG = TAG;
+    }
+
+    public void setNeedUmengStatic(boolean need) {
+        needUmengStatic = need;
     }
 
     public BaseFragment() {
@@ -55,12 +63,18 @@ public abstract class BaseFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i(TAG, "OnResume");
+        if (needUmengStatic) {
+            MobclickAgent.onPageStart(TAG);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Log.i(TAG, "OnPause");
+        if (needUmengStatic) {
+            MobclickAgent.onPageEnd(TAG);
+        }
     }
 
     @Override

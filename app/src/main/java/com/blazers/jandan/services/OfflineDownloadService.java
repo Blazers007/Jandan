@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalArticleHtml;
 import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
@@ -52,7 +53,29 @@ public class OfflineDownloadService extends Service {
          * */
         @Override
         public void startDownloadNews(int fromPage, int pageSize) throws RemoteException {
-
+            Observable.range(fromPage, pageSize)
+                .flatMap(Parser.getInstance()::getNewsData)
+                .doOnNext(list -> DBHelper.saveToRealm(OfflineDownloadService.this, list))
+                .flatMap(Observable::from)
+                .map(newsPost -> {
+                    DBHelper.saveToRealm(OfflineDownloadService.this, ImageDownloader.getInstance().doSimpleDownload(newsPost.getThumbUrl()));
+                    return newsPost.getId();
+                })
+                .flatMap(Parser.getInstance()::getNewsContentData)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    localArticleHtml -> {
+                        DBHelper.saveToRealm(realm, localArticleHtml);
+                        Log.i("离线文章", "下载完毕1");
+                    },
+                    throwable -> {
+                        Log.e("Error", throwable.toString());
+                    },
+                    () -> {
+                        Log.e("离线文章", "全部下载完毕");
+                    }
+                );
         }
 
         /**
@@ -126,7 +149,21 @@ public class OfflineDownloadService extends Service {
          * */
         @Override
         public void startDownloadJokes(int fromPage, int pageSize) throws RemoteException {
-
+            Observable.range(fromPage, pageSize)
+                .flatMap(Parser.getInstance()::getJokeData)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    list -> {
+                        DBHelper.saveToRealm(OfflineDownloadService.this, list);
+                    },
+                    throwable -> {
+                        Log.e("Error Joke", throwable.toString());
+                    },
+                    () -> {
+                        Log.e("离线端子", "全部下载完毕");
+                    }
+                );
         }
     };
 

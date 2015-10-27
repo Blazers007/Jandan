@@ -17,6 +17,7 @@ import com.blazers.jandan.models.db.local.LocalArticleHtml;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.ObservableWebView;
 import io.realm.Realm;
@@ -90,14 +91,9 @@ public class NewsReadActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    data -> {
-                        realm.beginTransaction();
-                        LocalArticleHtml localArticleHtml = new LocalArticleHtml();
-                        localArticleHtml.setId(post.getId());
-                        localArticleHtml.setHtml(data);
-                        realm.copyToRealmOrUpdate(localArticleHtml);
-                        realm.commitTransaction();
-                        webView.loadDataWithBaseURL("file:///android_asset", data, "text/html; charset=UTF-8", null, null);
+                    localArticleHtml -> {
+                        DBHelper.saveToRealm(realm, localArticleHtml);
+                        webView.loadDataWithBaseURL("file:///android_asset", localArticleHtml.getHtml(), "text/html; charset=UTF-8", null, null);
                     },
                     throwable -> Log.e("err", throwable.toString())
                 );

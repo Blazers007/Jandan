@@ -22,11 +22,14 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.imagepipeline.image.ImageInfo;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by Blazers on 15/8/27.
  */
 public class ImageViewerFragment extends DialogFragment {
+
+    public static final String TAG = ImageViewerFragment.class.getSimpleName();
 
     @Bind(R.id.viewer) ZoomableDraweeView view;
     private Uri uri;
@@ -45,6 +48,7 @@ public class ImageViewerFragment extends DialogFragment {
         uri = Uri.parse(args.getString("url"));
     }
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class ImageViewerFragment extends DialogFragment {
                 .setUri(uri)
                 .setTapToRetryEnabled(true)
                 .setAutoPlayAnimations(true)
+                .setControllerListener(new FrescoControlListener())
                 .build();
         GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
                 .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
@@ -65,13 +70,20 @@ public class ImageViewerFragment extends DialogFragment {
         return root;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart(TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd(TAG);
+    }
+
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
-
-        private ZoomableDraweeView draweeView;
-
-        public FrescoControlListener(ZoomableDraweeView draweeView) {
-            this.draweeView = draweeView;
-        }
 
         @Override
         public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
@@ -84,8 +96,8 @@ public class ImageViewerFragment extends DialogFragment {
                 view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
             float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
             if (asp <= 0.4) {
-                draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
-                draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
+                view.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
+                view.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
             }
         }
 

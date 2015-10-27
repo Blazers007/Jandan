@@ -16,6 +16,7 @@ import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.adapters.JandanCommentAdapter;
+import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -23,7 +24,9 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Blazers on 2015/10/13.
  */
-public class CommentFragment extends Fragment {
+public class CommentFragment extends BaseFragment {
+
+    public static final String TAG = CommentFragment.class.getSimpleName();
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
@@ -33,6 +36,7 @@ public class CommentFragment extends Fragment {
         Bundle data = new Bundle();
         data.putLong("commentId", commentId);
         fragment.setArguments(data);
+        fragment.setTAG(TAG);
         return fragment;
     }
 

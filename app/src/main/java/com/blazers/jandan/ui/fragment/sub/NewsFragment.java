@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.FileHelper;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -153,10 +155,15 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
 
         @Override
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
-            NewsPost newsList = mNewsPostArrayList.get(i);
-            newsHolder.draweeView.setImageURI(Uri.parse(newsList.getThumbUrl()));
-            newsHolder.title.setText(newsList.getTitle());
-            newsHolder.content.setText(newsList.getAuthorName() + "  @ " + newsList.getDate());
+            NewsPost newsPost = mNewsPostArrayList.get(i);
+            LocalImage localImage = realm.where(LocalImage.class).equalTo("url", newsPost.getThumbUrl()).findFirst();
+            if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
+                newsHolder.draweeView.setImageURI(Uri.parse("file://" + localImage.getLocalUrl()));
+            } else {
+                newsHolder.draweeView.setImageURI(Uri.parse(newsPost.getThumbUrl()));
+            }
+            newsHolder.title.setText(newsPost.getTitle());
+            newsHolder.content.setText(String.format("%s   @   %s", newsPost.getAuthorName(), newsPost.getDate()));
         }
 
         @Override

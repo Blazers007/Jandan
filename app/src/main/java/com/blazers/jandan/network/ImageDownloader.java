@@ -38,10 +38,16 @@ public class ImageDownloader {
 
     public LocalImage doDownloadingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
-        String type = url.substring(url.lastIndexOf(".")+1);
+        return doSimpleDownload(url);
+    }
+
+    public LocalImage doSimpleDownload(String url) {
+        String type = url.substring(url.lastIndexOf(".") + 1);
+        if (type.isEmpty())
+            type = "cache";
         Request request = new Request.Builder()
-                .url(url)
-                .build();
+            .url(url)
+            .build();
         Log.i("Downloading", url);
         try {
             InputStream inputStream = client.newCall(request).execute().body().byteStream();
@@ -56,7 +62,6 @@ public class ImageDownloader {
             }
             inputStream.close();
             fos.close();
-            // 直接获取图片宽高?
             LocalImage localImage = new LocalImage();
             localImage.setUrl(url);
             localImage.setLocalUrl(file.getAbsolutePath());

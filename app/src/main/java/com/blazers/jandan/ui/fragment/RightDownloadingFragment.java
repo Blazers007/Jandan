@@ -42,22 +42,14 @@ public class RightDownloadingFragment extends Fragment {
 
     @OnClick(R.id.button)
     public void download() {
-//        /* 首先把请求发送至Service由其负责调用Parser以及下载 */
-//        Notification notification = new NotificationCompat.Builder(getActivity())
-//            .setVisibility(Notification.VISIBILITY_PUBLIC)
-////            .setSmallIcon(R.mipmap.ic_launcher)
-////            .setFullScreenIntent(pendingIntent, false)  // 设置Heads up
-////            .setUsesChronometer(true)                   // 设置Heads up
-////            .setContentTitle("这是标题")
-////            .setContentText("这是内容")
-////            .addAction(R.drawable.ic_launcher, "菜单1", peddingIntent1)
-//            .build();
-////        notificationManager.notify(1, notification);
-//        Parser.getInstance().offlineMeizi(1, 5);
         IOfflineDownloadInterface binder = ((MainActivity) getActivity()).getOfflineBinder();
         if (binder != null) {
             try {
+                binder.startDownloadPicture("wuliao",1, 3);
                 binder.startDownloadPicture("meizi", 1, 3);
+                binder.startDownloadNews(1, 3);
+                binder.startDownloadJokes(1, 3);
+                ReadingFragment.getInstance().closeDrawer();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
