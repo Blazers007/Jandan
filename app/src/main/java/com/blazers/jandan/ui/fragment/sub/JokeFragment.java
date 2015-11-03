@@ -9,12 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalVote;
 import com.blazers.jandan.models.db.sync.JokePost;
 import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.CommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
+import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.ThumbTextButton;
 import rx.android.schedulers.AndroidSchedulers;
@@ -25,7 +32,10 @@ import java.util.List;
 
 /**
  * Created by Blazers on 15/9/1.
+ *
+ * 段子页面
  */
+@SuppressWarnings("unused")
 public class JokeFragment extends BaseSwipeLoadMoreFragment{
 
     public static final String TAG = JokeFragment.class.getSimpleName();
@@ -144,9 +154,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
 
 
     class JokeAdapter extends RecyclerView.Adapter<JokeAdapter.JokeHolder> {
-
         private LayoutInflater inflater;
-
         public JokeAdapter() {
             inflater = LayoutInflater.from(getActivity());
         }
@@ -161,11 +169,25 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
         public void onBindViewHolder(JokeHolder holder, int position) {
             JokePost joke = mJokePostArrayList.get(position);
             holder.content.setText(joke.getComment_content());
-            holder.author.setText("@"+joke.getComment_author());
+            holder.author.setText(String.format("@%s", joke.getComment_author()));
             holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));
-            holder.thumbUp.setThumbText("15");
-            holder.thumbDown.setThumbText("15");
-            holder.comment.setThumbText("15");
+            holder.oo.setThumbText(joke.getVote_positive());
+            holder.xx.setThumbText(joke.getVote_negative());
+            holder.comment.setThumbText(String.format("%d", joke.getCommentNumber()));
+            //TODO 优化数据库查询 或者缓存
+            LocalVote vote = realm.where(LocalVote.class).equalTo("id", joke.getComment_ID()).findFirst();
+            if (vote != null){
+                if (vote.getId() > 0) {
+                    holder.oo.setPressed(true);
+                    holder.xx.setPressed(false);
+                }else if (vote.getId() < 0) {
+                    holder.oo.setPressed(false);
+                    holder.xx.setPressed(true);
+                }
+            } else {
+                holder.oo.setPressed(false);
+                holder.xx.setPressed(false);
+            }
         }
 
         @Override
@@ -173,34 +195,58 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
             return mJokePostArrayList.size();
         }
 
-        class JokeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public TextView content, author, date;
-            public ThumbTextButton thumbUp, thumbDown, comment;
+        class JokeHolder extends RecyclerView.ViewHolder {
+
+            @Bind(R.id.content) TextView content;
+            @Bind(R.id.author) TextView author;
+            @Bind(R.id.date) TextView date;
+            @Bind(R.id.btn_oo) ThumbTextButton oo;
+            @Bind(R.id.btn_xx) ThumbTextButton xx;
+            @Bind(R.id.btn_comment) ThumbTextButton comment;
+
             public JokeHolder(View itemView) {
                 super(itemView);
-                content = (TextView) itemView.findViewById(R.id.content);
-                author = (TextView) itemView.findViewById(R.id.author);
-                date = (TextView) itemView.findViewById(R.id.date);
-
-                thumbUp = (ThumbTextButton) itemView.findViewById(R.id.btn_oo);
-                thumbDown = (ThumbTextButton) itemView.findViewById(R.id.btn_xx);
-                comment = (ThumbTextButton) itemView.findViewById(R.id.btn_comment);
-
-                thumbUp.setOnClickListener(this);
-                thumbDown.setOnClickListener(this);
-                comment.setOnClickListener(this);
+                ButterKnife.bind(this, itemView);
             }
 
-            @Override
-            public void onClick(View view) {
+            @OnClick({R.id.btn_oo, R.id.btn_xx})
+            public void vote(View view) {
+                JokePost post = mJokePostArrayList.get(getAdapterPosition());
+                /* 查看是否已经投票 */
+                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
+                if (vote != null && vote.getId() != 0){
+                    Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 switch (view.getId()) {
                     case R.id.btn_oo:
-                        thumbUp.addThumbText(1);
+                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                            .compose(RxHelper.applySchedulers())
+                            .subscribe(s->{
+                                oo.addThumbText(1);
+                                LocalVote v = new LocalVote();
+                                v.setId(post.getComment_ID());
+                                v.setVote(1);
+                                DBHelper.saveToRealm(realm, v);
+                            },throwable -> Log.e("Vote", throwable.toString()));
                         break;
                     case R.id.btn_xx:
-                        thumbDown.addThumbText(1);
+                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                            .compose(RxHelper.applySchedulers())
+                            .subscribe(s -> {
+                                xx.addThumbText(1);
+                                LocalVote v = new LocalVote();
+                                v.setId(post.getComment_ID());
+                                v.setVote(-1);
+                                DBHelper.saveToRealm(realm, v);
+                            }, throwable -> Log.e("Vote", throwable.toString()));
                         break;
                 }
+            }
+
+            @OnClick(R.id.btn_comment)
+            public void showComment(){
+                Rxbus.getInstance().send(new CommentEvent(mJokePostArrayList.get(getAdapterPosition()).getComment_ID()));
             }
         }
     }

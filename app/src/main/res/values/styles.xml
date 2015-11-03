@@ -1,18 +1,19 @@
 <resources>
 
     <!-- Base application theme. Day Mode TODO:实现主题颜色切换 -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Base.AppTheme">
+
+    </style>
+
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Other attributes like colorPrimary, colorAccent etc. -->
         <!--<item name="colorPrimary">#328bff</item>-->
         <!--<item name="colorPrimaryDark">#2c70d7</item>-->
         <!--<item name="colorAccent">#ff5722</item>-->
-
         <item name="colorPrimary">#fafafa</item>
         <item name="colorPrimaryDark">#5f5f5f</item>
         <item name="colorAccent">#3c4043</item>
-
         <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>-->
-
         <item name="windowActionModeOverlay">true</item> <!-- 确保ActionMode 浮动在Toolbar上方 -->
         <!--<item name="android:windowContentTransitions">true</item>-->
     </style>
@@ -27,6 +28,13 @@
     <style name="ReadingModeStyle" parent="AppTheme">
         <!-- TODO: Take case for the implements in differ versions  -->
         <!--<item name="colorPrimaryDark">#000000</item>-->
+    </style>
+
+    <!-- 夜间模式 -->
+    <style name="NightMode" parent="AppTheme">
+        <item name="colorPrimary">#212121</item>
+        <item name="colorPrimaryDark">#060606</item>
+        <item name="colorAccent">#979797</item>
     </style>
 
 </resources>

@@ -14,6 +14,8 @@ import android.view.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.sub.JokeFragment;
@@ -34,7 +36,6 @@ public class ReadingFragment extends BaseFragment {
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.tab_layout) TabLayout tabLayout;
     @Bind(R.id.container) ViewPager viewPager;
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
 
 
     private ArrayList<Fragment> fragments;
@@ -54,18 +55,14 @@ public class ReadingFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root =  inflater.inflate(R.layout.fragment_reading, container, false);
         ButterKnife.bind(this, root);
-        initDownloadFragment();
         initJandanFragments();
         initToolbarAndLeftDrawer(toolbar, "煎蛋");
-        setHasOptionsMenu(true);
         return root;
     }
 
-
-    void initDownloadFragment() {
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-    }
-
+    /**
+     * 初始化各个Fragment
+     * */
     void initJandanFragments() {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
@@ -80,13 +77,13 @@ public class ReadingFragment extends BaseFragment {
         viewPager.setOffscreenPageLimit(4);
     }
 
+    /**
+     * Adapter
+     * */
     class FragmentAdapter extends FragmentPagerAdapter {
-
-        private FragmentManager fm;
 
         public FragmentAdapter(FragmentManager fm) {
             super(fm);
-            this.fm = fm;
         }
 
         @Override
@@ -103,26 +100,5 @@ public class ReadingFragment extends BaseFragment {
         public CharSequence getPageTitle(int position) {
             return titles[position];
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_jandan, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.offline:
-                drawerLayout.openDrawer(GravityCompat.END);
-                drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN);
-                break;
-        }
-        return true;
-    }
-
-    public void closeDrawer() {
-        drawerLayout.closeDrawer(GravityCompat.END);
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     }
 }

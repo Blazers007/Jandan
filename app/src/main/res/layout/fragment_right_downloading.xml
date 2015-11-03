@@ -17,16 +17,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="无聊图"
-            android:id="@+id/textView3" android:textColor="#666" android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"/>
+            android:id="@+id/textView3"
+            android:textColor="#666"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            />
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="17331"
-            android:id="@+id/textView4" android:textColor="#666" android:layout_below="@+id/textView3"
-            android:layout_marginLeft="16dp" android:layout_marginTop="8dp"/>
-
+            android:id="@+id/textView4"
+            android:textColor="#666"
+            android:layout_below="@+id/textView3"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            />
+    <!-- 取消 -->
+    <ImageView
+            android:id="@+id/close"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_cancel_grey600_24dp"
+            android:padding="12dp"
+            android:clickable="true"
+            />
     <!-- 下载设置区域 -->
     <TextView
             android:layout_width="wrap_content"
@@ -59,6 +74,7 @@
             android:layout_marginLeft="12dp"
             >
         <com.blazers.jandan.views.SelectableTextView
+                android:id="@+id/seg_news"
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
@@ -70,35 +86,32 @@
                 android:background="@drawable/border_grey"
                 />
         <com.blazers.jandan.views.SelectableTextView
+                android:id="@+id/seg_wuliao"
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="无聊图"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:background="@drawable/border_grey"
                 />
         <com.blazers.jandan.views.SelectableTextView
+                android:id="@+id/seg_jokes"
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="段子"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:background="@drawable/border_grey"
                 />
         <com.blazers.jandan.views.SelectableTextView
+                android:id="@+id/seg_meizi"
                 android:layout_width="72dp"
                 android:layout_height="32dp"
                 android:textColor="#000"
                 android:gravity="center"
                 android:text="妹子图"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
                 android:layout_margin="8dp"
                 android:background="@drawable/border_grey"
                 />

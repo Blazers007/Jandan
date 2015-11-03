@@ -21,13 +21,34 @@
     <string name="action_share">分享</string>
 
     <!-- Setting -->
+    <string name="setting_night_mode">夜间模式</string>
+    <string name="setting_night_mode_describe">保护视力</string>
+    <string name="setting_auto_gif">自动播放GIF</string>
+    <string name="setting_auto_gif_describe">但是不支持点击暂停哟</string>
+    <string name="setting_meizi">开启妹子图</string>
+    <string name="setting_meizi_describe">可以在隐秘的地方做羞羞哒事情啦</string>
     <string name="setting_auto_filter">内容过滤</string>
     <string name="setting_auto_filter_describe">自动过滤不被大家喜欢的内容</string>
-
+    <string name="setting_filter_number">过滤数量设置</string>
+    <string name="setting_filter_number_describe">自动过滤XX数量过大的内容,节省流量</string>
+    <string name="filter_dialog_title">设置过滤数量</string>
+    <array name="filter_selections">
+        <item>>5</item>
+        <item>>10</item>
+        <item>>15</item>
+        <item>>20</item>
+        <item>>25</item>
+        <item>>30</item>
+        <item>>10000(老子啥恶心的没见过?)</item>
+    </array>
     <!-- Toast -->
     <string name="there_is_no_more">没有更多了</string>
     <string name="no_connect_toast">少年,没有网我赵日天也无法下载啊</string>
+    <string name="warn_already_vote">民主政治每人只能投一票哦~</string>
 
+    <!-- Dialog -->
+    <string name="choose">就决定是你了!</string>
+    <string name="negetive">还是...算了!</string>
     <!-- TestStrings -->
     <string name="longText">
         反法西斯就是为了我在想晒孩子的时候就可以晒孩子，我不想看阅兵的时候也不会招来谩骂，尊重个人意志，使个人意志不被集体意志和强权所裹挟。我觉得那些先烈们白牺牲了，他们反抗的东西至今还存在着，还披上了爱国的外衣

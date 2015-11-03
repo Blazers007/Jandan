@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+    <TextView
+            android:id="@+id/setting_main"
+            tools:text="过滤口口"
+            style="@style/SettingMainText"
+            />
+    <TextView
+            android:id="@+id/setting_sub"
+            android:layout_alignLeft="@+id/setting_main"
+            android:layout_below="@+id/setting_main"
+            tools:text="手动设定XX量过多的内容不予显示"
+            style="@style/SettingSubText"
+            />
+    <TextView
+            android:id="@+id/setting_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="20dp"
+            android:textSize="16sp"
+            tools:text="15"
+            />
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#f0f0f0"
+            android:layout_alignParentBottom="true"
+            />
+</RelativeLayout>

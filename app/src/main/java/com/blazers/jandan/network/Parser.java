@@ -13,9 +13,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import com.squareup.okhttp.*;
 import io.realm.Realm;
 import io.realm.RealmObject;
 import org.json.JSONArray;
@@ -88,6 +86,22 @@ public class Parser {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
+        Response response = client.newCall(request).execute();
+        String str = response.body().string();
+//        Log.i("[Response]", str);
+        return str;
+    }
+
+    /**
+     * POST数据
+     * */
+    private String simpleHttpPostRequest(String url, RequestBody body) throws IOException{
+        Log.i("[Connecting Post]", url);
+        /* KV */
+        Request request = new Request.Builder()
+            .url(url)
+            .post(body)
+            .build();
         Response response = client.newCall(request).execute();
         String str = response.body().string();
 //        Log.i("[Response]", str);
@@ -217,10 +231,23 @@ public class Parser {
                 String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
                 JSONObject object = new JSONObject(json);
                 JSONArray comments = object.getJSONArray("comments");
+                /* 评论数量URL */
+                String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                 for (int i = 0; i < comments.length(); i++) {
                     JokePost jokePost = gson.fromJson(comments.getJSONObject(i).toString(), JokePost.class);
                     jokePost.setPage(page);
                     jokePostList.add(jokePost);
+                    commentInfoUrl += ("comment-" + jokePost.getComment_ID() + ",");
+                }
+                /* 获取数量 */
+                String commentInfo = simpleHttpRequest(commentInfoUrl);
+                JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
+                for (JokePost post : jokePostList) {
+                    String key = "comment-" + post.getComment_ID();
+                    if (commentJSON.has(key)) {
+                        int commentNumber = commentJSON.getJSONObject(key).getInt("comments");
+                        post.setCommentNumber(commentNumber);
+                    }
                 }
                 subscriber.onNext(jokePostList);
             } catch (IOException | JSONException e) {
@@ -241,6 +268,25 @@ public class Parser {
                 Comments comments = gson.fromJson(json, Comments.class);
                 subscriber.onNext(comments);
             } catch (Exception e) {
+                subscriber.onError(e);
+            }
+            subscriber.onCompleted();
+        });
+    }
+
+    /**
+     * 投票
+     * */
+    public Observable<Boolean> voteByCommentIdAndVote(long id, boolean vote) {
+        return Observable.create(subscriber -> {
+            try {
+                RequestBody body = new FormEncodingBuilder()
+                    .add("ID", id+"")
+                    .build();
+                String str = simpleHttpPostRequest(URL.JANDAN_VOTE_API + (vote ? "1" : "0"), body);
+                Log.i("Vote", str);
+                subscriber.onNext(true);
+            }catch (IOException e) {
                 subscriber.onError(e);
             }
             subscriber.onCompleted();

@@ -115,6 +115,7 @@ public class NewsReadActivity extends BaseActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 webView.loadUrl("javascript:loadCssFile('day')");
+
             }
         });
     }

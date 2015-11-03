@@ -136,4 +136,8 @@ public class SelectableTextView extends TextView implements View.OnClickListener
         this.progress = progress;
         invalidate();
     }
+
+    public boolean isSegSelected() {
+        return selected;
+    }
 }

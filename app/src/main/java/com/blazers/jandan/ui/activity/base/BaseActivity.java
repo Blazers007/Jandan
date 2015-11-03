@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import com.blazers.jandan.R;
+import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.util.Dppx;
 
 /**
@@ -125,5 +126,19 @@ public class BaseActivity extends AppCompatActivity {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 注册事件
+     * */
+    public void registerEventReceiver() {
+        Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
+    }
+
+    /**
+     * 处理时间
+     * */
+    public void handleRxEvent(Object event){
+
     }
 }

@@ -30,7 +30,10 @@ import java.util.List;
 
 /**
  * Created by Blazers on 2015/8/27.
+ *
+ * 新鲜事列表
  */
+@SuppressWarnings("unused")
 public class NewsFragment extends BaseSwipeLoadMoreFragment {
 
     public static final String TAG = NewsFragment.class.getSimpleName();

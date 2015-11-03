@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+    <TextView
+            android:id="@+id/setting_main"
+            style="@style/SettingMainText"
+            tools:text="标题文字"
+            />
+    <TextView
+            android:id="@+id/setting_sub"
+            android:layout_alignLeft="@+id/setting_main"
+            android:layout_below="@+id/setting_main"
+            style="@style/SettingSubText"
+            tools:text="说明文字"
+            />
+    <android.support.v7.widget.SwitchCompat
+            android:id="@+id/setting_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"/>
+    <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#f0f0f0"
+            android:layout_alignParentBottom="true"/>
+</RelativeLayout>

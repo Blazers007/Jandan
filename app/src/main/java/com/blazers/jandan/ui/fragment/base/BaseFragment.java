@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.InitToolbarEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.umeng.analytics.MobclickAgent;
 
@@ -59,6 +61,9 @@ public abstract class BaseFragment extends Fragment {
         super.onStart();
     }
 
+    /**
+     * 为何不能在此处统计页面周期?
+     * */
     @Override
     public void onResume() {
         super.onResume();
@@ -108,15 +113,29 @@ public abstract class BaseFragment extends Fragment {
     protected void initToolbarAndLeftDrawer(Toolbar toolbar, String title) {
         this.toolbar = toolbar;
         this.title = title;
-        ((MainActivity)getActivity()).initDrawerWithToolbar(toolbar);
+        Rxbus.getInstance().send(new InitToolbarEvent(toolbar));
         toolbar.setTitle(title);
     }
 
     /**
-     *
+     * 重新绑定Toolbar与Menu
      * */
     public void reboundToolbar() {
         if (null != toolbar && title != null)
             initToolbarAndLeftDrawer(toolbar, title);
+    }
+
+    /**
+     * 注册事件
+     * */
+    public void registerEventReceiver() {
+        Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
+    }
+
+    /**
+     * 处理时间
+     * */
+    public void handleRxEvent(Object event){
+
     }
 }

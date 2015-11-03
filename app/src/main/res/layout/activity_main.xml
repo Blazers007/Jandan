@@ -7,15 +7,12 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity"
         android:fitsSystemWindows="true"
-        >
-    <!-- Use fitsSystemWindows to make sure that drawerLayout layout behind status bar-->
-    <!-- Fragments container-->
+        ><!-- Fragments container-->
     <FrameLayout
             android:id="@+id/fragment_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     <!-- Fragments container end-->
-
     <!-- Navigation -->
     <android.support.design.widget.NavigationView
             android:id="@+id/left_nav"
@@ -23,5 +20,15 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:headerLayout="@layout/partial_left_menu_header"
-            app:menu="@menu/menu_left_drawer"/>
+            app:menu="@menu/menu_left_drawer"
+            app:itemTextColor="#fafafa"
+            />
+    <!--  Download -->
+    <fragment
+            class="com.blazers.jandan.ui.fragment.RightDownloadingFragment"
+            android:id="@+id/right_downloading"
+            android:layout_gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 </android.support.v4.widget.DrawerLayout>

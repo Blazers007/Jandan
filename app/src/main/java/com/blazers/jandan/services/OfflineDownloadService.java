@@ -15,10 +15,7 @@ import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.MainActivity;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.NotificationHelper;
-import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.util.*;
 import io.realm.Realm;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -62,8 +59,7 @@ public class OfflineDownloadService extends Service {
                     return newsPost.getId();
                 })
                 .flatMap(Parser.getInstance()::getNewsContentData)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.applySchedulers())
                 .subscribe(
                     localArticleHtml -> {
                         DBHelper.saveToRealm(realm, localArticleHtml);
@@ -91,6 +87,10 @@ public class OfflineDownloadService extends Service {
             offlinePage = pageSize;
             imageSize = 0;
             downloadedSize = 0;
+
+            /**
+             * 精简优化Notification方法
+             * */
             PendingIntent pendingIntent = PendingIntent.getActivity(
                 OfflineDownloadService.this,
                 0,
@@ -114,8 +114,7 @@ public class OfflineDownloadService extends Service {
                 .flatMap(Observable::from)                                                  // 5 - 利用from操作符逐一处理
                 .map(ImageDownloader.getInstance()::doDownloadingImage)                     // 6 - 利用map操作符完成下载与转换
                 .filter(localImage -> localImage != null)                                   // 7 - 过滤掉没有下载成功的
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.applySchedulers())
                 .subscribe(
                     localImage -> {
                         Log.i("下载完成", localImage.getLocalUrl());
@@ -130,7 +129,7 @@ public class OfflineDownloadService extends Service {
                         DBHelper.saveToRealm(realm, localImage);
                     }, throwable -> {
                         Log.e("Error", throwable.toString());
-                    }, ()->{
+                    }, () -> {
                         Log.i(">>>>>下载全部完毕<<<<<", TimeHelper.getTime());
                         NotificationHelper.showOfflineNotification(
                             OfflineDownloadService.this,
@@ -151,8 +150,7 @@ public class OfflineDownloadService extends Service {
         public void startDownloadJokes(int fromPage, int pageSize) throws RemoteException {
             Observable.range(fromPage, pageSize)
                 .flatMap(Parser.getInstance()::getJokeData)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .compose(RxHelper.applySchedulers())
                 .subscribe(
                     list -> {
                         DBHelper.saveToRealm(OfflineDownloadService.this, list);

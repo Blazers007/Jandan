@@ -16,7 +16,9 @@ public class JokePost extends RealmObject implements Serializable{
     private String comment_content;
     private String comment_author;
     private String comment_date;
-    // 页码
+    private String vote_positive;
+    private String vote_negative;
+    private int commentNumber;
     private long page;
 
     public long getComment_ID() {
@@ -49,6 +51,30 @@ public class JokePost extends RealmObject implements Serializable{
 
     public void setComment_date(String comment_date) {
         this.comment_date = comment_date;
+    }
+
+    public String getVote_positive() {
+        return vote_positive;
+    }
+
+    public void setVote_positive(String vote_positive) {
+        this.vote_positive = vote_positive;
+    }
+
+    public String getVote_negative() {
+        return vote_negative;
+    }
+
+    public void setVote_negative(String vote_negative) {
+        this.vote_negative = vote_negative;
+    }
+
+    public int getCommentNumber() {
+        return commentNumber;
+    }
+
+    public void setCommentNumber(int commentNumber) {
+        this.commentNumber = commentNumber;
     }
 
     public long getPage() {

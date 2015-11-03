@@ -66,6 +66,8 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
             loadMoreRecyclerView.setPullCallback(new PullCallback() {
                 @Override
                 public void onLoadMore() {
+                    if (isLoading())
+                        return;
                     Log.i(TAG, "开始刷新");
                     isLoading = true;
                     invokeLoadMore();

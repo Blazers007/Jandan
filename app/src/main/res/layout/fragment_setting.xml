@@ -20,93 +20,31 @@
             <TextView android:text="阅读设置"
                       style="@style/SettingSegmentText"
                       />
+            <!-- 夜间模式 -->
+            <include
+                    android:id="@+id/set_night_mode"
+                    layout="@layout/layout_setting_switch"
+                    />
+            <!--  开启妹子图 -->
+            <include
+                    android:id="@+id/set_auto_gif"
+                    layout="@layout/layout_setting_switch"
+                    />
+            <!--  开启妹子图 -->
+            <include
+                    android:id="@+id/set_meizi"
+                    layout="@layout/layout_setting_switch"
+                    />
             <!--  内容过滤 -->
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp">
-                <TextView
-                        android:id="@+id/setting_main"
-                        android:text="@string/setting_auto_filter"
-                        style="@style/SettingMainText"
-                        />
-                <TextView
-                        android:id="@+id/setting_sub"
-                        android:layout_alignLeft="@+id/setting_main"
-                        android:layout_below="@+id/setting_main"
-                        android:text="@string/setting_auto_filter_describe"
-                        style="@style/SettingSubText"
-                        />
-                <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/setting_Switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="16dp"/>
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1px"
-                        android:background="#f0f0f0"
-                        android:layout_alignParentBottom="true"/>
-            </RelativeLayout>
+            <include
+                    android:id="@+id/set_filter"
+                    layout="@layout/layout_setting_switch"
+                    />
             <!--  过滤数量指定 -->
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp">
-                <TextView
-                        android:id="@+id/setting_main"
-                        android:text="过滤口口"
-                        style="@style/SettingMainText"
-                        />
-                <TextView
-                        android:id="@+id/setting_sub"
-                        android:layout_alignLeft="@+id/setting_main"
-                        android:layout_below="@+id/setting_main"
-                        android:text="手动设定口口量过多的内容不予显示"
-                        style="@style/SettingSubText"
-                        />
-                <TextView
-                        android:id="@+id/setting_Switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="20dp" android:text="15"/>
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1px"
-                        android:background="#f0f0f0"
-                        android:layout_alignParentBottom="true"/>
-            </RelativeLayout>
+            <include
+                    android:id="@+id/set_filter_number"
+                    layout="@layout/layout_setting_edittext"/>
             <!--  开启隐藏 -->
-            <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp">
-                <TextView
-                        android:id="@+id/setting_main"
-                        android:text="开启妹子图"
-                        style="@style/SettingMainText"
-                        />
-                <TextView
-                        android:id="@+id/setting_sub"
-                        android:layout_alignLeft="@+id/setting_main"
-                        android:layout_below="@+id/setting_main"
-                        android:text="开启妹子图"
-                        style="@style/SettingSubText"
-                        />
-                <android.support.v7.widget.SwitchCompat
-                        android:id="@+id/setting_Switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="16dp"/>
-                <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1px"
-                        android:background="#f0f0f0"
-                        android:layout_alignParentBottom="true"/>
-            </RelativeLayout>
             <!--  关于 -->
             <TextView android:text="关于"
                       style="@style/SettingSegmentText"/>

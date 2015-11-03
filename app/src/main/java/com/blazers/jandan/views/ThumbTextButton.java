@@ -84,6 +84,7 @@ public class ThumbTextButton extends ImageButton {
         textString = String.valueOf(Integer.parseInt(textString) + addition);
         invalidate();
         playAnimation(addition);
+        setPressed(true);
     }
 
 

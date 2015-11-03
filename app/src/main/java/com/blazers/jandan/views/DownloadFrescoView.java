@@ -10,8 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
-import com.blazers.jandan.ui.adapters.JandanImageAdapter;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -33,7 +34,7 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
     /* Vars */
     private ControllerListener<ImageInfo> listener;
 
-    private JandanImageAdapter.ImageInfo imageInfoListener;
+    private LoadedImageSizeInfo imageInfoListener;
 
     public DownloadFrescoView(Context context) {
         super(context);
@@ -74,14 +75,10 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
 
     @Override
     public void onClick(View view) {
-        Bundle args = new Bundle();
-        args.putString("url", url);
-        DialogFragment fragment = new ImageViewerFragment();
-        fragment.setArguments(args);
-        fragment.show(((AppCompatActivity)getContext()).getSupportFragmentManager(), "tag");
+        Rxbus.getInstance().send(new ViewImageEvent(url));
     }
 
-    public void setImageInfoListener (JandanImageAdapter.ImageInfo listener) {
+    public void setImageInfoListener (LoadedImageSizeInfo listener) {
         this.imageInfoListener = listener;
     }
 
@@ -126,5 +123,12 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         public void onRelease(String s) {
             Log.i("Release Image", s);
         }
+    }
+
+    /**
+     * 图片信息接口
+     * */
+    public interface LoadedImageSizeInfo {
+        void onLoaded(int width, int height);
     }
 }
