@@ -15,7 +15,7 @@ public class JandanApp extends Application {
     public void onCreate() {
         super.onCreate();
         // 初始化CrashHandler
-        CrashHandler.getInstance().init(this);
+//        CrashHandler.getInstance().init(this);
         // 初始化Fresco
         Fresco.initialize(this, ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
         // 初始化OKHTTP解析

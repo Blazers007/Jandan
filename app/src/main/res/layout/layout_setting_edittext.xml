@@ -3,7 +3,9 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="72dp"
+        android:background="@drawable/selector_default_setting"
+        >
     <TextView
             android:id="@+id/setting_main"
             tools:text="过滤口口"
@@ -31,5 +33,11 @@
             android:layout_height="1px"
             android:background="#f0f0f0"
             android:layout_alignParentBottom="true"
+            />
+    <View
+            android:id="@+id/disable_mask"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#ccfefefe"
             />
 </RelativeLayout>

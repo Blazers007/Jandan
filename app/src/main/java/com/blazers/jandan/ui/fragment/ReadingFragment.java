@@ -22,6 +22,7 @@ import com.blazers.jandan.ui.fragment.sub.JokeFragment;
 import com.blazers.jandan.ui.fragment.sub.NewsFragment;
 import com.blazers.jandan.ui.fragment.sub.PicFragment;
 import com.blazers.jandan.util.Dppx;
+import com.blazers.jandan.util.SPHelper;
 
 import java.util.ArrayList;
 
@@ -68,13 +69,14 @@ public class ReadingFragment extends BaseFragment {
         fragments.add(new NewsFragment());
         fragments.add(PicFragment.newInstance("wuliao"));
         fragments.add(new JokeFragment());
-        fragments.add(PicFragment.newInstance("meizi"));
+        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
+            fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
         /* TODO: 根据屏幕尺寸设置TabMode */
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         viewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(fragments.size());
     }
 
     /**

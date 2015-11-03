@@ -16,7 +16,18 @@ public class SdcardHelper {
         return file.getPath();
     }
 
-    synchronized public static File createImageFile(String type) {
+    public static String getSdcardCachePath() {
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Jandan/Cached/");
+        if (!file.exists())
+            file.mkdirs();
+        return file.getPath();
+    }
+
+    synchronized public static File createCachedImageFile(String type) {
+        return new File(getSdcardCachePath() + "/" + System.currentTimeMillis() + "." + type);
+    }
+
+    synchronized public static File createSavedImageFile(String type) {
         return new File(getSdcardPicturePath() + "/" + System.currentTimeMillis() + "." + type);
     }
 }

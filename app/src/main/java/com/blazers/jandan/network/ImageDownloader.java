@@ -6,7 +6,6 @@ import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.util.SdcardHelper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
-import rx.Observable;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,22 +35,34 @@ public class ImageDownloader {
         return INSTANCE;
     }
 
-    public LocalImage doDownloadingImage(ImageRelateToPost imageRelateToPost) {
-        String url = imageRelateToPost.url;
-        return doSimpleDownload(url);
+    public LocalImage doSimpleCaching(String url) {
+        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
     }
 
-    public LocalImage doSimpleDownload(String url) {
+    public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
+        String url = imageRelateToPost.url;
+        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
+    }
+
+    public LocalImage doSavingImage(ImageRelateToPost imageRelateToPost) {
+        String url = imageRelateToPost.url;
+        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
+    }
+
+    private String getTypeByUrl(String url){
         String type = url.substring(url.lastIndexOf(".") + 1);
         if (type.isEmpty())
             type = "cache";
+        return type;
+    }
+
+    private LocalImage doSimpleDownload(String url, File file) {
         Request request = new Request.Builder()
             .url(url)
             .build();
         Log.i("Downloading", url);
         try {
             InputStream inputStream = client.newCall(request).execute().body().byteStream();
-            File file = SdcardHelper.createImageFile(type);
             FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[1024*10];
             while(true){
@@ -68,6 +79,7 @@ public class ImageDownloader {
             return localImage;
         } catch (IOException e) {
             e.printStackTrace();
+            file.delete();
         }
         return null;
     }

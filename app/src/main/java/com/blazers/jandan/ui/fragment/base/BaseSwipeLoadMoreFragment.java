@@ -15,7 +15,7 @@ import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
 import com.blazers.jandan.views.loadmore.PullCallback;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import io.realm.Realm;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+//import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
  * Created by Blazers on 2015/10/16.
@@ -62,7 +62,7 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
         if (null != loadMoreRecyclerView && null != adapter) {
             loadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
             loadMoreRecyclerView.addItemDecoration(new GreySpaceItemDecoration());
-            loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
+//            loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
             loadMoreRecyclerView.setPullCallback(new PullCallback() {
                 @Override
                 public void onLoadMore() {

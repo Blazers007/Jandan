@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             fresco:actualImageScaleType="fitCenter"
-            fresco:viewAspectRatio="1.318"
+            fresco:viewAspectRatio="0.618"
             android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
             />

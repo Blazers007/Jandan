@@ -13,6 +13,7 @@ import android.view.View;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
+import com.blazers.jandan.util.SPHelper;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -112,6 +113,9 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
                 draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
                 draweeView.setAspectRatio(1.118f);
             }
+            // 是否自动播放
+            if (SPHelper.getBooleanSP(getContext(), SPHelper.AUTO_GIF_MODE_ON, false) && animatable != null)
+                animatable.start();
         }
 
         @Override

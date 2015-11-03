@@ -85,11 +85,7 @@ public class SettingFragment extends BaseFragment {
 
         filterHolder = new SwitchHolder(setFilter,
             R.string.setting_auto_filter, R.string.setting_auto_filter_describe, SPHelper.AUTO_FILTER_MODE_ON,
-            (view, isChecked)->{
-                if (isChecked) {
-
-                }
-            }
+            (view, isChecked)->filterNumberHolder.setEnabled(isChecked)
         );
 
         /* 输入框 */
@@ -145,6 +141,7 @@ public class SettingFragment extends BaseFragment {
         @Bind(R.id.setting_main) TextView title;
         @Bind(R.id.setting_sub) TextView sub;
         @Bind(R.id.setting_text) TextView text;
+        @Bind(R.id.disable_mask) View disableMask;
 
         public EditIntHolder (View root, int title, int sub, String key, boolean enabled) {
             ButterKnife.bind(this, root);
@@ -154,23 +151,24 @@ public class SettingFragment extends BaseFragment {
             this.title.setText(title);
             this.sub.setText(sub);
 
+            setEnabled(enabled);
+
             int value = SPHelper.getIntSP(getActivity(), key, 0);
             text.setText(String.format("%d", value));
 
-            root.setClickable(true);
             root.setOnClickListener(v->{
-                if (enabled) {
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                /* 首先获取当前 */
+                int selection = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, -1);
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                         .title(R.string.filter_dialog_title)
                         .items(R.array.filter_selections)
-                        .itemsCallbackSingleChoice(-1, (dia, view, which, str)->{
-                            if (which != 6) {
-                                text.setText(String.format("%d", which));
-                                SPHelper.putIntSP(getActivity(), key, (which+1)*5);
-                            } else {
-                                text.setText("1000");
-                                SPHelper.putIntSP(getActivity(), key, 1000);
+                        .itemsCallbackSingleChoice(selection, (dia, view, which, str)->{
+                            if (which == -1) {
+                                SPHelper.putIntSP(getActivity(), key, which);
+                                return true;
                             }
+                            text.setText(str);
+                            SPHelper.putIntSP(getActivity(), key, which);
                             return true;
                         })
                         .positiveText(R.string.choose)
@@ -178,21 +176,18 @@ public class SettingFragment extends BaseFragment {
                         .negativeText(R.string.negetive)
                         .negativeColor(Color.rgb(109, 109, 109))
                         .build();
-                    dialog.show();
-                }
+                dialog.show();
             });
         }
 
-        public void updateView() {
-            if (enabled) {
-
-            } else {
-
-            }
-        }
-
         public void setEnabled(boolean enabled) {
-
+            this.enabled = enabled;
+            root.setClickable(enabled);
+            if (enabled) {
+                disableMask.setVisibility(View.GONE);
+            }else{
+                disableMask.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

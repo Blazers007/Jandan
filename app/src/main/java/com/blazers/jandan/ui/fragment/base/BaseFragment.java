@@ -11,6 +11,8 @@ import com.blazers.jandan.rxbus.event.InitToolbarEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.umeng.analytics.MobclickAgent;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by Blazers on 2015/9/11.
  */

@@ -94,11 +94,6 @@ public class ImageViewerFragment extends DialogFragment {
                 view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             else
                 view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
-            if (asp <= 0.4) {
-                view.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
-                view.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
-            }
         }
 
         @Override

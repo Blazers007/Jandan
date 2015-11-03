@@ -23,6 +23,7 @@ import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.QuoteView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
+import com.pnikosis.materialishprogress.ProgressWheel;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class CommentFragment extends BaseFragment {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
+    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
 
     public static CommentFragment NewInstance(long commentId) {
         CommentFragment fragment = new CommentFragment();
@@ -77,6 +79,7 @@ public class CommentFragment extends BaseFragment {
     }
 
     void parseAndShowComments(Comments comments) {
+        progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
         commentRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
         JandanCommentAdapter adapter = new JandanCommentAdapter(LayoutInflater.from(getActivity()), comments);
         commentRecyclerView.setAdapter(adapter);

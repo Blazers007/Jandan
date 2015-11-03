@@ -20,6 +20,7 @@ import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.ObservableWebView;
+import com.pnikosis.materialishprogress.ProgressWheel;
 import io.realm.Realm;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -32,6 +33,7 @@ public class NewsReadActivity extends BaseActivity {
     @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.webView) ObservableWebView webView;
+    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
 
     /* Vars for testing the scroll visible effect */
     private static final int HIDE_THRESHOLD = 256;
@@ -84,6 +86,7 @@ public class NewsReadActivity extends BaseActivity {
         // 查看有无本地缓存
         LocalArticleHtml articleHtml = realm.where(LocalArticleHtml.class).equalTo("id", post.getId()).findFirst();
         if (null != articleHtml && !articleHtml.getHtml().isEmpty()) {
+            progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
             webView.loadDataWithBaseURL("file:///android_asset", articleHtml.getHtml(), "text/html; charset=UTF-8", null, null);
         } else {
             Parser parser = Parser.getInstance();
@@ -93,6 +96,7 @@ public class NewsReadActivity extends BaseActivity {
                 .subscribe(
                     localArticleHtml -> {
                         DBHelper.saveToRealm(realm, localArticleHtml);
+                        progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
                         webView.loadDataWithBaseURL("file:///android_asset", localArticleHtml.getHtml(), "text/html; charset=UTF-8", null, null);
                     },
                     throwable -> Log.e("err", throwable.toString())

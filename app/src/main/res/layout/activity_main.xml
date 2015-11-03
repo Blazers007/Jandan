@@ -21,8 +21,9 @@
             android:layout_gravity="start"
             app:headerLayout="@layout/partial_left_menu_header"
             app:menu="@menu/menu_left_drawer"
-            app:itemTextColor="#fafafa"
+            app:itemIconTint="#328bff"
             />
+    <!--app:itemTextColor="#fafafa"-->
     <!--  Download -->
     <fragment
             class="com.blazers.jandan.ui.fragment.RightDownloadingFragment"

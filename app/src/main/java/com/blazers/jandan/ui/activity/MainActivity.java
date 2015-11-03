@@ -83,8 +83,10 @@ public class MainActivity extends BaseActivity {
                 BaseFragment choosen = null;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_jandan:
-                        for (Fragment fragment : getSupportFragmentManager().getFragments())
-                            transaction.hide(fragment);
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                            if (fragment != null)
+                                transaction.hide(fragment);
+                        }
                         transaction.show(defaultFragment);
                         nowSelectedNavId = R.id.nav_jandan;
                         choosen = defaultFragment;
@@ -93,8 +95,10 @@ public class MainActivity extends BaseActivity {
                         if (getSupportFragmentManager().findFragmentByTag(FAV_TAG) == null) {
                             transaction.add(R.id.fragment_wrapper, FavoriteFragment.getInstance(), FAV_TAG);
                         } else {
-                            for (Fragment fragment : getSupportFragmentManager().getFragments())
-                                transaction.hide(fragment);
+                            for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                                if (fragment != null)
+                                    transaction.hide(fragment);
+                            }
                             transaction.show(choosen = FavoriteFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_fav;
@@ -103,8 +107,13 @@ public class MainActivity extends BaseActivity {
                         if (getSupportFragmentManager().findFragmentByTag(SETTING_TAG) == null) {
                             transaction.add(R.id.fragment_wrapper, SettingFragment.getInstance(), SETTING_TAG);
                         } else {
-                            for (Fragment fragment : getSupportFragmentManager().getFragments())
-                                transaction.hide(fragment);
+                            for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                                if (fragment != null && fragment != SettingFragment.getInstance())
+                                    transaction.hide(fragment);
+                            }
+                            /*TODO
+                            * http://stackoverflow.com/questions/22489703/trying-to-remove-fragment-from-view-gives-me-nullpointerexception-on-mnextanim
+                            * */
                             transaction.show(choosen = SettingFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_setting;
@@ -193,8 +202,12 @@ public class MainActivity extends BaseActivity {
             Bundle args = new Bundle();
             args.putString("url", url);
             DialogFragment fragment = new ImageViewerFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(fragment, null);
             fragment.setArguments(args);
-            fragment.show(getSupportFragmentManager(), "tag");
+//            fragment.show(getSupportFragmentManager(), "tag");
+            // http://stackoverflow.com/questions/12105064/actions-in-onactivityresult-and-error-can-not-perform-this-action-after-onsavei
+            ft.commitAllowingStateLoss();
         } else if (event instanceof NightModeEvent) {
             boolean isNightModeOn = ((NightModeEvent) event).nightModeOn;
             if (isNightModeOn || !isNowNightModeOn) {

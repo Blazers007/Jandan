@@ -18,6 +18,7 @@ import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.db.local.LocalVote;
 import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
+import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.CommentEvent;
@@ -28,6 +29,7 @@ import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.views.DownloadFrescoView;
 import com.blazers.jandan.views.ThumbTextButton;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import java.util.ArrayList;
 import java.util.List;
@@ -207,11 +209,13 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
                 holder.draweeView.showImage("file://" + localImage.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
                 holder.save.setVisibility(View.VISIBLE);
+                holder.save.setClickable(false);
                 holder.save.setImageResource(R.mipmap.ic_publish_16dp);
                 url = localImage.getLocalUrl();
             } else {
                 holder.draweeView.showImage(image.url, holder.save);
                 holder.save.setVisibility(View.INVISIBLE);
+                holder.save.setClickable(true);
                 holder.save.setImageResource(R.drawable.selector_download);
                 url = image.url;
             }
@@ -269,7 +273,16 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
             @OnClick(R.id.btn_save)
             public void download(){
-
+                Observable.just(imageArrayList.get(getAdapterPosition()))
+                        .map(ImageDownloader.getInstance()::doSavingImage)
+                        .compose(RxHelper.applySchedulers())
+                        .subscribe(localImage -> {
+                            Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
+                            save.setClickable(false);
+                            save.setImageResource(R.mipmap.ic_publish_16dp);
+                        }, throwable -> {
+                            Log.e("Error", throwable.toString());
+                        });
             }
 
             @OnClick({R.id.btn_oo, R.id.btn_xx})
