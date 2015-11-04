@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import com.blazers.jandan.R;
+import com.blazers.jandan.util.SPHelper;
 
 /**
  * Created by Blazers on 2015/11/4.
@@ -44,6 +45,11 @@ public class WatchRelativeLayout extends RelativeLayout implements INightWatch {
             bgNight = a.getDrawable(R.styleable.WatchRelativeLayout_wtg_night_bg);
         }finally {
             a.recycle();
+        }
+        if (SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false)) {
+            setNightMode();
+        } else {
+            setDayMode();
         }
     }
 

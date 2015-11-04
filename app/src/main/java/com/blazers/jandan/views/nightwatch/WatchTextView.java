@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.blazers.jandan.R;
+import com.blazers.jandan.util.SPHelper;
 
 /**
  * Created by Blazers on 2015/11/4.
@@ -20,7 +21,6 @@ import com.blazers.jandan.R;
 public class WatchTextView extends TextView implements INightWatch {
 
     /* 保存变量 */
-    private int dayStyleId, nightStyleId;
     private int textColorDay, textColorNight;
     private Drawable bgDay, bgNight;
     /* TODO:添加对Drawable的支持 */
@@ -45,29 +45,29 @@ public class WatchTextView extends TextView implements INightWatch {
      * 读取两套皮肤 优先读取Style随后的其他属性则可以覆盖掉Style便于单独控制
      * */
     void init(Context context, AttributeSet attrs) {
-//        if (null == attrs)
-//            return;
-//        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.WatchTextView, 0, 0);
-//        try {
-//            /* 获取Style */
-//            dayStyleId = a.getResourceId(R.styleable.WatchTextView_wtv_day_style, -1);
-//            nightStyleId = a.getResourceId(R.styleable.WatchTextView_wtv_night_style, -1);
-//            /* 一般 */
-//            textColorDay = a.getColor(R.styleable.WatchTextView_wtv_day_textColor, -1);
-//            textColorNight = a.getColor(R.styleable.WatchTextView_wtv_night_textColor, -1);
-//
-//            bgDay = a.getDrawable(R.styleable.WatchTextView_wtv_day_bg);
-//            bgNight = a.getDrawable(R.styleable.WatchTextView_wtv_night_bg);
-//        }finally {
-//            a.recycle();
-//        }
+        if (null == attrs)
+            return;
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.WatchTextView, 0, 0);
+        try {
+            /* 一般 */
+            textColorDay = a.getColor(R.styleable.WatchTextView_wtv_day_textColor, -1);
+            textColorNight = a.getColor(R.styleable.WatchTextView_wtv_night_textColor, -1);
+
+            bgDay = a.getDrawable(R.styleable.WatchTextView_wtv_day_bg);
+            bgNight = a.getDrawable(R.styleable.WatchTextView_wtv_night_bg);
+        }finally {
+            a.recycle();
+        }
+        /*  */
+        if (SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false)) {
+            setNightMode();
+        } else {
+            setDayMode();
+        }
     }
 
     @Override
     public void setDayMode() {
-        /* 首先设置Style */
-        if (dayStyleId != -1)
-            setTextAppearance(getContext(), dayStyleId);
         /* 设置文字 & 背景 */   // TODO: 若文字同样采用了Selector如何处理?
         if (textColorDay != -1)
             setTextColor(textColorDay);
@@ -77,8 +77,6 @@ public class WatchTextView extends TextView implements INightWatch {
 
     @Override
     public void setNightMode() {
-        if (nightStyleId != -1)
-            setTextAppearance(getContext(), nightStyleId);
         if (textColorNight != -1)
             setTextColor(textColorDay);
         if (null != bgNight)

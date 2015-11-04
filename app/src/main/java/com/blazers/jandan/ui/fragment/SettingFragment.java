@@ -18,6 +18,7 @@ import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.nightwatch.NightWatcher;
+import com.blazers.jandan.views.nightwatch.WatchTextView;
 
 
 /**
@@ -70,8 +71,8 @@ public class SettingFragment extends BaseFragment {
         nightModeHolder = new SwitchHolder(setNightMode,
             R.string.setting_night_mode, R.string.setting_night_mode_describe, SPHelper.NIGHT_MODE_ON,
             (view, isChecked)->{
-                if (isChecked)
-                    NightWatcher.switchToModeNight(getView());
+                NightWatcher.switchToModeNight(getView(), isChecked);
+                toolbar.setBackgroundColor(Color.rgb(44,44,44));
             }
         );
         // Todo 目前暂时隐藏
@@ -81,11 +82,7 @@ public class SettingFragment extends BaseFragment {
             R.string.setting_auto_gif, R.string.setting_auto_gif_describe, SPHelper.AUTO_GIF_MODE_ON, null);
 
         meiziHolder = new SwitchHolder(setMeizi,
-            R.string.setting_meizi, R.string.setting_meizi_describe, SPHelper.MEIZI_MODE_ON,
-            (view, isChecked)->{
-                // 广播
-            }
-        );
+            R.string.setting_meizi, R.string.setting_meizi_describe, SPHelper.MEIZI_MODE_ON, null);
 
         filterHolder = new SwitchHolder(setFilter,
             R.string.setting_auto_filter, R.string.setting_auto_filter_describe, SPHelper.AUTO_FILTER_MODE_ON,
@@ -107,8 +104,8 @@ public class SettingFragment extends BaseFragment {
         private View root;
         private String key;
 
-        @Bind(R.id.setting_main) TextView title;
-        @Bind(R.id.setting_sub) TextView sub;
+        @Bind(R.id.setting_main) WatchTextView title;
+        @Bind(R.id.setting_sub) WatchTextView sub;
         @Bind(R.id.setting_switch) SwitchCompat switchCompat;
         //
 
