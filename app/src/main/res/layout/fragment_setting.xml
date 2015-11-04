@@ -18,6 +18,8 @@
                 android:layout_height="wrap_content">
             <!-- 常规 -->
             <TextView android:text="阅读设置"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
                       style="@style/SettingSegmentText"
                       />
             <!-- 夜间模式 -->
@@ -47,6 +49,8 @@
             <!--  开启隐藏 -->
             <!--  关于 -->
             <TextView android:text="关于"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
                       style="@style/SettingSegmentText"/>
         </LinearLayout>
     </ScrollView>

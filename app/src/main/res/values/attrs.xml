@@ -7,4 +7,24 @@
         <attr name="ttb_textSize" format="dimension"/>
         <attr name="ttb_floatTextSize" format="dimension"/>
     </declare-styleable>
+
+
+    <!-- Simple -->
+    <declare-styleable name="WatchRelativeLayout">
+        <!-- Basic Background-->
+        <attr name="wtg_day_bg" format="color|reference"/>
+        <attr name="wtg_night_bg" format="color|reference"/>
+    </declare-styleable>
+    <!-- ChangeSkin  for Style -->
+    <declare-styleable name="WatchTextView">
+        <!-- Basic Background-->
+        <attr name="wtv_day_bg" format="color|reference"/>
+        <attr name="wtv_night_bg" format="color|reference"/>
+        <!-- Basic Text-->
+        <attr name="wtv_day_textColor" format="color|reference"/>
+        <attr name="wtv_night_textColor" format="color|reference"/>
+        <!-- Style -->
+        <attr name="wtv_day_style" format="reference"/>
+        <attr name="wtv_night_style" format="reference"/>
+    </declare-styleable>
  </resources>

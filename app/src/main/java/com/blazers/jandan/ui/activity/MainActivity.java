@@ -49,13 +49,13 @@ public class MainActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         /* 读取模式 */
-        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON,false);
+        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         /* 友盟统计 */
         MobclickAgent.openActivityDurationTrack(false);
         /* RxBus */
-        registerEventReceiver();
+        setHasRegisterDemand(true);
         /* 绑定离线下载服务 */
         startService(new Intent(this, OfflineDownloadService.class));
         bindService(new Intent(this, OfflineDownloadService.class), serviceConnection, BIND_AUTO_CREATE);
@@ -249,21 +249,6 @@ public class MainActivity extends BaseActivity {
         if (offlineBinder == null)
             Toast.makeText(this, "离线下载服务还木有准备完毕", Toast.LENGTH_SHORT).show();
         return offlineBinder;
-    }
-
-    /**
-     * Umeng统计
-     * */
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MobclickAgent.onResume(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        MobclickAgent.onPause(this);
     }
 
     /**

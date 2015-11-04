@@ -21,8 +21,6 @@
 
     <!--  设置页面的文本 Preference -->
     <style name="SettingSegmentText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">#666</item>
         <item name="android:layout_marginLeft">24dp</item>
@@ -30,20 +28,26 @@
         <item name="android:layout_marginBottom">0dp</item>
     </style>
 
+    <!-- 设置文字 -->
     <style name="SettingMainText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#444</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_marginLeft">16dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
+    <style name="SettingMainTextNight" parent="SettingMainText">
+        <item name="android:textColor">#bebebe</item>
+    </style>
+
+    <!-- 设置文字的说明 -->
     <style name="SettingSubText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#989898</item>
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginTop">4dp</item>
+    </style>
+
+    <style name="SettingSubTextNight" parent="SettingMainText">
+        <item name="android:textColor">#969696</item>
     </style>
 </resources>

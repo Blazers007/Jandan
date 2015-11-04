@@ -15,12 +15,14 @@ import android.widget.LinearLayout;
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.util.Dppx;
+import com.umeng.analytics.MobclickAgent;
+import rx.Subscription;
 
 /**
  * Created by Blazers on 2015/8/31.
  */
 @SuppressLint("Registered")
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     /* Static */
     public enum ToolbarType {
@@ -111,7 +113,7 @@ public class BaseActivity extends AppCompatActivity {
         View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
         if (null != animate) {
             animate.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度
-                    .translationY(- getStatusBarHeight() - Dppx.Dp2Px(this, 56))
+                    .translationY(-getStatusBarHeight() - Dppx.Dp2Px(this, 56))
                     .setDuration(400)
                     .setStartDelay(200).start();
         }
@@ -128,11 +130,46 @@ public class BaseActivity extends AppCompatActivity {
         return result;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        if (isRegisterEventDemand)
+            registerEventReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        if (isRegisterEventDemand)
+            unregisterEventReceiver();
+    }
+
+    /**
+     * 注册事件机制
+     *
+     * 通过此方法则采用自动注册方式 否则需要自己 在 Resume与Pause中注册 解注册
+     * */
+    private boolean isRegisterEventDemand = false;
+    private Subscription subscription;
+    public void setHasRegisterDemand(boolean has) {
+        isRegisterEventDemand = has;
+    }
+
     /**
      * 注册事件
      * */
     public void registerEventReceiver() {
-        Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
+        subscription = Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
+    }
+
+    /**
+     * 解注事件
+     * */
+    public void unregisterEventReceiver() {
+        if (null != subscription)
+            subscription.unsubscribe();
     }
 
     /**

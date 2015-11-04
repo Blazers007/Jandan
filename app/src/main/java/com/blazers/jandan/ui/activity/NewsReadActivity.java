@@ -134,10 +134,8 @@ public class NewsReadActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
-            case R.id.action_settings:
-                webView.loadUrl("javascript:loadCssFile('night')");
-                return true;
             case R.id.action_share:
+//                webView.loadUrl("javascript:loadCssFile('night')");
                 ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl());
                 return true;
         }

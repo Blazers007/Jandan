@@ -17,6 +17,7 @@ import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.views.nightwatch.NightWatcher;
 
 
 /**
@@ -68,10 +69,13 @@ public class SettingFragment extends BaseFragment {
 
         nightModeHolder = new SwitchHolder(setNightMode,
             R.string.setting_night_mode, R.string.setting_night_mode_describe, SPHelper.NIGHT_MODE_ON,
-            (view, isChecked)->Rxbus.getInstance().send(new NightModeEvent(isChecked))
+            (view, isChecked)->{
+                if (isChecked)
+                    NightWatcher.switchToModeNight(getView());
+            }
         );
         // Todo 目前暂时隐藏
-        nightModeHolder.hide();
+//        nightModeHolder.hide();
 
         autoGifHolder = new SwitchHolder(setAutoGif,
             R.string.setting_auto_gif, R.string.setting_auto_gif_describe, SPHelper.AUTO_GIF_MODE_ON, null);

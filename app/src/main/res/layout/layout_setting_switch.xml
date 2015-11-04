@@ -2,21 +2,26 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:background="@drawable/selector_default_setting"
+        xmlns:blz="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="72dp"
+        android:background="@drawable/selector_default_setting"
         >
-    <TextView
+    <com.blazers.jandan.views.nightwatch.WatchTextView
             android:id="@+id/setting_main"
-            style="@style/SettingMainText"
-            tools:text="标题文字"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            blz:wtv_day_style="@style/SettingMainText"
+            blz:wtv_night_style="@style/SettingMainTextNight"
             />
-    <TextView
+    <com.blazers.jandan.views.nightwatch.WatchTextView
             android:id="@+id/setting_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/setting_main"
             android:layout_below="@+id/setting_main"
-            style="@style/SettingSubText"
-            tools:text="说明文字"
+            blz:wtv_day_style="@style/SettingSubText"
+            blz:wtv_night_style="@style/SettingSubTextNight"
             />
     <android.support.v7.widget.SwitchCompat
             android:id="@+id/setting_switch"
@@ -24,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"/>
+            android:layout_marginRight="16dp"
+            />
     <View
             android:layout_width="match_parent"
             android:layout_height="1px"

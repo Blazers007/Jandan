@@ -171,7 +171,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
         @Override
         public JandanHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View itemView = inflater.inflate(R.layout.item_jandan_image_2, parent, false);
+            View itemView = inflater.inflate(R.layout.item_jandan_image, parent, false);
             return new JandanHolder(itemView);
         }
 
