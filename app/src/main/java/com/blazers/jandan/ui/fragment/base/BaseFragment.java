@@ -1,15 +1,23 @@
 package com.blazers.jandan.ui.fragment.base;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.InitToolbarEvent;
+import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
+import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.views.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
+import rx.Subscription;
 
 import java.lang.reflect.Field;
 
@@ -18,9 +26,13 @@ import java.lang.reflect.Field;
  */
 public abstract class BaseFragment extends Fragment {
 
+    /* Vars */
     public String TAG = "BaseFragment";
     private Toolbar toolbar;
     private String title;
+
+    /* Vars */
+    protected boolean isNowNightModeOn;
 
     /* Umeng */
     private boolean needUmengStatic = true;
@@ -42,12 +54,15 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Context context) {
         Log.i(TAG, "Attach");
         super.onAttach(context);
+        /* 读取模式 */
+        isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "OnCreate");
         super.onCreate(savedInstanceState);
+        registerEventReceiver();
     }
 
     @Override
@@ -99,6 +114,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterEventReceiver();
         Log.i(TAG, "OnDestroy");
     }
 
@@ -110,34 +126,70 @@ public abstract class BaseFragment extends Fragment {
 
 
     /**
-     * 将该Fragment持有的Toolbar与主界面的Drawer关联
+     * 初始化Toolbar与Title文字
      * */
     protected void initToolbarAndLeftDrawer(Toolbar toolbar, String title) {
         this.toolbar = toolbar;
         this.title = title;
-        Rxbus.getInstance().send(new InitToolbarEvent(toolbar));
         toolbar.setTitle(title);
+        applyNewMode();
+        reboundToolbar();
     }
 
     /**
      * 重新绑定Toolbar与Menu
      * */
     public void reboundToolbar() {
-        if (null != toolbar && title != null)
-            initToolbarAndLeftDrawer(toolbar, title);
+        if (null != toolbar)
+            Rxbus.getInstance().send(new InitToolbarEvent(toolbar));
     }
 
     /**
      * 注册事件
      * */
+    private Subscription subscription;
     public void registerEventReceiver() {
         Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
     }
 
     /**
-     * 处理时间
+     * 解注事件
+     * */
+    public void unregisterEventReceiver() {
+        if (null != subscription)
+            subscription.unsubscribe();
+    }
+
+    /**
+     * 处理事件
      * */
     public void handleRxEvent(Object event){
+        if (event instanceof NightModeEvent) {
+            isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
+            applyNewMode();
+            /* 改变Root */
+            NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
+        }
+    }
 
+    /**
+     * 改变当前Fragment的主题颜色
+     * */
+    protected void applyNewMode() {
+        if (null == toolbar)
+            return;
+        if (isNowNightModeOn) {
+            toolbar.setBackgroundColor(Color.rgb(44, 44, 44));
+            toolbar.setTitleTextColor(Color.rgb(190, 190, 190));
+            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            toolbar.setNavigationIcon(upArrow);
+        } else {
+            toolbar.setBackgroundColor(Color.rgb(250, 250, 250));
+            toolbar.setTitleTextColor(Color.rgb(60, 64, 67));
+            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
+            toolbar.setNavigationIcon(upArrow);
+        }
     }
 }

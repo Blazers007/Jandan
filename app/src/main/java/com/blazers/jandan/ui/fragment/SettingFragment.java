@@ -1,6 +1,8 @@
 package com.blazers.jandan.ui.fragment;
 
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
@@ -70,10 +72,7 @@ public class SettingFragment extends BaseFragment {
 
         nightModeHolder = new SwitchHolder(setNightMode,
             R.string.setting_night_mode, R.string.setting_night_mode_describe, SPHelper.NIGHT_MODE_ON,
-            (view, isChecked)->{
-                NightWatcher.switchToModeNight(getView(), isChecked);
-                toolbar.setBackgroundColor(Color.rgb(44,44,44));
-            }
+            (view, isChecked)->Rxbus.getInstance().send(new NightModeEvent(isChecked))
         );
         // Todo 目前暂时隐藏
 //        nightModeHolder.hide();

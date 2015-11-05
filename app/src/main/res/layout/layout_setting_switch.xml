@@ -29,9 +29,11 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             />
-    <View
+    <com.blazers.jandan.views.nightwatch.WachView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="#f0f0f0"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            blz:wtg_day_bg="#f0f0f0"
+            blz:wtg_night_bg="#616161"
+            />
 </RelativeLayout>

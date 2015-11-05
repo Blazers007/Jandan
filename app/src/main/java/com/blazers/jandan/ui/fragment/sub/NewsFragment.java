@@ -23,7 +23,6 @@ import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.facebook.drawee.view.SimpleDraweeView;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +150,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
 
         @Override
         public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = inflater.inflate(R.layout.item_jandan_news_list, parent, false);
+            View v = inflater.inflate(R.layout.item_jandan_news, parent, false);
             return new NewsHolder(v);
         }
 

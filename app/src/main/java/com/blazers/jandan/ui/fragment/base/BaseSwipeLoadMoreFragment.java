@@ -61,7 +61,7 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
         if (null != loadMoreRecyclerView && null != adapter) {
             loadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-            loadMoreRecyclerView.addItemDecoration(new GreySpaceItemDecoration());
+            loadMoreRecyclerView.addItemDecoration(new GreySpaceItemDecoration(getActivity()));
 //            loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
             loadMoreRecyclerView.setPullCallback(new PullCallback() {
                 @Override

@@ -14,9 +14,4 @@ public class RecyclerViewHelper {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         return linearLayoutManager;
     }
-
-    public static RecyclerView.ItemDecoration getDefaultVeriticalDivider(Activity activity) {
-        return new DividerItemDecoration(activity, DividerItemDecoration.VERTICAL_LIST);
-    }
-
 }

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.util.Dppx;
+import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
 import rx.Subscription;
 
@@ -31,8 +32,17 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /* Vars */
-    private Toolbar toolbar;
+    protected Toolbar toolbar;
     private ViewGroup toolbarWithShadow;
+    /* Vars */
+    protected boolean isNowNightModeOn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        /* 读取模式 */
+        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
+    }
 
     /* Init functions */
     protected void initToolbarByTypeWithShadow(ViewGroup holder, Toolbar toolbar, ToolbarType type) {

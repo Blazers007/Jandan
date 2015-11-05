@@ -30,20 +30,22 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:textSize="16sp"
-            blz:wtv_day_textColor="#666"
-            blz:wtv_night_textColor="#aaa"
+            blz:wtv_day_textColor="@color/SettingText.Day"
+            blz:wtv_night_textColor="@color/SettingText.Night"
             tools:text="15"
             />
-    <View
+    <com.blazers.jandan.views.nightwatch.WachView
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="#f0f0f0"
             android:layout_alignParentBottom="true"
+            blz:wtg_day_bg="#f0f0f0"
+            blz:wtg_night_bg="#616161"
             />
-    <View
+    <com.blazers.jandan.views.nightwatch.WachView
             android:id="@+id/disable_mask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ccfefefe"
+            blz:wtg_day_bg="#ccfefefe"
+            blz:wtg_night_bg="#cc343434"
             />
 </RelativeLayout>

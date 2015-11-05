@@ -4,29 +4,29 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.SPHelper;
 
 /**
- * Created by Blazers on 2015/11/4.
+ * Created by Blazers on 2015/11/5.
  */
-public class WatchRelativeLayout extends RelativeLayout implements INightWatch {
+public class WatchLinearLayout extends LinearLayout implements INightWatch {
 
     /* 保存变量 */
     private Drawable bgDay, bgNight;
 
-    public WatchRelativeLayout(Context context) {
+    public WatchLinearLayout(Context context) {
         super(context);
         init(context, null);
     }
 
-    public WatchRelativeLayout(Context context, AttributeSet attrs) {
+    public WatchLinearLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public WatchRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public WatchLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
@@ -42,10 +42,7 @@ public class WatchRelativeLayout extends RelativeLayout implements INightWatch {
             /* 一般 */
             bgDay = a.getDrawable(R.styleable.WatchView_wtg_day_bg);
             bgNight = a.getDrawable(R.styleable.WatchView_wtg_night_bg);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-        finally {
+        }finally {
             a.recycle();
         }
         if (SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false)) {

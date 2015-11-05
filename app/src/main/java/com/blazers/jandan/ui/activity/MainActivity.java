@@ -1,8 +1,12 @@
 package com.blazers.jandan.ui.activity;
 
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +31,7 @@ import com.blazers.jandan.services.OfflineDownloadService;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.*;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.blazers.jandan.util.ClipboardHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
 
@@ -43,26 +48,32 @@ public class MainActivity extends BaseActivity {
     /* 缓存变量 */
     private int nowSelectedNavId = R.id.nav_jandan;
     private ReadingFragment defaultFragment;
-    private boolean isNowNightModeOn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /* 读取模式 */
-        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         /* 友盟统计 */
         MobclickAgent.openActivityDurationTrack(false);
-        /* RxBus */
+        /* RxBus 与Fragment中部分 进行代码整合  */
         setHasRegisterDemand(true);
         /* 绑定离线下载服务 */
         startService(new Intent(this, OfflineDownloadService.class));
         bindService(new Intent(this, OfflineDownloadService.class), serviceConnection, BIND_AUTO_CREATE);
         /* 根据需要填充主界面所加载的Fragment */
         initFragments();
-        /* 初始化离线下载 */
+        /* 初始化Drawer */
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
+        /* 设置NavigationView */
+        setupNavigationView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /* 仅仅当程序在前台的时候 注册监听 */
+        ClipboardHelper.registerClipboardListener(this);
     }
 
     /**
@@ -76,52 +87,54 @@ public class MainActivity extends BaseActivity {
             .commitAllowingStateLoss();
         /* 设置导航选中状态 */
         navigationView.setCheckedItem(R.id.nav_jandan);
+        navigationView.postDelayed(defaultFragment::reboundToolbar, 200);  // 为何需要重新bind一下？
         /* 设置监听 */
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             if (menuItem.getItemId() != nowSelectedNavId) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                BaseFragment choosen = null;
+                BaseFragment choose = null;
                 switch (menuItem.getItemId()) {
                     case R.id.nav_jandan:
-                        for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                             if (fragment != null)
                                 transaction.hide(fragment);
                         }
                         transaction.show(defaultFragment);
                         nowSelectedNavId = R.id.nav_jandan;
-                        choosen = defaultFragment;
+                        choose = defaultFragment;
                         break;
                     case R.id.nav_fav:
                         if (getSupportFragmentManager().findFragmentByTag(FAV_TAG) == null) {
-                            transaction.add(R.id.fragment_wrapper, FavoriteFragment.getInstance(), FAV_TAG);
+                            transaction.add(R.id.fragment_wrapper, choose = FavoriteFragment.getInstance(), FAV_TAG);
                         } else {
-                            for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                                 if (fragment != null)
                                     transaction.hide(fragment);
                             }
-                            transaction.show(choosen = FavoriteFragment.getInstance());
+                            transaction.show(choose = FavoriteFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_fav;
                         break;
                     case R.id.nav_setting:
                         if (getSupportFragmentManager().findFragmentByTag(SETTING_TAG) == null) {
-                            transaction.add(R.id.fragment_wrapper, SettingFragment.getInstance(), SETTING_TAG);
+                            transaction.add(R.id.fragment_wrapper, choose = SettingFragment.getInstance(), SETTING_TAG);
                         } else {
-                            for (Fragment fragment : getSupportFragmentManager().getFragments()){
+                            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                                 if (fragment != null && fragment != SettingFragment.getInstance())
                                     transaction.hide(fragment);
                             }
                             /*TODO
                             * http://stackoverflow.com/questions/22489703/trying-to-remove-fragment-from-view-gives-me-nullpointerexception-on-mnextanim
                             * */
-                            transaction.show(choosen = SettingFragment.getInstance());
+                            transaction.show(choose = SettingFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_setting;
                         break;
                 }
-                if (choosen != null)
-                    choosen.reboundToolbar();
                 transaction.commitAllowingStateLoss();
+                if (choose != null)
+                    choose.reboundToolbar();
+//                    navigationView.postDelayed(choose::reboundToolbar, 300);
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
@@ -129,17 +142,38 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 将呈现的Fragment的Toolbar绑定到Drawer上去
+     * Setup NavigationView
      * */
-    void initDrawerWithToolbar(Toolbar toolbar) {
+    void setupNavigationView() {
+        if (isNowNightModeOn) {
+            navigationView.setBackgroundColor(Color.rgb(44,44,44));
+        }else {
+            navigationView.setBackgroundColor(Color.rgb(250,250,250));
+        }
+    }
+
+    /**
+     * 将呈现的Fragment的Toolbar绑定到Drawer上去 TODO:重新整理代码结构 减少耦合度 Apply代码放入正确的Cla
+     * */
+    private void initDrawerWithToolbar(Toolbar toolbar) {
         initToolbarByTypeWithShadow(null, toolbar, ToolbarType.NORMAL);
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.drawer_open, R.string.drawer_close);
         drawerToggle.syncState();
         drawerLayout.setDrawerListener(drawerToggle);
-        /* Navigation View */
+        /* 貌似上面的方法会还原默认ICON 所以需要重新更换NavIcon */
+        if (isNowNightModeOn) {
+            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            toolbar.setNavigationIcon(upArrow);
+        } else {
+            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
+            toolbar.setNavigationIcon(upArrow);
+        }
+        /* 需不需要放在此处? */
+        invalidateOptionsMenu();
     }
-
 
     /**
      * 滑入评论Fragment
@@ -168,6 +202,24 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+    /**
+     * 由于此Activity本身没有任何UI 所以仅仅管理Menu 以及Nav 的颜色 其余的主题由各个Fragment处理
+     * */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        for (int i = 0 ; i < menu.size() ; i ++) {
+            MenuItem item = menu.getItem(i);
+            Drawable icon = item.getIcon();
+            if (isNowNightModeOn) {
+                icon.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+            } else {
+                icon.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
+            }
+            item.setIcon(icon);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -193,9 +245,7 @@ public class MainActivity extends BaseActivity {
                 popupCommentFragment();
             }
         } else if (event instanceof InitToolbarEvent) {
-            /* 重新绑定Toolbar */
             initDrawerWithToolbar(((InitToolbarEvent) event).toolbar);
-            invalidateOptionsMenu();
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
             String url = ((ViewImageEvent) event).url;
@@ -209,13 +259,11 @@ public class MainActivity extends BaseActivity {
             // http://stackoverflow.com/questions/12105064/actions-in-onactivityresult-and-error-can-not-perform-this-action-after-onsavei
             ft.commitAllowingStateLoss();
         } else if (event instanceof NightModeEvent) {
-            boolean isNightModeOn = ((NightModeEvent) event).nightModeOn;
-            if (isNightModeOn || !isNowNightModeOn) {
-                // 动态开启夜间模式
-                
-            } else if (isNowNightModeOn) {
-
-            }
+            /* 更新Menu */
+            isNowNightModeOn = ((NightModeEvent)event).nightModeOn;
+            invalidateOptionsMenu();
+            /* 更新Nav */
+            setupNavigationView();
         } else if (event instanceof DrawerEvent) {
             switch (((DrawerEvent)event).messageType) {
                 case DrawerEvent.CLOSE_DRAWER_AND_LOCK:
@@ -249,6 +297,13 @@ public class MainActivity extends BaseActivity {
         if (offlineBinder == null)
             Toast.makeText(this, "离线下载服务还木有准备完毕", Toast.LENGTH_SHORT).show();
         return offlineBinder;
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ClipboardHelper.unregisterListener();
     }
 
     /**

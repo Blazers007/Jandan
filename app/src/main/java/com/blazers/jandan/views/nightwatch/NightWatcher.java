@@ -8,6 +8,8 @@ import android.view.ViewGroup;
  */
 public class NightWatcher {
     public static void switchToModeNight(View root, boolean night) {
+        if (null == root)
+            return;
         if (root instanceof INightWatch) {
             if (night) {
                 ((INightWatch)root).setNightMode();

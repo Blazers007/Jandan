@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.TextView;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.SPHelper;
@@ -55,6 +56,8 @@ public class WatchTextView extends TextView implements INightWatch {
 
             bgDay = a.getDrawable(R.styleable.WatchTextView_wtv_day_bg);
             bgNight = a.getDrawable(R.styleable.WatchTextView_wtv_night_bg);
+        }catch (Exception e){
+            e.printStackTrace();
         }finally {
             a.recycle();
         }
@@ -78,7 +81,7 @@ public class WatchTextView extends TextView implements INightWatch {
     @Override
     public void setNightMode() {
         if (textColorNight != -1)
-            setTextColor(textColorDay);
+            setTextColor(textColorNight);
         if (null != bgNight)
             setBackground(bgNight);
     }

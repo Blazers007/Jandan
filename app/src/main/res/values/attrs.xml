@@ -10,7 +10,7 @@
 
 
     <!-- Simple -->
-    <declare-styleable name="WatchRelativeLayout">
+    <declare-styleable name="WatchView">
         <!-- Basic Background-->
         <attr name="wtg_day_bg" format="color|reference"/>
         <attr name="wtg_night_bg" format="color|reference"/>

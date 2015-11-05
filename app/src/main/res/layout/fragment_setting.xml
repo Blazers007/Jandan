@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         blz:wtg_day_bg="#fafafa"
-        blz:wtg_night_bg="#333"
+        blz:wtg_night_bg="#4b4b4b"
         >
     <include
             android:id="@+id/toolbar_with_shadow"
