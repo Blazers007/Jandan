@@ -16,4 +16,8 @@
     <color name="SettingSubText.Night">#dcdcdc</color>
     <color name="SettingText.Day">#666</color>
     <color name="SettingText.Night">#3186d6</color>
+
+    <!-- Commeng Divider-->
+    <color name="hot_text">#ef4a4f</color>
+    <color name="not_hot_text">#1d6FC5</color>
 </resources>

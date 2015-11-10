@@ -17,6 +17,7 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
+import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.InfiniteSeekBar;
 import com.blazers.jandan.views.SelectableTextView;
 
@@ -51,7 +52,15 @@ public class RightDownloadingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_right_downloading, container, false);
         ButterKnife.bind(this, root);
+        init();
         return root;
+    }
+
+
+    void init() {
+        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false)) {
+            segments.get(3).setVisibility(View.GONE);
+        }
     }
 
     @OnClick(R.id.button)

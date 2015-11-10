@@ -39,9 +39,7 @@
                 android:screenOrientation="portrait"
                 >
         </activity>
-
         <!-- Service -->
         <service android:name=".services.OfflineDownloadService"/>
     </application>
-
 </manifest>

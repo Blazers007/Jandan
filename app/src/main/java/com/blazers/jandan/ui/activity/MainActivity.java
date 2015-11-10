@@ -54,8 +54,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        /* 友盟统计 */
-        MobclickAgent.openActivityDurationTrack(false);
         /* RxBus 与Fragment中部分 进行代码整合  */
         setHasRegisterDemand(true);
         /* 绑定离线下载服务 */

@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,6 +41,7 @@ public class CommentFragment extends BaseFragment {
     public static final String TAG = CommentFragment.class.getSimpleName();
 
     @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.nothing_hint) LinearLayout hint;
     @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
     @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
 
@@ -64,6 +68,8 @@ public class CommentFragment extends BaseFragment {
         toolbar.setTitle("评论");
         toolbar.setNavigationOnClickListener(v -> Rxbus.getInstance().send(new CommentEvent(-1)));
 
+        hint.setVisibility(View.GONE);
+
         loadCommentById(getArguments().getLong("commentId", -1));
         return root;
     }
@@ -74,15 +80,22 @@ public class CommentFragment extends BaseFragment {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 this::parseAndShowComments,
-                throwable -> Log.e("[Comments]", throwable.toString())
+                throwable -> {
+                    hint.setVisibility(View.VISIBLE);
+                    Log.e("[Comments]", throwable.toString());
+                }
             );
     }
 
     void parseAndShowComments(Comments comments) {
         progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
-        commentRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        JandanCommentAdapter adapter = new JandanCommentAdapter(LayoutInflater.from(getActivity()), comments);
-        commentRecyclerView.setAdapter(adapter);
+        if (comments.response.size() > 0) {
+            commentRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+            JandanCommentAdapter adapter = new JandanCommentAdapter(LayoutInflater.from(getActivity()), comments);
+            commentRecyclerView.setAdapter(adapter);
+        } else {
+            hint.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -154,8 +167,16 @@ public class CommentFragment extends BaseFragment {
             CommentPost post = commentPosts.get(position);
             switch (getItemViewType(position)) {
                 case CommentPost.HOT_DIVIDER:
+                    DividerHolder hot = (DividerHolder)h;
+                    hot.icon.setImageResource(R.drawable.ic_hot_24dp);
+                    hot.text.setText(R.string.hot);
+                    hot.text.setTextColor(Color.parseColor("#ef4a4f"));
                     break;
                 case CommentPost.NORMAL_DIVIDER:
+                    DividerHolder not = (DividerHolder)h;
+                    not.icon.setImageResource(R.drawable.ic_not_hot_24dp);
+                    not.text.setText(R.string.not_hot);
+                    not.text.setTextColor(Color.parseColor("#1d6FC5"));
                     break;
                 case CommentPost.POST:
                     CommentHolder holder = (CommentHolder)h;
@@ -180,14 +201,11 @@ public class CommentFragment extends BaseFragment {
          * 评论Holder
          * */
         class CommentHolder extends RecyclerView.ViewHolder{
-            @Bind(R.id.user_name)
-            TextView userName;
-            @Bind(R.id.user_head)
-            SimpleDraweeView userHead;
+            @Bind(R.id.user_name) TextView userName;
+            @Bind(R.id.user_head) SimpleDraweeView userHead;
             @Bind(R.id.comment_date) TextView commentDate;
             @Bind(R.id.message) TextView message;
-            @Bind(R.id.quote)
-            QuoteView quoteView;
+            @Bind(R.id.quote) QuoteView quoteView;
 
             public CommentHolder(View itemView) {
                 super(itemView);
@@ -199,8 +217,11 @@ public class CommentFragment extends BaseFragment {
          * 分隔线Holder
          * */
         class DividerHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.divider_icon) ImageView icon;
+            @Bind(R.id.divider_text) TextView text;
             public DividerHolder(View itemView) {
                 super(itemView);
+                ButterKnife.bind(this, itemView);
             }
         }
     }

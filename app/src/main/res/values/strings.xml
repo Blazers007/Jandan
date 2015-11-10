@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">煎蛋蛋</string>
+    <string name="app_name">煎蛋阅读</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -49,6 +49,15 @@
     <!-- Dialog -->
     <string name="choose">就决定是你了!</string>
     <string name="negetive">还是...算了!</string>
+
+    <!-- Nothing Hint -->
+    <string name="hint_main">现在还没有评论~</string>
+    <string name="hint_sub">上个厕所再回来看看，说不定就有了</string>
+
+    <!-- Comment-->
+    <string name="hot">热门评论</string>
+    <string name="not_hot">评论列表</string>
+
     <!-- TestStrings -->
     <string name="longText">
         反法西斯就是为了我在想晒孩子的时候就可以晒孩子，我不想看阅兵的时候也不会招来谩骂，尊重个人意志，使个人意志不被集体意志和强权所裹挟。我觉得那些先烈们白牺牲了，他们反抗的东西至今还存在着，还披上了爱国的外衣

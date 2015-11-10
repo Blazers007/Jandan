@@ -7,6 +7,8 @@
     <include
             android:id="@+id/toolbar_with_shadow"
             layout="@layout/layout_toolbar_with_shadow"/>
+    <include android:id="@+id/nothing_hint"
+             layout="@layout/layout_nothing_hint"/>
     <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/comment_swipe_refresh"
             android:layout_width="match_parent"
@@ -19,7 +21,7 @@
                 android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <!-- -->
+    <!-- Loading Progress -->
     <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_wheel"
             android:layout_width="80dp"

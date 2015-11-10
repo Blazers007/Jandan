@@ -63,7 +63,6 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     compile 'com.google.code.gson:gson:2.3.1'
-//    compile 'jp.wasabeef:recyclerview-animators:1.2.3'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.0@aar') {

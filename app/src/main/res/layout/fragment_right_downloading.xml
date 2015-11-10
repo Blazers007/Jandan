@@ -13,26 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="128dp"
             />
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="无聊图"
-            android:id="@+id/textView3"
-            android:textColor="#666"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            />
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="17331"
-            android:id="@+id/textView4"
-            android:textColor="#666"
-            android:layout_below="@+id/textView3"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            />
+    <!-- 图片信息 -->
     <!-- 取消 -->
     <ImageView
             android:id="@+id/close"
@@ -63,7 +44,7 @@
             android:layout_alignTop="@id/title"
             android:layout_toRightOf="@id/title"
             android:layout_marginLeft="12dp"/>
-
+    <!-- 自动换行 -->
     <com.blazers.jandan.views.AutoLayoutLinearLayout
             android:id="@+id/cata"
             android:orientation="horizontal"
