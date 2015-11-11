@@ -30,6 +30,11 @@
         <!--<item name="colorPrimaryDark">#000000</item>-->
     </style>
 
+    <style name="ImageViewStyle" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <!-- 夜间模式 -->
     <style name="NightMode" parent="AppTheme">
         <item name="colorPrimary">#212121</item>

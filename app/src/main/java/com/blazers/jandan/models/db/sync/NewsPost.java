@@ -100,7 +100,7 @@ public class NewsPost extends RealmObject implements Serializable {
 
     /* APIs */
     public static List<NewsPost> getAllPost(Realm realm, long page) {
-        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("id", false);
+        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", false);
     }
 
 

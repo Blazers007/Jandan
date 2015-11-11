@@ -3,14 +3,17 @@ package com.blazers.jandan.ui.fragment;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.*;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -18,7 +21,9 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.views.nightwatch.NightWatcher;
 import com.blazers.jandan.views.nightwatch.WatchTextView;
 
@@ -42,10 +47,11 @@ public class SettingFragment extends BaseFragment {
     @Bind(R.id.set_meizi) RelativeLayout setMeizi;
     @Bind(R.id.set_filter) RelativeLayout setFilter;
     @Bind(R.id.set_filter_number) RelativeLayout setFilterNumber;
+    @Bind(R.id.set_clean_cache) RelativeLayout setCleanCache;
 
     //Holders
     private SwitchHolder nightModeHolder, autoGifHolder, meiziHolder, filterHolder;
-    private EditIntHolder filterNumberHolder;
+    private TextHolder filterNumberHolder, cleanCacheHolder;
 
     public static SettingFragment getInstance() {
         if (INSTANCE == null){
@@ -74,8 +80,6 @@ public class SettingFragment extends BaseFragment {
             R.string.setting_night_mode, R.string.setting_night_mode_describe, SPHelper.NIGHT_MODE_ON,
             (view, isChecked)->Rxbus.getInstance().send(new NightModeEvent(isChecked))
         );
-        // Todo 目前暂时隐藏
-//        nightModeHolder.hide();
 
         autoGifHolder = new SwitchHolder(setAutoGif,
             R.string.setting_auto_gif, R.string.setting_auto_gif_describe, SPHelper.AUTO_GIF_MODE_ON, null);
@@ -85,14 +89,57 @@ public class SettingFragment extends BaseFragment {
 
         filterHolder = new SwitchHolder(setFilter,
             R.string.setting_auto_filter, R.string.setting_auto_filter_describe, SPHelper.AUTO_FILTER_MODE_ON,
-            (view, isChecked)->filterNumberHolder.setEnabled(isChecked)
+            (view, isChecked)->{
+                filterNumberHolder.setEnabled(isChecked);
+                if (!isChecked)
+                    SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, 10000);
+            }
         );
 
         /* 输入框 */
-        filterNumberHolder = new EditIntHolder(setFilterNumber,
-            R.string.setting_filter_number, R.string.setting_filter_number_describe, SPHelper.AUTO_FILTER_NUMBER,
-            SPHelper.getBooleanSP(getActivity(), SPHelper.AUTO_FILTER_MODE_ON, false)
+        filterNumberHolder = new TextHolder(setFilterNumber,
+            R.string.setting_filter_number, R.string.setting_filter_number_describe,
+            SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, 0)+"",
+            SPHelper.getBooleanSP(getActivity(), SPHelper.AUTO_FILTER_MODE_ON, false),
+            (v)->{
+                 /* 首先获取当前 */
+                int selection = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, -1);
+                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
+                    .title(R.string.filter_dialog_title)
+                    .items(R.array.filter_selections)
+                    .itemsCallbackSingleChoice(selection, (dia, view, which, str)->{
+                        if (which == -1) {
+                            SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, which);
+                            return true;
+                        }
+                        filterNumberHolder.setText(str.toString());
+                        SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, which);
+                        return true;
+                    })
+                    .positiveText(R.string.choose)
+                    .positiveColor(Color.rgb(240, 114 ,175))
+                    .negativeText(R.string.negetive)
+                    .negativeColor(Color.rgb(109, 109, 109))
+                    .build();
+                dialog.show();
+            }
         );
+
+        // 点击清空
+        cleanCacheHolder = new TextHolder(setCleanCache,
+            R.string.setting_clean_cache, R.string.setting_clean_cache_describe,
+            "计算中", true,
+            (v)->SdcardHelper.cleanSDCardCache()
+                    .compose(RxHelper.applySchedulers())
+                    .subscribe(
+                        state-> {
+                            Toast.makeText(getActivity(), "清理完毕", Toast.LENGTH_SHORT).show();
+                            SdcardHelper.calculateCacheSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
+                        }
+                        ,throwable -> Log.e("Error", "清空失败")
+                        )
+        );
+        SdcardHelper.calculateCacheSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
     }
 
     /**
@@ -133,7 +180,7 @@ public class SettingFragment extends BaseFragment {
         }
     }
 
-    class EditIntHolder {
+    class TextHolder {
 
         private View root;
         private boolean enabled;
@@ -143,41 +190,19 @@ public class SettingFragment extends BaseFragment {
         @Bind(R.id.setting_text) TextView text;
         @Bind(R.id.disable_mask) View disableMask;
 
-        public EditIntHolder (View root, int title, int sub, String key, boolean enabled) {
+        public TextHolder (View root, int title, int sub, String value, boolean enabled, View.OnClickListener listener) {
             ButterKnife.bind(this, root);
             this.root = root;
             this.enabled = enabled;
-
             this.title.setText(title);
             this.sub.setText(sub);
-
             setEnabled(enabled);
+            text.setText(value);
+            root.setOnClickListener(listener);
+        }
 
-            int value = SPHelper.getIntSP(getActivity(), key, 0);
-            text.setText(String.format("%d", value));
-
-            root.setOnClickListener(v->{
-                /* 首先获取当前 */
-                int selection = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, -1);
-                MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                        .title(R.string.filter_dialog_title)
-                        .items(R.array.filter_selections)
-                        .itemsCallbackSingleChoice(selection, (dia, view, which, str)->{
-                            if (which == -1) {
-                                SPHelper.putIntSP(getActivity(), key, which);
-                                return true;
-                            }
-                            text.setText(str);
-                            SPHelper.putIntSP(getActivity(), key, which);
-                            return true;
-                        })
-                        .positiveText(R.string.choose)
-                        .positiveColor(Color.rgb(240, 114 ,175))
-                        .negativeText(R.string.negetive)
-                        .negativeColor(Color.rgb(109, 109, 109))
-                        .build();
-                dialog.show();
-            });
+        public void setText(String text) {
+            this.text.setText(text);
         }
 
         public void setEnabled(boolean enabled) {

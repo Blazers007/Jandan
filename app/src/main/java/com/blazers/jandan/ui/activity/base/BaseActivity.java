@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -45,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /* Init functions */
-    protected void initToolbarByTypeWithShadow(ViewGroup holder, Toolbar toolbar, ToolbarType type) {
+    protected void initToolbarByTypeWithShadow(@Nullable ViewGroup holder, Toolbar toolbar, ToolbarType type) {
         this.toolbarWithShadow = holder;
         this.toolbar = toolbar;
         setSupportActionBar(toolbar);

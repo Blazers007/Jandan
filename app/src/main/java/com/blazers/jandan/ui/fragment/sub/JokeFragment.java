@@ -71,8 +71,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
         mJokePostArrayList.addAll(localImageList);
         adapter.notifyItemRangeInserted(0, localImageList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localImageList.size() == 0
-            || TimeHelper.getThatTimeOffsetByNow(localImageList.get(0).getComment_date()) > 30 * TimeHelper.ONE_MIN) {
+        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localImageList.get(0).getComment_date())) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }

@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -12,11 +13,14 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
+import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.InfiniteSeekBar;
 import com.blazers.jandan.views.SelectableTextView;
@@ -44,7 +48,6 @@ import java.util.List;
 public class RightDownloadingFragment extends Fragment {
 
     @Bind({R.id.seg_news, R.id.seg_wuliao, R.id.seg_jokes, R.id.seg_meizi}) List<SelectableTextView> segments;
-    @Bind(R.id.filter) SwitchCompat filter;
     @Bind(R.id.page_seek_bar) InfiniteSeekBar pageSeekBar;
 
     @Nullable
@@ -56,16 +59,31 @@ public class RightDownloadingFragment extends Fragment {
         return root;
     }
 
-
     void init() {
-        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false)) {
+        if (!SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false)) {
             segments.get(3).setVisibility(View.GONE);
         }
     }
 
     @OnClick(R.id.button)
     public void download() {
-        // 此处是否需要解耦和?
+        if (NetworkHelper.isWifi(getActivity())) {
+            startDownload();
+        } else {
+            new MaterialDialog.Builder(getActivity())
+                .title(R.string.not_in_wifi)
+                .content(R.string.not_in_wifi_message)
+                .positiveText(R.string.do_offline_download)
+                .positiveColor(Color.rgb(240, 114, 175)) // 需要采用Color
+                .negativeText(R.string.negetive)
+                .negativeColor(Color.rgb(109, 109, 109))
+                .onPositive((dialog, action)->startDownload())
+                .build()
+                .show();
+        }
+    }
+
+    private void startDownload() {
         IOfflineDownloadInterface binder = ((MainActivity) getActivity()).getOfflineBinder();
         if (binder != null) {
             try {

@@ -17,7 +17,9 @@
         <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                >
             <!-- 常规 -->
             <com.blazers.jandan.views.nightwatch.WatchTextView
                     android:text="阅读设置"
@@ -48,15 +50,18 @@
             <!--  过滤数量指定 -->
             <include
                     android:id="@+id/set_filter_number"
-                    layout="@layout/layout_setting_edittext"/>
-            <!--  开启隐藏 -->
-            <!--  关于 -->
+                    layout="@layout/layout_setting_text"/>
+            <!--  系统 -->
             <com.blazers.jandan.views.nightwatch.WatchTextView
-                    android:text="关于"
+                    android:text="系统设置"
                     blz:wtv_day_textColor="@color/SettingSegmentText.Day"
                     blz:wtv_night_textColor="@color/SettingSegmentText.Night"
                     style="@style/SettingSegmentText"
                     />
+            <!--  清理缓存 -->
+            <include
+                    android:id="@+id/set_clean_cache"
+                    layout="@layout/layout_setting_text"/>
         </LinearLayout>
     </ScrollView>
 </com.blazers.jandan.views.nightwatch.WatchRelativeLayout>

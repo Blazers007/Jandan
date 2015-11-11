@@ -81,6 +81,7 @@ public class CommentFragment extends BaseFragment {
             .subscribe(
                 this::parseAndShowComments,
                 throwable -> {
+                    progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
                     hint.setVisibility(View.VISIBLE);
                     Log.e("[Comments]", throwable.toString());
                 }

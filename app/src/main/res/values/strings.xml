@@ -21,7 +21,7 @@
     <string name="action_share">分享</string>
 
     <!-- Setting -->
-    <string name="setting_night_mode">夜间模式</string>
+    <string name="setting_night_mode">夜间模式(实验特性)</string>
     <string name="setting_night_mode_describe">保护视力</string>
     <string name="setting_auto_gif">自动播放GIF</string>
     <string name="setting_auto_gif_describe">但是不支持点击暂停哟</string>
@@ -31,6 +31,9 @@
     <string name="setting_auto_filter_describe">自动过滤不被大家喜欢的内容</string>
     <string name="setting_filter_number">过滤数量设置</string>
     <string name="setting_filter_number_describe">自动过滤XX数量过大的内容,节省流量</string>
+    <string name="setting_clean_cache">内容缓存</string>
+    <string name="setting_clean_cache_describe">清理本地缓存</string>
+    <!-- Filter Dialog -->
     <string name="filter_dialog_title">设置过滤数量</string>
     <array name="filter_selections">
         <item>>5</item>
@@ -47,6 +50,9 @@
     <string name="warn_already_vote">民主政治每人只能投一票哦~</string>
 
     <!-- Dialog -->
+    <string name="not_in_wifi">当前不在WLAN状态</string>
+    <string name="not_in_wifi_message">离线可能会消耗你宝贵的流量，确定要离线吗？</string>
+    <string name="do_offline_download">必须离！</string>
     <string name="choose">就决定是你了!</string>
     <string name="negetive">还是...算了!</string>
 

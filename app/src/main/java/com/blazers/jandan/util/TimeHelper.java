@@ -1,5 +1,7 @@
 package com.blazers.jandan.util;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -99,19 +101,19 @@ public class TimeHelper {
         return String.format("%02d:%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
     }
 
-    /**
-     * 比较两个时间 格式
-     * */
-    public static int thisDateStringCompareWithThanThat(String thisDate, String thatDate) {
-        try {
-            return stringToDate(thisDate).compareTo(stringToDate(thatDate.split(" ")[0]));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+    public static long currentTime() {
+        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        return calendar.getTime().getTime();
     }
 
-    public static long getThatTimeOffsetByNow(String thatTime) {
-        return 0;
+    public static boolean isTimeEnoughForRefreshing(String dateTime) {
+        try {
+            long time = stringToDateTime(dateTime).getTime();
+//            Log.e("TIME", ">>>>>" + (currentTime() - time)/1000/60);
+            return currentTime() - time > 10 * ONE_MIN;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return true;
+        }
     }
 }

@@ -102,11 +102,10 @@ public class InfiniteSeekBar extends View {
     private float lastTouchX;
     private float velocityX;
     /**
-     * 记录滑动  计算滑动速度 更改参数 更新UI
+     * 记录滑动  计算滑动速度 更改参数 更新UI  TODO:采用GestureDetector来实现点击操作
      * */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        return super.onTouchEvent(event);     // 不需要向下传递 以及判断点击 阻拦事件 直接在此进行处理!
         if (null == mVelocityTracker)
             mVelocityTracker = VelocityTracker.obtain();
         mVelocityTracker.addMovement(event);
@@ -116,29 +115,33 @@ public class InfiniteSeekBar extends View {
                 mScrolling = false;
                 removeCallbacks(mScrollingRunnable);
                 velocityX = 0;
-                // 计算
                 lastTouchX = event.getX();
-                Log.i(">>> [ Start ] <<<", "" + lastTouchX);
+//                Log.i(">>> [ Start ] <<<", "" + lastTouchX);
                 break;
             case MotionEvent.ACTION_MOVE:
-                // 计算偏移量
+                // 计算偏移量 并对越界的进行衰减判断
                 float nowX = event.getX();
                 float offsetX = nowX - lastTouchX;
-                Log.i(">>> [ Offset ] <<<", "" + offsetX);
+                // 是否需要衰减
+                if (mXOffset > 0 && offsetX >0) {
+                    offsetX *= (1 - mXOffset / 140.0f);
+                } else if (mXOffset < (mDefaultRangeEnd+2) * -100 && offsetX < 0) {
+                    offsetX *= (1 - Math.abs(mXOffset) / ((mDefaultRangeEnd+6)*100.0f));
+                }
                 lastTouchX = nowX;
-                // 更改并计算 mXOffset 与 mDefaultSelectValue!
                 mXOffset += offsetX;
+                Log.i(">>> [ XOffset ] <<<", "" + mXOffset);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 // 计算速度
-                mVelocityTracker.computeCurrentVelocity(160, mMaxVelocity);
+                mVelocityTracker.computeCurrentVelocity(100, mMaxVelocity);
                 velocityX = mVelocityTracker.getXVelocity();
-                Log.i(">>> [Vel X] <<<", "" + velocityX);
+//                Log.i(">>> [Vel X] <<<", "" + velocityX);
                 // 计算加速度 延时动画效果
                 float upX = event.getX();
-                Log.i(">>> [ UP ] <<<", "" + upX);
-                Log.i(">>> [ Final Speed ] <<<", "" + velocityX);
+//                Log.i(">>> [ UP ] <<<", "" + upX);
+//                Log.i(">>> [ Final Speed ] <<<", "" + velocityX);
                 // 根据速度计算是否需要滑动 如果不需要则画像最近的一个
                 if (velocityX > 100) {
                     computeSeekBarScroll();

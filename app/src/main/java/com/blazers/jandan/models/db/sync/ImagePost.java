@@ -137,7 +137,7 @@ public class ImagePost extends RealmObject {
 
     /* APIs */
     public static List<ImagePost> getImagePosts(Realm realm, long page, String type) {
-        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_ID", false);
+        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_date", false);
     }
 
     /**

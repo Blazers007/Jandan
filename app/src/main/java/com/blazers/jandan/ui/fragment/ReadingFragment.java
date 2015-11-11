@@ -31,6 +31,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Blazers on 2015/10/12.
+ *
+ * 主 Fragment负责管理四个阅读板块
+ *
  */
 public class ReadingFragment extends BaseFragment {
 
@@ -61,7 +64,7 @@ public class ReadingFragment extends BaseFragment {
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
-        initToolbarAndLeftDrawer(toolbar, "煎蛋");
+        initToolbarAndLeftDrawer(toolbar, "煎蛋阅读");
         return root;
     }
 
@@ -73,6 +76,7 @@ public class ReadingFragment extends BaseFragment {
         fragments.add(new NewsFragment());
         fragments.add(PicFragment.newInstance("wuliao"));
         fragments.add(new JokeFragment());
+        // 是否需要加载妹纸页面
         if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
             fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));

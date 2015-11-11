@@ -18,8 +18,8 @@ import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.FileHelper;
 import com.blazers.jandan.util.NetworkHelper;
+import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.facebook.drawee.view.SimpleDraweeView;
 import rx.android.schedulers.AndroidSchedulers;
@@ -66,8 +66,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
         mNewsPostArrayList.addAll(localNewsList);
         adapter.notifyItemRangeInserted(0, localNewsList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localNewsList.size() == 0
-            || TimeHelper.getThatTimeOffsetByNow(localNewsList.get(0).getDate()) > 30 * TimeHelper.ONE_MIN) {
+        if (localNewsList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localNewsList.get(0).getDate())) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }
@@ -159,7 +158,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
         public void onBindViewHolder(NewsHolder newsHolder, int i) {
             NewsPost newsPost = mNewsPostArrayList.get(i);
             LocalImage localImage = realm.where(LocalImage.class).equalTo("url", newsPost.getThumbUrl()).findFirst();
-            if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
+            if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
                 newsHolder.draweeView.setImageURI(Uri.parse("file://" + localImage.getLocalUrl()));
             } else {
                 newsHolder.draweeView.setImageURI(Uri.parse(newsPost.getThumbUrl()));

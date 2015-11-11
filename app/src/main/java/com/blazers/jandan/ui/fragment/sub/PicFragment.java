@@ -23,10 +23,7 @@ import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.CommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.FileHelper;
-import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.RxHelper;
+import com.blazers.jandan.util.*;
 import com.blazers.jandan.views.DownloadFrescoView;
 import com.blazers.jandan.views.ThumbTextButton;
 import rx.Observable;
@@ -76,14 +73,32 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         trySetupSwipeRefreshLayout();
         trySetupRecyclerViewWithAdapter(adapter = new JandanImageAdapter());
         // 首先从数据库读取 在判断是否需要加载
-        List<ImageRelateToPost> localImageList = ImagePost.getAllImagesFromDB(realm, 1, type);
+        List<ImagePost> list = applyFilter(ImagePost.getImagePosts(realm, 1, type));
+        List<ImageRelateToPost> localImageList = ImagePost.getAllImageFromList(list);
         imageArrayList.addAll(localImageList);
         adapter.notifyItemRangeInserted(0, localImageList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localImageList.size() == 0) {
+        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localImageList.get(0).holder.getComment_date())) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }
+    }
+
+    /**
+     * 过滤
+     * */
+    List<ImagePost> applyFilter(List<ImagePost> posts) {
+        int filter = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, 10000);
+        if (filter == 10000)
+            return posts;
+        List<ImagePost> newPosts = new ArrayList<>();
+        for (ImagePost post : posts) {
+            long voteNegative = 0;
+            try {voteNegative = Long.parseLong(post.getVote_negative());} catch (Exception e){e.printStackTrace();}// 绘画出问题}
+            if (voteNegative < filter)
+                newPosts.add(post);
+        }
+        return newPosts;
     }
 
     @Override
@@ -93,6 +108,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             Parser.getInstance().getPictureData(mPage, type) // 是IO线程还是Main县城由该方法确定
                 .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
                 .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+                .map(this::applyFilter)
                 .subscribe(list -> {
                     refreshComplete();
                     // 处理数据
@@ -206,7 +222,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             // 加载图片 首先判断本地是否有
             LocalImage localImage = realm.where(LocalImage.class).equalTo("url", image.url).findFirst();
             String url;
-            if (localImage != null && FileHelper.isThisFileExist(localImage.getLocalUrl())) {
+            if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
                 holder.draweeView.showImage("file://" + localImage.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
                 holder.save.setVisibility(View.VISIBLE);
                 holder.save.setClickable(false);

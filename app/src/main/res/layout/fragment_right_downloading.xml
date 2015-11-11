@@ -13,13 +13,37 @@
             android:layout_width="match_parent"
             android:layout_height="128dp"
             />
-    <!-- 图片信息 -->
+    <!-- Jandan信息 -->
+    <TextView
+            android:id="@+id/wuliao_title"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center_horizontal"
+            android:textSize="19sp"
+            android:textColor="#333"
+            android:text="无聊图"
+            />
+    <TextView
+            android:id="@+id/wuliao_count"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/wuliao_title"
+            android:layout_alignRight="@id/wuliao_title"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:textSize="15sp"
+            android:textColor="#666"
+            android:text="194008"
+            />
     <!-- 取消 -->
     <ImageView
             android:id="@+id/close"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/ic_cancel_grey600_24dp"
+            android:src="@mipmap/ic_close_black_24dp"
             android:padding="12dp"
             android:clickable="true"
             />
@@ -99,34 +123,10 @@
     </com.blazers.jandan.views.AutoLayoutLinearLayout>
     <!-- 设置区域 -->
     <TextView
-            android:id="@+id/filter_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cata"
-            android:textColor="#555"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="12dp"
-            android:text="过滤设置"
-            android:textSize="13sp"
-            />
-    <android.support.v7.widget.SwitchCompat
-            android:id="@+id/filter"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_below="@id/filter_title"
-            android:textSize="15sp"
-            android:text="沿用设置的过滤条件进行离线"
-            android:layout_marginBottom="8dp"
-            app:theme="@style/Color1SwitchStyle"
-            />
-    <TextView
             android:id="@+id/page_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/filter"
+            android:layout_below="@id/cata"
             android:textColor="#555"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"

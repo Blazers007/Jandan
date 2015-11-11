@@ -32,12 +32,12 @@ public class ObservableWebView extends WebView {
             listener.onScrollChanged(l, t, oldl, oldt);
     }
 
-    @Override
-    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-        if (listener != null)
-            listener.onScrollChanged(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-    }
+//    @Override
+//    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+//        super.onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+//        if (listener != null)
+//            listener.onScrollChanged(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
+//    }
 
     public void setListener(OnWebViewScrollChangeListener listener) {
         this.listener = listener;
@@ -46,5 +46,7 @@ public class ObservableWebView extends WebView {
     public interface OnWebViewScrollChangeListener {
         void onScrollChanged(int left, int top, int oldLeft, int oldTop);
     }
+
+
 
 }

@@ -87,6 +87,6 @@ public class JokePost extends RealmObject implements Serializable{
 
     /* APIs */
     public static List<JokePost> getAllPost(Realm realm, int page) {
-        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_ID", false);
+        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_date", false);
     }
 }

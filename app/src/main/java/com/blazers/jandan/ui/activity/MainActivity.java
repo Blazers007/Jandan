@@ -118,7 +118,7 @@ public class MainActivity extends BaseActivity {
                             transaction.add(R.id.fragment_wrapper, choose = SettingFragment.getInstance(), SETTING_TAG);
                         } else {
                             for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                                if (fragment != null && fragment != SettingFragment.getInstance())
+                                if (fragment != null)
                                     transaction.hide(fragment);
                             }
                             /*TODO
@@ -176,7 +176,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 滑入评论Fragment
      * */
-    void pushInCommentFragment(long id) {
+    private void pushInCommentFragment(long id) {
         getSupportFragmentManager().beginTransaction()
             .setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out, R.anim.activity_slide_right_in, R.anim.activity_slide_right_out)
             .add(R.id.fragment_wrapper, CommentFragment.NewInstance(id))
@@ -187,7 +187,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 滑出Fragment
      * */
-    void popupCommentFragment() {
+    private void popupCommentFragment() {
         getSupportFragmentManager().popBackStack();
     }
 
@@ -229,6 +229,33 @@ public class MainActivity extends BaseActivity {
         return true;
     }
 
+
+    /**
+     * 处理回退键
+     * */
+    private long lastClickTime;
+    @Override
+    public void onBackPressed() {
+        // 1 若打开了右侧Drawer关闭之
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
+            return;
+        }
+        // 2 若当前BackStack回退栈有Fragment 退出之
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0 ){
+            getSupportFragmentManager().popBackStack();
+            return;
+        }
+        // 3 点击退出
+        if (System.currentTimeMillis() - lastClickTime > 2000) {
+            Toast.makeText(this, "再次点击退出~", Toast.LENGTH_SHORT).show();
+            lastClickTime = System.currentTimeMillis();
+        }else{
+            super.onBackPressed();
+        }
+    }
+
     /**
      * 处理Event消息
      * */
@@ -247,15 +274,19 @@ public class MainActivity extends BaseActivity {
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
             String url = ((ViewImageEvent) event).url;
-            Bundle args = new Bundle();
-            args.putString("url", url);
-            DialogFragment fragment = new ImageViewerFragment();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(fragment, null);
-            fragment.setArguments(args);
+            Intent intent = new Intent(this, ImageViewerActivity.class);
+            intent.putExtra("url", url);
+            startActivity(intent);
+//            Bundle args = new Bundle();
+//            args.putString("url", url);
+//            DialogFragment fragment = new ImageViewerFragment();
+//            fragment.setArguments(args);
+//            getSupportFragmentManager().beginTransaction()
+//                .add(fragment, null)
+//                .addToBackStack(null)
+//                .commitAllowingStateLoss();
 //            fragment.show(getSupportFragmentManager(), "tag");
             // http://stackoverflow.com/questions/12105064/actions-in-onactivityresult-and-error-can-not-perform-this-action-after-onsavei
-            ft.commitAllowingStateLoss();
         } else if (event instanceof NightModeEvent) {
             /* 更新Menu */
             isNowNightModeOn = ((NightModeEvent)event).nightModeOn;
@@ -298,6 +329,9 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    /**
+     * 解除监听Clipboard
+     * */
     @Override
     protected void onPause() {
         super.onPause();

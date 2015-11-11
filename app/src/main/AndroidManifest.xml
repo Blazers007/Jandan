@@ -16,16 +16,19 @@
             android:theme="@style/AppTheme">
 
         <!-- Umeng统计 -->
-        <meta-data android:value="562ec5f467e58e1679000f52" android:name="UMENG_APPKEY"/>
-        <meta-data android:value="Wandoujia" android:name="UMENG_CHANNEL"/>
+        <meta-data
+                android:name="UMENG_APPKEY"
+                android:value="562ec5f467e58e1679000f52"/>
+        <meta-data
+                android:name="UMENG_CHANNEL"
+                android:value="Wandoujia"/>
 
         <!-- Launcher -->
         <activity
                 android:name=".ui.activity.MainActivity"
                 android:label="@string/app_name"
-                android:theme="@style/NeedDrawerStyle"
                 android:screenOrientation="portrait"
-                >
+                android:theme="@style/NeedDrawerStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -35,11 +38,18 @@
         <activity
                 android:name=".ui.activity.NewsReadActivity"
                 android:label="@string/title_activity_news_read"
-                android:theme="@style/ReadingModeStyle"
                 android:screenOrientation="portrait"
-                >
+                android:theme="@style/ReadingModeStyle">
         </activity>
+        <!-- View Image-->
+        <activity android:name=".ui.activity.ImageViewerActivity"
+                  android:screenOrientation="portrait"
+                  android:theme="@style/ImageViewStyle"
+                />
+
         <!-- Service -->
         <service android:name=".services.OfflineDownloadService"/>
+
     </application>
+
 </manifest>

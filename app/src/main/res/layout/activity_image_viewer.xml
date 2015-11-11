@@ -3,8 +3,18 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000"
         >
     <!-- Toolbar -->
+    <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:paddingRight="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#33666666"
+            android:minHeight="?actionBarSize"
+            />
+    <!-- Fresco -->
     <com.blazers.jandan.views.fresco.ZoomableDraweeView
             android:id="@+id/viewer"
             android:layout_width="match_parent"

@@ -18,6 +18,7 @@ import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.ObservableWebView;
 import com.pnikosis.materialishprogress.ProgressWheel;
@@ -39,6 +40,7 @@ public class NewsReadActivity extends BaseActivity {
     private static final int HIDE_THRESHOLD = 256;
     private int scrolledDistance = 0;
     private boolean controlsVisible = true;
+    private float webViewContentHeight, scale = 3.0f;
 
     /* Vars */
     private NewsPost post;
@@ -53,26 +55,36 @@ public class NewsReadActivity extends BaseActivity {
             finish();
         setContentView(R.layout.activity_news_read);
         ButterKnife.bind(this);
-
         /* Init Toolbar */
         initToolbarByTypeWithShadow(toolbarWrapper, toolbar, ToolbarType.FINISH);
         setToolbarTitle(getIntent().getStringExtra("title"));
         setContentFloatingModeEnabled(true);
         /* Init Appbar listener */
         webView.setListener(((left, top, oldLeft, oldTop) -> {
-            int distance = top - oldTop;
-            if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
-                //hide
-                hideNavigationBar(toolbar);
-                controlsVisible = false;
-                scrolledDistance = 0;
-            } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+            // 滚动到底部 显示
+            webViewContentHeight = webView.getContentHeight() * scale;
+            float webViewCurrentHeight = (webView.getHeight() + webView.getScrollY());
+            Log.i("WB", "WB Content Height ->" + webViewContentHeight + "   Current ->" + webViewCurrentHeight);
+            if ((webViewContentHeight - webViewCurrentHeight) == 0) {
                 showSystemUI(toolbar);
                 controlsVisible = true;
                 scrolledDistance = 0;
-            }
-            if((controlsVisible && distance>0) || (!controlsVisible && distance<0)) {
-                scrolledDistance += distance;
+            }else {
+                int distance = top - oldTop;
+                // 向上滚动距离大于隐藏Trigger
+                if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                    //hide
+                    hideNavigationBar(toolbar);
+                    controlsVisible = false;
+                    scrolledDistance = 0;
+                } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                    showSystemUI(toolbar);
+                    controlsVisible = true;
+                    scrolledDistance = 0;
+                }
+                if((controlsVisible && distance>0) || (!controlsVisible && distance<0)) {
+                    scrolledDistance += distance;
+                }
             }
         }));
         /* 更合理的提示与判断 */
@@ -110,16 +122,22 @@ public class NewsReadActivity extends BaseActivity {
             }
         });
         webView.setWebViewClient(new WebViewClient() {
+            // 记录缩放值
             @Override
-            public void onLoadResource(WebView view, String url) {
-                super.onLoadResource(view, url);
+            public void onScaleChanged(WebView view, float oldScale, float newScale) {
+                super.onScaleChanged(view, oldScale, newScale);
+                scale = newScale;
             }
 
+            // 判断模式
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                webView.loadUrl("javascript:loadCssFile('day')");
-
+                if (SPHelper.getBooleanSP(NewsReadActivity.this, SPHelper.NIGHT_MODE_ON, false)) {
+                    webView.loadUrl("javascript:loadCssFile('night')");
+                } else {
+                    webView.loadUrl("javascript:loadCssFile('day')");
+                }
             }
         });
     }
@@ -135,7 +153,6 @@ public class NewsReadActivity extends BaseActivity {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_share:
-//                webView.loadUrl("javascript:loadCssFile('night')");
                 ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl());
                 return true;
         }
