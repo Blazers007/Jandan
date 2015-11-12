@@ -47,7 +47,7 @@
     <!-- Toast -->
     <string name="there_is_no_more">没有更多了</string>
     <string name="no_connect_toast">少年,没有网我赵日天也无法下载啊</string>
-    <string name="warn_already_vote">民主政治每人只能投一票哦~</string>
+    <string name="warn_already_vote">每人只能投一票哦~</string>
 
     <!-- Dialog -->
     <string name="not_in_wifi">当前不在WLAN状态</string>

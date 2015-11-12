@@ -99,14 +99,14 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
 
     public void refreshComplete() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
             Log.i(TAG, "刷新成功");
         }
     }
 
     public void refreshError() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
             Log.i(TAG, "刷新失败");
         }
     }

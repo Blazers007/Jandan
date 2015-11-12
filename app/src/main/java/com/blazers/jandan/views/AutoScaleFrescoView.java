@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.ImageViewerFragment;
@@ -30,89 +32,67 @@ import com.facebook.imagepipeline.request.ImageRequest;
 /**
  * Created by Blazers on 2015/8/28.
  */
-public class DownloadFrescoView extends SimpleDraweeView implements View.OnClickListener{
+public class AutoScaleFrescoView extends SimpleDraweeView {
 
-    /* Vars */
-    private ControllerListener<ImageInfo> listener;
-
-    private LoadedImageSizeInfo imageInfoListener;
-
-    public DownloadFrescoView(Context context) {
+    public AutoScaleFrescoView(Context context) {
         super(context);
     }
-
-    public DownloadFrescoView(Context context, AttributeSet attrs) {
+    public AutoScaleFrescoView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
-    public DownloadFrescoView(Context context, AttributeSet attrs, int defStyle) {
+    public AutoScaleFrescoView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 
-    public void setListener(ControllerListener listener) {
-        this.listener = listener;
-    }
+    /* Vars */
+    private boolean imageLoaded = false;
+    private ImageView tag;
 
-    public String url;
-
-    public void showImage(String url, View trigger) {
-        this.url = url;
-        /* Init vars prefer to load from local storage */
+    public void showImage(ImageView tag, String url) {
+        // 显示Tag
+        this.tag = tag;
+        if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
+            tag.setImageResource(R.mipmap.ic_gif_corner_24dp);
+        // 显示图片
         ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(url));
         PipelineDraweeControllerBuilder builder = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
-                .setControllerListener(new FrescoControlListener(this, trigger))
+                .setControllerListener(new FrescoControlListener())
                 .setAutoPlayAnimations(false);
-        if (listener != null)
-            builder.setControllerListener(listener);
         setController(builder.build());
         GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
                 .setProgressBarImage(new ProgressBarDrawable())
                 .build();
         setHierarchy(hierarchy);
-        setOnClickListener(this);
-    }
-
-
-    @Override
-    public void onClick(View view) {
-        Rxbus.getInstance().send(new ViewImageEvent(url));
-    }
-
-    public void setImageInfoListener (LoadedImageSizeInfo listener) {
-        this.imageInfoListener = listener;
     }
 
     class FrescoControlListener extends BaseControllerListener<ImageInfo> {
-
-        private DownloadFrescoView draweeView;
-        private View trigger;
-
-        public FrescoControlListener(DownloadFrescoView draweeView, View trigger) {
-            this.draweeView = draweeView;
-            this.trigger = trigger;
-        }
 
         @Override
         public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
             if (imageInfo == null) {
                 return;
             }
-            if (imageInfoListener != null)
-                imageInfoListener.onLoaded(imageInfo.getWidth(), imageInfo.getHeight());
-            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048)
+            int width = imageInfo.getWidth();
+            int height = imageInfo.getHeight();
+            // 判断大小 显示提示图片
+            if (width > 2048 || height > 2048) {
+                tag.setImageResource(R.mipmap.ic_more_corner_24dp);
+            }
+            // 控制硬件加速 以及宽高比
+            if (width > 2048 || height > 2048)
                 setLayerType(View.LAYER_TYPE_SOFTWARE, null);
             else
                 setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            // 加载完毕 可以下载
-            trigger.setVisibility(View.VISIBLE);
             float asp = (float)imageInfo.getWidth() / (float)(imageInfo.getHeight());
-            draweeView.setAspectRatio(asp);
+            setAspectRatio(asp);
             if (asp <= 0.4) {
-                draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
-                draweeView.getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
-                draweeView.setAspectRatio(1.118f);
+                getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FOCUS_CROP);
+                getHierarchy().setActualImageFocusPoint(new PointF(0.5f, 0f));
+                setAspectRatio(1.118f);
             }
+            // 加载完毕
+            imageLoaded = true;
             // 是否自动播放
             if (SPHelper.getBooleanSP(getContext(), SPHelper.AUTO_GIF_MODE_ON, false) && animatable != null)
                 animatable.start();
@@ -129,10 +109,7 @@ public class DownloadFrescoView extends SimpleDraweeView implements View.OnClick
         }
     }
 
-    /**
-     * 图片信息接口
-     * */
-    public interface LoadedImageSizeInfo {
-        void onLoaded(int width, int height);
+    public boolean isImageLoaded() {
+        return imageLoaded;
     }
 }

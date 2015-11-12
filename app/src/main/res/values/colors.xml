@@ -20,4 +20,7 @@
     <!-- Commeng Divider-->
     <color name="hot_text">#ef4a4f</color>
     <color name="not_hot_text">#1d6FC5</color>
+    <color name="foreground_material_light">#000000</color>
+    <color name="primary_text_default_material_light">#deffffff</color>
+    <color name="primary_text_material_light">#ffffff</color>
 </resources>

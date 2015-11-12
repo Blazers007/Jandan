@@ -49,6 +49,10 @@ public class ImageDownloader {
         return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
     }
 
+    public LocalImage doSavingImage(String url) {
+        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
+    }
+
     private String getTypeByUrl(String url){
         String type = url.substring(url.lastIndexOf(".") + 1);
         if (type.isEmpty())

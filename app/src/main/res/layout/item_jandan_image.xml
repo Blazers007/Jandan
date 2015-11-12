@@ -23,12 +23,12 @@
             android:layout_marginBottom="8dp"
             style="@style/CommentTextStyle"
             />
-    <com.blazers.jandan.views.DownloadFrescoView
+    <com.blazers.jandan.views.AutoScaleFrescoView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             fresco:actualImageScaleType="fitCenter"
-            fresco:viewAspectRatio="0.618"
+            fresco:viewAspectRatio="1.418"
             android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
             />
@@ -80,14 +80,16 @@
             android:src="@drawable/selector_comment"
             android:layout_marginLeft="8dp"
             />
-    <ImageButton
+    <com.github.ivbaranov.mfb.MaterialFavoriteButton
             style="@style/ImageButton40Base"
-            android:id="@+id/btn_save"
-            android:src="@drawable/selector_download"
-            android:layout_alignTop="@+id/btn_oo"
+            android:id="@+id/btn_fav"
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
-            android:visibility="invisible"
+            android:layout_alignTop="@+id/btn_oo"
+            app:mfb_animate_favorite="true"
+            app:mfb_animate_unfavorite="false"
+            app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
+            app:mfb_not_favorite_image="@mipmap/ic_favorite_grey600_16dp"
             />
     <ImageButton
             style="@style/ImageButton40Base"

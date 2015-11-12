@@ -18,6 +18,7 @@ import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.util.Dppx;
 import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
+import io.realm.Realm;
 import rx.Subscription;
 
 /**
@@ -37,10 +38,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ViewGroup toolbarWithShadow;
     /* Vars */
     protected boolean isNowNightModeOn;
+    protected Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm = Realm.getInstance(this);
         /* 读取模式 */
         isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
     }
@@ -131,7 +134,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
 
-    /* Tools for running activity */
+    /**
+     * 获取StatusBar 高度
+     * */
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -139,6 +144,26 @@ public abstract class BaseActivity extends AppCompatActivity {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    /**
+     * 获取导航条高度
+     * */
+    public int getNavationBarHeight() {
+        int resIdShow = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+        boolean hasNavigationBar = false;
+        if(resIdShow > 0){
+            hasNavigationBar = getResources().getBoolean(resIdShow);//是否显示底部navigationBar
+        }
+        if(hasNavigationBar) {
+            int resIdNavigationBar = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            int navigationbarHeight = 0;
+            if (resIdNavigationBar > 0) {
+                navigationbarHeight = getResources().getDimensionPixelSize(resIdNavigationBar);//navigationBar高度
+                return navigationbarHeight;
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -188,5 +213,13 @@ public abstract class BaseActivity extends AppCompatActivity {
      * */
     public void handleRxEvent(Object event){
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (null != realm) {
+            realm.close();
+        }
     }
 }

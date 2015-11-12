@@ -1,5 +1,6 @@
 package com.blazers.jandan.models.db.local;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -44,5 +45,10 @@ public class LocalImage extends RealmObject {
 
     public void setHeight(long height) {
         this.height = height;
+    }
+
+    /* Public APIs */
+    public static LocalImage getLocalImageByWebUrl(Realm realm, String url) {
+        return realm.where(LocalImage.class).equalTo("url", url).findFirst();
     }
 }

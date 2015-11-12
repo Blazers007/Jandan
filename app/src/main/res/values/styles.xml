@@ -7,9 +7,6 @@
 
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Other attributes like colorPrimary, colorAccent etc. -->
-        <!--<item name="colorPrimary">#328bff</item>-->
-        <!--<item name="colorPrimaryDark">#2c70d7</item>-->
-        <!--<item name="colorAccent">#ff5722</item>-->
         <item name="colorPrimary">#fafafa</item>
         <item name="colorPrimaryDark">#363636</item>
         <item name="colorAccent">#3c4043</item>
@@ -30,9 +27,11 @@
         <!--<item name="colorPrimaryDark">#000000</item>-->
     </style>
 
-    <style name="ImageViewStyle" parent="AppTheme">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
+    <style name="ImageViewStyle" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">#000000</item>
+        <item name="colorPrimaryDark">#000000</item>
+        <item name="colorAccent">#ffffff</item>
+        <item name="android:textColorPrimary">#ffffff</item>
     </style>
 
     <!-- 夜间模式 -->

@@ -46,7 +46,6 @@
                   android:screenOrientation="portrait"
                   android:theme="@style/ImageViewStyle"
                 />
-
         <!-- Service -->
         <service android:name=".services.OfflineDownloadService"/>
 

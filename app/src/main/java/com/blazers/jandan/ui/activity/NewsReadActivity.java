@@ -22,14 +22,10 @@ import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.ObservableWebView;
 import com.pnikosis.materialishprogress.ProgressWheel;
-import io.realm.Realm;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class NewsReadActivity extends BaseActivity {
-
-    /* Realm数据库 */
-    private Realm realm;
 
     @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -48,7 +44,6 @@ public class NewsReadActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = Realm.getInstance(this);
         long id = getIntent().getLongExtra("id", -1);
         post = NewsPost.getPostById(realm, id);
         if (post == null)
@@ -157,11 +152,5 @@ public class NewsReadActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        realm.close();
     }
 }

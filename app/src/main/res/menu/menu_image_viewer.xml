@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group>
+        <item android:id="@+id/offline1"
+              android:title="分享"
+              app:showAsAction="withText"
+              android:icon="@mipmap/ic_inbox_grey_24dp"/>
+        <item android:id="@+id/offline2"
+              android:title="下载"
+              app:showAsAction="withText"
+              android:icon="@mipmap/ic_publish_white_16dp"/>
+        <item android:id="@+id/offline3"
+              android:title="喜欢"
+              app:showAsAction="withText"
+              android:icon="@mipmap/ic_inbox_grey_24dp"/>
+        <item android:id="@+id/offline4"
+              android:title="评论列表"
+              app:showAsAction="withText"
+              android:icon="@mipmap/ic_inbox_grey_24dp"/>
+    </group>
+</menu>

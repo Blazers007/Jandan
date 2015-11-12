@@ -273,9 +273,9 @@ public class MainActivity extends BaseActivity {
             initDrawerWithToolbar(((InitToolbarEvent) event).toolbar);
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
-            String url = ((ViewImageEvent) event).url;
+            ViewImageEvent imageEvent = ((ViewImageEvent) event);
             Intent intent = new Intent(this, ImageViewerActivity.class);
-            intent.putExtra("url", url);
+            intent.putExtra(ViewImageEvent.KEY, imageEvent);
             startActivity(intent);
 //            Bundle args = new Bundle();
 //            args.putString("url", url);

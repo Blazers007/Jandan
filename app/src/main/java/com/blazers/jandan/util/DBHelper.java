@@ -50,4 +50,16 @@ public class DBHelper {
         realm.commitTransaction();
         realm.close();
     }
+
+
+    /**
+     * 移除某一行
+     * */
+    public static <E extends RealmObject> void removeFromRealm(Realm realm, E object) {
+        if (null != object) {
+            realm.beginTransaction();
+            object.removeFromRealm();
+            realm.commitTransaction();
+        }
+    }
 }

@@ -84,6 +84,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.facebook.fresco/imagepipeline/0.7.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.afollestad.material-dialogs/core/0.8.5.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.castorflex.smoothprogressbar/library/1.1.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.github.ivbaranov/materialfavoritebutton/0.1.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.pnikosis/materialish-progress/1.7/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/io.reactivex/rxandroid/1.0.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/me.zhanghai.android.materialprogressbar/library/1.1.4/jars" />
@@ -107,7 +108,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.3.1" level="project" />
-    <orderEntry type="library" exported="" name="realm-android-0.84.0" level="project" />
+    <orderEntry type="library" exported="" name="realm-android-0.84.2" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="preference-v7-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="fbcore-0.7.0" level="project" />
@@ -126,6 +127,7 @@
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="rxandroid-1.0.1" level="project" />
+    <orderEntry type="library" exported="" name="materialfavoritebutton-0.1.1" level="project" />
     <orderEntry type="library" exported="" name="design-23.1.0" level="project" />
     <orderEntry type="library" exported="" name="core-0.8.5.0" level="project" />
     <orderEntry type="library" exported="" name="rxjava-1.0.13" level="project" />

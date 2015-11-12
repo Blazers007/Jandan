@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment.sub;
+package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +13,9 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnLongClick;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalFavImages;
 import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.db.local.LocalVote;
 import com.blazers.jandan.models.db.sync.ImagePost;
@@ -22,10 +24,12 @@ import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.CommentEvent;
+import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.*;
-import com.blazers.jandan.views.DownloadFrescoView;
+import com.blazers.jandan.views.AutoScaleFrescoView;
 import com.blazers.jandan.views.ThumbTextButton;
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import java.util.ArrayList;
@@ -194,10 +198,10 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         /*TODO: Totally important !!!! https://github.com/06peng/FrescoDemo/blob/master/app/src/main/java/com/mzba/fresco/ui/ImageListFragment.java  */
         @Override
         public void onViewRecycled(JandanHolder holder) {
-            if (holder.draweeView.getController() != null)
-                holder.draweeView.getController().onDetach();
-            if (holder.draweeView.getTopLevelDrawable() != null)
-                holder.draweeView.getTopLevelDrawable().setCallback(null);
+            if (holder.content.getController() != null)
+                holder.content.getController().onDetach();
+            if (holder.content.getTopLevelDrawable() != null)
+                holder.content.getTopLevelDrawable().setCallback(null);
         }
 
         @Override
@@ -211,6 +215,9 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             holder.oo.setThumbText(post.getVote_positive());
             holder.xx.setThumbText(post.getVote_negative());
             holder.comment.setThumbText(String.format("%s", post.getCommentNumber()));
+            holder.content.setAspectRatio(1.418f);
+            holder.typeHint.setImageDrawable(null);
+            holder.fav.setFavorite(LocalFavImages.isThisFaved(realm, image.url) ,false);
             // 填入评论文字
             String comment = post.getText_content();
             if (comment.trim().equals(""))
@@ -220,33 +227,15 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                 holder.text.setText(comment.trim());
             }
             // 加载图片 首先判断本地是否有
-            LocalImage localImage = realm.where(LocalImage.class).equalTo("url", image.url).findFirst();
+            LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, image.url);
             String url;
             if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
-                holder.draweeView.showImage("file://" + localImage.getLocalUrl(), holder.save); //TODO: 这种参数传递可能导致无法正确调用Trigger
-                holder.save.setVisibility(View.VISIBLE);
-                holder.save.setClickable(false);
-                holder.save.setImageResource(R.mipmap.ic_publish_16dp);
-                url = localImage.getLocalUrl();
+                holder.content.showImage(holder.typeHint, "file://" + localImage.getLocalUrl());
             } else {
-                holder.draweeView.showImage(image.url, holder.save);
-                holder.save.setVisibility(View.INVISIBLE);
-                holder.save.setClickable(true);
-                holder.save.setImageResource(R.drawable.selector_download);
-                url = image.url;
+                holder.content.showImage(holder.typeHint, image.url);
             }
-            // 根据尺寸显示图片信息
-            holder.typeHint.setImageDrawable(null);
-            // 是否是GIF
-            if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
-                holder.typeHint.setImageResource(R.mipmap.ic_gif_corner_24dp);
-            holder.draweeView.setImageInfoListener((width, height) -> {
-                if (width > 2048 || height > 2048) {
-                    holder.typeHint.setImageResource(R.mipmap.ic_more_corner_24dp);
-                }
-            });
-            //TODO 优化数据库查询 或者缓存
-            LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
+            // 显示Vote信息 TODO 优化数据库查询 或者缓存
+            LocalVote vote = LocalVote.getLocalVoteById(realm, post.getComment_ID());
             if (vote != null){
                 if (vote.getId() > 0) {
                     holder.oo.setPressed(true);
@@ -266,16 +255,15 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             return imageArrayList.size();
         }
 
-
         /**
          * ViewHolder
          * */
         class JandanHolder extends RecyclerView.ViewHolder {
-            @Bind(R.id.content) DownloadFrescoView draweeView;
+            @Bind(R.id.content) AutoScaleFrescoView content;
             @Bind(R.id.author) TextView author;
             @Bind(R.id.text) TextView text;
             @Bind(R.id.date) TextView date;
-            @Bind(R.id.btn_save) ImageButton save;
+            @Bind(R.id.btn_fav) MaterialFavoriteButton fav;
             @Bind(R.id.btn_share) ImageButton share;
             @Bind(R.id.btn_oo) ThumbTextButton oo;
             @Bind(R.id.btn_xx) ThumbTextButton xx;
@@ -285,20 +273,33 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             public JandanHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
+                // Fav
+                fav.setOnFavoriteChangeListener(
+                    (view, favorite)->LocalFavImages.setThisFavedOrNot(favorite, realm, imageArrayList.get(getAdapterPosition()).url)
+                );
             }
 
-            @OnClick(R.id.btn_save)
-            public void download(){
+            @OnClick(R.id.content)
+            public void view() {
+                if (content.isImageLoaded()) {
+                    ImageRelateToPost image = imageArrayList.get(getAdapterPosition());
+                    Rxbus.getInstance().send(new ViewImageEvent(image.url, image.holder.getText_content()));
+                }
+            }
+
+            @OnLongClick(R.id.content)
+            public boolean download(){
+                // 弹窗
                 Observable.just(imageArrayList.get(getAdapterPosition()))
                         .map(ImageDownloader.getInstance()::doSavingImage)
                         .compose(RxHelper.applySchedulers())
                         .subscribe(localImage -> {
                             Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
-                            save.setClickable(false);
-                            save.setImageResource(R.mipmap.ic_publish_16dp);
+                            DBHelper.saveToRealm(getActivity(), localImage);
                         }, throwable -> {
                             Log.e("Error", throwable.toString());
                         });
+                return true;
             }
 
             @OnClick({R.id.btn_oo, R.id.btn_xx})

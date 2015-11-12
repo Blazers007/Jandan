@@ -1,5 +1,6 @@
 package com.blazers.jandan.models.db.local;
 
+import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -25,5 +26,10 @@ public class LocalVote extends RealmObject {
 
     public void setVote(int vote) {
         this.vote = vote;
+    }
+
+    /* Public APIs */
+    public static LocalVote getLocalVoteById(Realm realm, long id) {
+        return realm.where(LocalVote.class).equalTo("id", id).findFirst();
     }
 }

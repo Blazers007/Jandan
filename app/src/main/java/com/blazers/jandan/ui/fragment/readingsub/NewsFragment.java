@@ -1,4 +1,4 @@
-package com.blazers.jandan.ui.fragment.sub;
+package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.content.Intent;
 import android.net.Uri;

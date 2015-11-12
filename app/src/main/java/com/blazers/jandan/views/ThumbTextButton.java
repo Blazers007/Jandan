@@ -104,6 +104,10 @@ public class ThumbTextButton extends ImageButton {
         if (textString != null) {
             float length = textPaint.measureText(textString);
             int baseline = (getMeasuredHeight() - fontMetrics.bottom + fontMetrics.top) / 2 - fontMetrics.top;
+            if (isPressed())
+                textPaint.setColor(FLOAT_TEXT_COLOR);
+            else
+                textPaint.setColor(TEXT_COLOR);
             canvas.drawText(textString, width - TEXT_RIGHT_PADDING - length, baseline, textPaint);
         }
         /* 动画 */
@@ -162,6 +166,12 @@ public class ThumbTextButton extends ImageButton {
                 }
             }).start();
         }
+    }
+
+    @Override
+    public void setPressed(boolean pressed) {
+        super.setPressed(pressed);
+        invalidate();
     }
 
     private Handler handler = new Handler() {
