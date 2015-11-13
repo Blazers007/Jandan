@@ -47,4 +47,22 @@
         <item name="android:textSize">14sp</item>
         <item name="android:layout_marginTop">4dp</item>
     </style>
+
+    <!--  个人收藏页面的三大分类 -->
+    <style name="FavSegmentTitle">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="layout_widthPercent">33.333%w</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#222</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:drawablePadding">4dp</item>
+    </style>
+    
+    <style name="FavSegmentText" parent="FavSegmentTitle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#444</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:paddingLeft">4dp</item>
+    </style>
 </resources>

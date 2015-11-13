@@ -22,14 +22,5 @@
         </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
     <!-- Loading Progress -->
-    <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_wheel"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            wheel:matProg_barColor="#5588FF"
-            wheel:matProg_progressIndeterminate="true"
-            android:layout_centerInParent="true"
-            />
+    <include layout="@layout/layout_circular_progress"/>
 </RelativeLayout>

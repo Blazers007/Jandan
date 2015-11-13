@@ -116,4 +116,8 @@ public class TimeHelper {
             return true;
         }
     }
+
+    public static boolean isTimeEnoughForRefreshing(long time) {
+        return currentTime() - time > 10 * ONE_MIN;
+    }
 }

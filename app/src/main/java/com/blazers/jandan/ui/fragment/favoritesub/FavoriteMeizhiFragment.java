@@ -49,7 +49,7 @@ public class FavoriteMeizhiFragment extends Fragment {
         if (null != addons)
             list.addAll(addons);
         //
-        test.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        test.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
         test.setAdapter(new FavMeizhiAdapter());
     }
 

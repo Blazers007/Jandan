@@ -1,6 +1,7 @@
 package com.blazers.jandan.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -46,6 +47,30 @@ public class SPHelper {
 
     public static void putStringSP(Context context, String key, String value) {
         context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putString(key, value).apply();
+    }
+
+
+
+    /* 刷新 */
+    private static HashMap<String, Long> tempLong = new HashMap<>();
+    /**
+     * 获取上次刷新时间
+     * */
+    public static long getLastRefreshTime(Context context, String key) {
+        if (tempLong.containsKey(key))
+            return tempLong.get(key);
+        long time = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).getLong(key, 0);
+        tempLong.put(key, time);
+        return time;
+    }
+
+    /**
+     * 设置更新时间
+     * */
+    public static void setLastRefreshTime(Context context, String key) {
+        long time = TimeHelper.currentTime();
+        tempLong.put(key, time);
+        context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putLong(key, time).apply();
     }
 
 }

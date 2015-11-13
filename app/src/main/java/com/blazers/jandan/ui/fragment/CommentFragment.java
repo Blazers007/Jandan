@@ -26,7 +26,7 @@ import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.QuoteView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
-import com.pnikosis.materialishprogress.ProgressWheel;
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class CommentFragment extends BaseFragment {
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.nothing_hint) LinearLayout hint;
     @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
-    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
+    @Bind(R.id.progress_wheel) CircularProgressBar progressWheel;
 
     public static CommentFragment NewInstance(long commentId) {
         CommentFragment fragment = new CommentFragment();
@@ -61,7 +61,7 @@ public class CommentFragment extends BaseFragment {
             // 关闭
             return null;
         }
-        View root = inflater.inflate(R.layout.fragment_comment, container, false);
+        View root = inflater.inflate(R.layout.fragment_comments, container, false);
         ButterKnife.bind(this, root);
 
         toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_black_24dp);

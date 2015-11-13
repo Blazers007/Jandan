@@ -17,10 +17,7 @@ import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.SdcardHelper;
-import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.util.*;
 import com.facebook.drawee.view.SimpleDraweeView;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -49,7 +46,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_refresh_load, container, false);
+        return inflater.inflate(R.layout.fragment_common_refresh_load, container, false);
     }
 
     @Override
@@ -66,7 +63,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
         mNewsPostArrayList.addAll(localNewsList);
         adapter.notifyItemRangeInserted(0, localNewsList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localNewsList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localNewsList.get(0).getDate())) {
+        if (localNewsList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }

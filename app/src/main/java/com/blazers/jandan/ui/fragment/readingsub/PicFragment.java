@@ -46,7 +46,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
     private JandanImageAdapter adapter;
     private ArrayList<ImageRelateToPost> imageArrayList = new ArrayList<>();
     private int mPage = 1;
-    private String type;
+
 
     /* Constructor */
     public static PicFragment newInstance(String type) {
@@ -61,7 +61,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_refresh_load, container, false);
+        return inflater.inflate(R.layout.fragment_common_refresh_load, container, false);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         imageArrayList.addAll(localImageList);
         adapter.notifyItemRangeInserted(0, localImageList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localImageList.get(0).holder.getComment_date())) {
+        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }

@@ -21,7 +21,7 @@ import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.views.ObservableWebView;
-import com.pnikosis.materialishprogress.ProgressWheel;
+import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -30,7 +30,7 @@ public class NewsReadActivity extends BaseActivity {
     @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.webView) ObservableWebView webView;
-    @Bind(R.id.progress_wheel) ProgressWheel progressWheel;
+    @Bind(R.id.progress_wheel) CircularProgressBar progressWheel;
 
     /* Vars for testing the scroll visible effect */
     private static final int HIDE_THRESHOLD = 256;

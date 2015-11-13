@@ -20,10 +20,7 @@ import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.CommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.RxHelper;
-import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.util.*;
 import com.blazers.jandan.views.ThumbTextButton;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import rx.android.schedulers.AndroidSchedulers;
@@ -53,7 +50,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_refresh_load, container, false);
+        return inflater.inflate(R.layout.fragment_common_refresh_load, container, false);
     }
 
     @Override
@@ -70,7 +67,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
         mList.addAll(localList);
         adapter.notifyItemRangeInserted(0, localList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(localList.get(0).getComment_date())) {
+        if (localList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
             swipeRefreshLayout.post(()->swipeRefreshLayout.setRefreshing(true));
             refresh();
         }

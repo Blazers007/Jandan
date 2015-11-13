@@ -54,7 +54,7 @@ public class ReadingFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root =  inflater.inflate(R.layout.fragment_reading, container, false);
+        View root =  inflater.inflate(R.layout.fragment_holder_reading, container, false);
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
@@ -75,7 +75,7 @@ public class ReadingFragment extends BaseFragment {
             fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
 //        viewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
-        viewPager.setOffscreenPageLimit(fragments.size());
+//        viewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }

@@ -10,6 +10,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.RecyclerViewHelper;
+import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.GreySpaceItemDecoration;
 import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
 import com.blazers.jandan.views.loadmore.PullCallback;
@@ -20,42 +22,19 @@ import io.realm.Realm;
 /**
  * Created by Blazers on 2015/10/16.
  */
-public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
+public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment {
 
-    @Bind(R.id.swipe_container) public SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.recycler_list) public LoadMoreRecyclerView loadMoreRecyclerView;
     @Bind(R.id.load_more_progress) public SmoothProgressBar smoothProgressBar;
 
     /* Vars */
-    public Realm realm;
     private boolean isLoading = false;
     private boolean isLoadAllItems = false;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        realm = Realm.getInstance(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        realm.close();
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-    }
-
-    /**
-     * 设置SwipeRefreshLayout 适当分离 不需要刻意整合在一起
-     * */
-    public void trySetupSwipeRefreshLayout() {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.setOnRefreshListener(this::invokeRefresh);
-        }
     }
 
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
@@ -87,30 +66,6 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
         }
     }
 
-
-    /**
-     * 下拉刷新
-     * */
-    private void invokeRefresh() {
-        refresh();
-    }
-
-    public abstract void refresh();
-
-    public void refreshComplete() {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
-            Log.i(TAG, "刷新成功");
-        }
-    }
-
-    public void refreshError() {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
-            Log.i(TAG, "刷新失败");
-        }
-    }
-
     /**
      * 上拉加载更多
      * */
@@ -139,6 +94,5 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseFragment {
             Log.i(TAG, "加载更多失败");
         }
     }
-
 
 }
