@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * 主 Fragment负责管理四个阅读板块
  *
  */
-public class ReadingFragment extends BaseFragment {
+public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener{
 
     public static final String TAG = ReadingFragment.class.getSimpleName();
     private static ReadingFragment INSTANCE;
@@ -58,7 +58,7 @@ public class ReadingFragment extends BaseFragment {
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
-        initToolbarAndLeftDrawer(toolbar, "煎蛋阅读");
+        initToolbarWithLeftDrawerAndMenu(toolbar, "煎蛋阅读", R.menu.menu_reading_fragment, this);
         return root;
     }
 
@@ -94,6 +94,16 @@ public class ReadingFragment extends BaseFragment {
             tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#434343"));
         }
     }
+
+
+    /**
+     * 点击Menu
+     * */
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        return false;
+    }
+
     /**
      * Adapter
      * */
@@ -123,7 +133,7 @@ public class ReadingFragment extends BaseFragment {
     public void handleRxEvent(Object event) {
         if (event instanceof NightModeEvent) {
             isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
-            applyNewMode();
+            applyToolbarIconAndTheme();
             NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
             /* Extra 改变TabLayout */
             setupTabLayoutTheme();

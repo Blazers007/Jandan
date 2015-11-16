@@ -8,10 +8,9 @@ import android.graphics.Typeface;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewConfiguration;
+import android.view.*;
+import android.view.animation.BounceInterpolator;
+import android.widget.OverScroller;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.Dppx;
 
@@ -23,7 +22,7 @@ import com.blazers.jandan.util.Dppx;
  * 如果需要支持小数 则添加一个转化器即可
  *
  */
-public class InfiniteSeekBar extends View {
+public class InfiniteSeekBar extends View implements GestureDetector.OnGestureListener {
 
     /* 参数 */
     private boolean mSupportNegative = false;       // 默认不支持负数
@@ -59,6 +58,11 @@ public class InfiniteSeekBar extends View {
     /* 画笔 */
     private Paint mTextPaint;
 
+    /* 2015 11-16 Update 采用OverScroller */
+    private OverScroller mScroller;
+    private GestureDetector mGestureDetector;
+
+
     public InfiniteSeekBar(Context context) {
         super(context);
         init(context, null);
@@ -79,10 +83,13 @@ public class InfiniteSeekBar extends View {
      * 初始化方法的入口
      * */
     void init(Context context, AttributeSet attrs) {
+        // Paint
         initPaint();
+        // Scroller
+        mScroller = new OverScroller(context, new BounceInterpolator());
+        mGestureDetector = new GestureDetector(context, this);
         /* 设置速度计算 */
         mMaxVelocity = ViewConfiguration.get(context).getScaledMaximumFlingVelocity();
-
         /* 根据参数赋值计算一些初始化的数值 */
         mXOffset = (mDefaultSelectedValue - mDefaultRangeStart) * mDefaultSegmentWidth;
     }
@@ -106,58 +113,7 @@ public class InfiniteSeekBar extends View {
      * */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (null == mVelocityTracker)
-            mVelocityTracker = VelocityTracker.obtain();
-        mVelocityTracker.addMovement(event);
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                // 取消滑动
-                mScrolling = false;
-                removeCallbacks(mScrollingRunnable);
-                velocityX = 0;
-                lastTouchX = event.getX();
-//                Log.i(">>> [ Start ] <<<", "" + lastTouchX);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                // 计算偏移量 并对越界的进行衰减判断
-                float nowX = event.getX();
-                float offsetX = nowX - lastTouchX;
-                // 是否需要衰减
-                if (mXOffset > 0 && offsetX >0) {
-                    offsetX *= (1 - mXOffset / 140.0f);
-                } else if (mXOffset < (mDefaultRangeEnd+2) * -100 && offsetX < 0) {
-                    offsetX *= (1 - Math.abs(mXOffset) / ((mDefaultRangeEnd+6)*100.0f));
-                }
-                lastTouchX = nowX;
-                mXOffset += offsetX;
-                Log.i(">>> [ XOffset ] <<<", "" + mXOffset);
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                // 计算速度
-                mVelocityTracker.computeCurrentVelocity(100, mMaxVelocity);
-                velocityX = mVelocityTracker.getXVelocity();
-//                Log.i(">>> [Vel X] <<<", "" + velocityX);
-                // 计算加速度 延时动画效果
-                float upX = event.getX();
-//                Log.i(">>> [ UP ] <<<", "" + upX);
-//                Log.i(">>> [ Final Speed ] <<<", "" + velocityX);
-                // 根据速度计算是否需要滑动 如果不需要则画像最近的一个
-                if (velocityX > 100) {
-                    computeSeekBarScroll();
-                } else {
-                    computeToSegment();
-                }
-                // 释放
-                if(null != mVelocityTracker) {
-                    mVelocityTracker.clear();
-                    mVelocityTracker.recycle();
-                    mVelocityTracker = null;
-                }
-                break;
-        }
-        invalidate();
-        return true;
+        return mGestureDetector.onTouchEvent(event);
     }
 
 
@@ -245,37 +201,10 @@ public class InfiniteSeekBar extends View {
                 } else {
                     velocityX = 0;
                     mScrolling = false;
-                    computeToSegment();
                 }
             };
         }
         post(mScrollingRunnable);
-    }
-
-
-    private Runnable mSegmentScrollRunnable;
-    /**
-     * 滑动到最近的一个地方
-     * */
-    void computeToSegment() {
-//        mScrolling = true;
-//        if (mSegmentScrollRunnable == null) {
-//            mSegmentScrollRunnable = ()->{
-//                if (mScrolling) {
-//                    float x = mXOffset + (mDefaultSelectedValue - mDefaultRangeStart) * mDefaultSegmentWidth;
-//                    if (Math.abs(x) < 20) {
-//                        mXOffset+=2;
-//                        invalidate();
-//                        postDelayed(mSegmentScrollRunnable, 16);
-//                    } else {
-//                        mXOffset = (mDefaultSelectedValue - mDefaultRangeStart) * mDefaultSegmentWidth;
-//                        invalidate();
-//                        mScrolling = false;
-//                    }
-//                }
-//            };
-//        }
-//        post(mSegmentScrollRunnable);
     }
 
     /**
@@ -293,4 +222,53 @@ public class InfiniteSeekBar extends View {
         return mDefaultSelectedValue;
     }
 
+
+    /* OnGesture Detector */
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return true;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        mXOffset -= distanceX;
+        invalidate();
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (velocityY > 0) {
+            // 消耗掉
+//            mScroller.fling((int)mXOffset, 0, 0, (int)velocityY, 0, 300, 0, 0);
+            return true;
+        }
+        return false;
+    }
+
+    /* Compute Scroll */
+
+    @Override
+    public void computeScroll() {
+        super.computeScroll();
+        if (mScroller.computeScrollOffset()) {
+            mXOffset = mScroller.getCurrX();
+            invalidate();
+        }
+    }
 }

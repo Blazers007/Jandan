@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteJokesFragment;
-import com.blazers.jandan.ui.fragment.favoritesub.FavoriteMeizhiFragment;
+import com.blazers.jandan.ui.fragment.favoritesub.FavoriteImageFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteNewsFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteTimelineFragment;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -67,7 +67,7 @@ public class FavoriteFragment extends BaseFragment {
         fragments = new ArrayList<>();
         fragments.add(new FavoriteTimelineFragment());
         fragments.add(new FavoriteNewsFragment());
-        fragments.add(new FavoriteMeizhiFragment());
+        fragments.add(new FavoriteImageFragment());
         fragments.add(new FavoriteJokesFragment());
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);

@@ -7,19 +7,19 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.InitToolbarEvent;
+import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
-import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
 import rx.Subscription;
-
-import java.lang.reflect.Field;
 
 /**
  * Created by Blazers on 2015/9/11.
@@ -125,24 +125,26 @@ public abstract class BaseFragment extends Fragment {
     }
 
 
-    /**
-     * 初始化Toolbar与Title文字
-     * */
     protected void initToolbarAndLeftDrawer(Toolbar toolbar, String title) {
-        this.toolbar = toolbar;
-        this.title = title;
-        toolbar.setTitle(title);
-        applyNewMode();
-        reboundToolbar();
+        initToolbarWithLeftDrawerAndMenu(toolbar, title, -1, null);
     }
 
     /**
-     * 重新绑定Toolbar与Menu
+     * 初始化Toolbar与Title文字
      * */
-    public void reboundToolbar() {
-        if (null != toolbar)
-            Rxbus.getInstance().send(new InitToolbarEvent(toolbar));
+    protected void initToolbarWithLeftDrawerAndMenu(Toolbar toolbar, String title, int menuId, Toolbar.OnMenuItemClickListener listener) {
+        this.toolbar = toolbar;
+        this.title = title;
+        toolbar.setTitle(title);
+        // 初始化颜色以及ICON
+        if (menuId != -1) {
+            toolbar.inflateMenu(menuId);
+            toolbar.setOnMenuItemClickListener(listener);
+        }
+        toolbar.setNavigationOnClickListener(v->Rxbus.getInstance().send(new DrawerEvent(GravityCompat.START, DrawerEvent.TOGGLE)));
+        applyToolbarIconAndTheme();
     }
+
 
     /**
      * 注册事件
@@ -166,18 +168,19 @@ public abstract class BaseFragment extends Fragment {
     public void handleRxEvent(Object event){
         if (event instanceof NightModeEvent) {
             isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
-            applyNewMode();
+            applyToolbarIconAndTheme();
             /* 改变Root */
             NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
         }
     }
 
     /**
-     * 改变当前Fragment的主题颜色
+     * 改变当前Fragment的Toolbar的颜色
      * */
-    protected void applyNewMode() {
+    protected void applyToolbarIconAndTheme() {
         if (null == toolbar)
             return;
+        // Background and color
         if (isNowNightModeOn) {
             toolbar.setBackgroundColor(Color.rgb(44, 44, 44));
             toolbar.setTitleTextColor(Color.rgb(190, 190, 190));
@@ -190,6 +193,20 @@ public abstract class BaseFragment extends Fragment {
             final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
             upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
             toolbar.setNavigationIcon(upArrow);
+        }
+        // Menu Icon
+        Menu menu = toolbar.getMenu();
+        if (null != menu) {
+            for (int i = 0 ; i < menu.size() ; i ++) {
+                MenuItem item = menu.getItem(i);
+                Drawable icon = item.getIcon();
+                if (isNowNightModeOn) {
+                    icon.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
+                } else {
+                    icon.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
+                }
+                item.setIcon(icon);
+            }
         }
     }
 }

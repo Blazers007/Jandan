@@ -1,19 +1,18 @@
 package com.blazers.jandan.ui.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.*;
 import android.widget.LinearLayout;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalArticleHtml;
+import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
@@ -25,12 +24,15 @@ import fr.castorflex.android.circularprogressbar.CircularProgressBar;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class NewsReadActivity extends BaseActivity {
+import java.lang.annotation.Annotation;
+
+public class NewsReadActivity extends BaseActivity implements JavascriptInterface{
 
     @Bind(R.id.toolbar_with_shadow) LinearLayout toolbarWrapper;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.webView) ObservableWebView webView;
     @Bind(R.id.progress_wheel) CircularProgressBar progressWheel;
+    @Bind(R.id.fab_fav) FloatingActionButton fabFav;
 
     /* Vars for testing the scroll visible effect */
     private static final int HIDE_THRESHOLD = 256;
@@ -54,6 +56,8 @@ public class NewsReadActivity extends BaseActivity {
         initToolbarByTypeWithShadow(toolbarWrapper, toolbar, ToolbarType.FINISH);
         setToolbarTitle(getIntent().getStringExtra("title"));
         setContentFloatingModeEnabled(true);
+        /* Fav */
+        fabFav.setOnClickListener(v->LocalFavNews.setThisFavedOrNot(true, realm, post.getId()));
         /* Init Appbar listener */
         webView.setListener(((left, top, oldLeft, oldTop) -> {
             // 滚动到底部 显示
@@ -62,6 +66,7 @@ public class NewsReadActivity extends BaseActivity {
             Log.i("WB", "WB Content Height ->" + webViewContentHeight + "   Current ->" + webViewCurrentHeight);
             if ((webViewContentHeight - webViewCurrentHeight) == 0) {
                 showSystemUI(toolbar);
+                fabFav.animate().translationY(0).setDuration(300).start();
                 controlsVisible = true;
                 scrolledDistance = 0;
             }else {
@@ -70,10 +75,12 @@ public class NewsReadActivity extends BaseActivity {
                 if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
                     //hide
                     hideNavigationBar(toolbar);
+                    fabFav.animate().translationY(300).setDuration(300).start();
                     controlsVisible = false;
                     scrolledDistance = 0;
                 } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
                     showSystemUI(toolbar);
+                    fabFav.animate().translationY(0).setDuration(300).start();
                     controlsVisible = true;
                     scrolledDistance = 0;
                 }
@@ -137,6 +144,11 @@ public class NewsReadActivity extends BaseActivity {
         });
     }
 
+    // 添加 Javascript 调用java 查看图片
+    public void viewWebViewImageInActivity() {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_news_read, menu);
@@ -152,5 +164,10 @@ public class NewsReadActivity extends BaseActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Class<? extends Annotation> annotationType() {
+        return null;
     }
 }

@@ -1,5 +1,6 @@
 package com.blazers.jandan.util;
 import android.content.Context;
+import android.view.WindowManager;
 
 /**
  * Created by BlazersDar on 6/25/2014.
@@ -22,6 +23,11 @@ public class Dppx {
 
     public static float getY(Context context,float marginToBottom){
         return context.getResources().getDisplayMetrics().heightPixels - Dp2Px(context,marginToBottom);
+    }
+
+    public static float getScreenWidth(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        return wm.getDefaultDisplay().getWidth();
     }
 }
 

@@ -65,6 +65,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.github.ivbaranov:materialfavoritebutton:0.1.1'
+    compile 'com.ms-square:expandableTextView:0.1.4'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.0@aar') {
         transitive = true
     }

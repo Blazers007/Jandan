@@ -6,6 +6,8 @@ import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Blazers on 2015/10/21.
+ *
+ * 由于Image是跟单独Image关联 所以不采用Relationship
  */
 public class LocalImage extends RealmObject {
 

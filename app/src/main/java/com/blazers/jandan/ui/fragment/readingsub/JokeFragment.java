@@ -209,6 +209,9 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
                 );
             }
 
+            /**
+             * 投票
+             * */
             @OnClick({R.id.btn_oo, R.id.btn_xx})
             public void vote(View view) {
                 JokePost post = mList.get(getAdapterPosition());

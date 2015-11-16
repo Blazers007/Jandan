@@ -82,4 +82,9 @@ public class AutoLayoutLinearLayout extends LinearLayout {
             }
         }
     }
+
+    @Override
+    public void addView(View child) {
+        super.addView(child);
+    }
 }

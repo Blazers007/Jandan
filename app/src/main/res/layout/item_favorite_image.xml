@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fresco图片控件 -->
+<com.facebook.drawee.view.SimpleDraweeView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:fresco="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/content"
+        android:layout_margin="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="108dp"
+        fresco:actualImageScaleType="centerCrop"
+        fresco:placeholderImage="@color/grey900"
+        />

@@ -62,16 +62,6 @@ public class TimeHelper {
     }
 
     /**
-     * @param time 毫秒数
-     * @return 时间格式
-     * */
-    public static String getTimeByLong(long time) {
-        Date date = new Date(time * 1000);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss" , Locale.CHINA);
-        return sdf.format(date);
-    }
-
-    /**
      * @param hours 偏差的小时数量 之前为负数
      * @return 返回的毫秒数
      * */
@@ -82,6 +72,12 @@ public class TimeHelper {
 
     public static String getDate() {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        return String.format("%02d-%02d", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH));
+    }
+
+    public static String getDate(long time) {
+        Calendar calendar = Calendar.getInstance(Locale.CHINA);
+        calendar.setTime(new Date(time));
         return String.format("%02d-%02d", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH));
     }
 

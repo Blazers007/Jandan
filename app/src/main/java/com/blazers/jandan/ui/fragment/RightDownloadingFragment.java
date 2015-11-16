@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -107,7 +108,7 @@ public class RightDownloadingFragment extends Fragment {
                     toast += "妹子图,";
                 }
                 Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
-                Rxbus.getInstance().send(new DrawerEvent(DrawerEvent.CLOSE_DRAWER_AND_LOCK));
+                Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.CLOSE_DRAWER_AND_LOCK));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -116,6 +117,6 @@ public class RightDownloadingFragment extends Fragment {
 
     @OnClick(R.id.close)
     public void closeDrawer(){
-        Rxbus.getInstance().send(new DrawerEvent(DrawerEvent.CLOSE_DRAWER_AND_LOCK));
+        Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.CLOSE_DRAWER_AND_LOCK));
     }
 }

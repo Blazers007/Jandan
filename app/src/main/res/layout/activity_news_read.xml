@@ -14,4 +14,12 @@
             android:id="@+id/toolbar_with_shadow"
             layout="@layout/layout_toolbar_with_shadow"/>
     <include layout="@layout/layout_circular_progress"/>
+    <!-- Fab Fav -->
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_fav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentBottom="true" android:layout_alignParentRight="true"
+            android:layout_margin="16dp"/>
 </RelativeLayout>

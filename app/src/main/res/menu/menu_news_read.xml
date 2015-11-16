@@ -2,9 +2,15 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.blazers.jandan.ui.activity.NewsReadActivity">
-    <item android:id="@+id/action_share"
+    <item android:id="@+id/action_fav"
           android:title="@string/action_settings"
           android:orderInCategory="100"
+          android:icon="@mipmap/ic_favorite_grey600_16dp"
+          app:showAsAction="ifRoom"
+            />
+    <item android:id="@+id/action_share"
+          android:title="@string/action_settings"
+          android:orderInCategory="200"
           android:icon="@mipmap/ic_share_black_24dp"
           app:showAsAction="ifRoom"/>
 </menu>
