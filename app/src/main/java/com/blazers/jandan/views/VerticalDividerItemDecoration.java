@@ -11,21 +11,27 @@ import com.blazers.jandan.util.SPHelper;
 
 /**
  * Created by Blazers on 15/9/19.
+ *
+ * Update @ 11-16
  */
-public class GreySpaceItemDecoration extends RecyclerView.ItemDecoration {
+public class VerticalDividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private Context context;
     private Paint paint;
+    private int height;
+    private int color;
 
-    public GreySpaceItemDecoration(Context context) {
+    public VerticalDividerItemDecoration(Context context, int height, int color) {
         super();
         this.context = context;
+        this.height = height;
+        this.color = color;
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-        outRect.set(0, 0, 0, 24);
+        outRect.set(0, 0, 0, height);
     }
 
     @Override
@@ -33,13 +39,13 @@ public class GreySpaceItemDecoration extends RecyclerView.ItemDecoration {
         if (SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false)) {
             paint.setColor(Color.rgb(55, 56, 54));
         } else {
-            paint.setColor(Color.rgb(241, 242, 241));
+            paint.setColor(color);
         }
         int width = parent.getRight();
         for (int i = 0 ; i < parent.getChildCount() ; i ++) {
             View child = parent.getChildAt(i);
             int top = child.getBottom();
-            c.drawRect(0, top, width, top + 24, paint);
+            c.drawRect(0, top, width, top + height, paint);
         }
     }
 }

@@ -81,11 +81,13 @@
             android:layout_marginLeft="8dp"
             />
     <com.github.ivbaranov.mfb.MaterialFavoriteButton
-            style="@style/ImageButton40Base"
             android:id="@+id/btn_fav"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
-            android:layout_alignTop="@+id/btn_oo"
+            android:layout_alignBottom="@id/btn_oo"
+            app:mfb_padding="16"
             app:mfb_animate_favorite="true"
             app:mfb_animate_unfavorite="false"
             app:mfb_favorite_image="@mipmap/ic_favorite_16dp"

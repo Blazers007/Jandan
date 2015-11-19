@@ -5,6 +5,9 @@ package com.blazers.jandan.common;
  */
 public class URL {
 
+    /* API */
+    public static final String BASE_URL = "http://192.168.50.102:3000/";
+
     /* JANDAN http://jandan.net */
     public static final String JANDAN_PIC_API = "http://jandan.net/?oxwlxojflwblxbsapi=jandan.get_pic_comments&page=";
     public static final String JANDAN_OOXX_API = "http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_ooxx_comments&page=";

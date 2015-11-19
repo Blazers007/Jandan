@@ -113,7 +113,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-    public void hideNavigationBar(Toolbar toolbar) {
+    public void hideSystemUI(Toolbar toolbar) {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
@@ -149,7 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 获取导航条高度
      * */
-    public int getNavationBarHeight() {
+    public int getNavigationBarHeight() {
         int resIdShow = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
         boolean hasNavigationBar = false;
         if(resIdShow > 0){

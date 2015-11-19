@@ -50,10 +50,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //    compile 'org.jsoup:jsoup:1.8.3' // 解析HTML用的
     compile 'com.zhy:percent-support-extends:1.1.1'
-    compile 'com.android.support:support-v4:23.1.0'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:recyclerview-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
     compile 'com.facebook.fresco:fresco:0.7.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp:0.7.0'
     compile 'io.realm:realm-android:0.84.2'
@@ -66,6 +66,9 @@ dependencies {
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.github.ivbaranov:materialfavoritebutton:0.1.1'
     compile 'com.ms-square:expandableTextView:0.1.4'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.0@aar') {
         transitive = true
     }

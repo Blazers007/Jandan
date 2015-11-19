@@ -1,14 +1,12 @@
 package com.blazers.jandan.ui.fragment.favoritesub;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.Gravity;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.*;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,14 +14,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavImages;
-import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.blazers.jandan.models.db.local.LocalFavNews;
+import com.blazers.jandan.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.ui.activity.ImageViewerActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.facebook.drawee.view.SimpleDraweeView;
-import io.realm.Realm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
 /**
  * Created by Blazers on 2015/11/12.
@@ -31,6 +29,7 @@ import java.util.zip.Inflater;
 public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
 
     private ArrayList<LocalFavImages> list;
+    private FavImageAdapter adapter;
 
     @Nullable
     @Override
@@ -42,31 +41,30 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         trySetupSwipeRefreshLayout();
-        init();
+        list = new ArrayList<>();
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter = new FavImageAdapter());
     }
 
-    /**
-     * 长按取消收藏 OR 长按进入编辑模式 ？
-     * */
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
+    }
 
     @Override
     public void refresh() {
-
-    }
-
-    void init() {
-        list = new ArrayList<>();
         List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", false);
         if (null != addons)
             list.addAll(addons);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        recyclerView.setAdapter(new FavMeizhiAdapter());
+        refreshComplete();
     }
 
     /**
      * Adapter
      * */
-    class FavMeizhiAdapter extends RecyclerView.Adapter<FavMeizhiAdapter.MeizhiHolder> {
+    class FavImageAdapter extends RecyclerView.Adapter<FavImageAdapter.MeizhiHolder> {
 
         @Override
         public MeizhiHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -90,15 +88,27 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
             public MeizhiHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
+                itemView.setOnClickListener(v->{
+                    LocalFavImages images = list.get(getAdapterPosition());
+                    startActivity(
+                        new Intent(getActivity(), ImageViewerActivity.class)
+                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
+                    );
+                });
+                //
                 itemView.setOnLongClickListener(v->{
-                    PopupMenu popup = new PopupMenu(getActivity(), getActivity().getWindow().getDecorView(), Gravity.CENTER);
-                    //Inflating the Popup using xml file
-                    popup.getMenuInflater()
-                        .inflate(R.menu.menu_popup, popup.getMenu());
-
-                    //registering popup with OnMenuItemClickListener
-                    popup.setOnMenuItemClickListener(item->true);
-                    popup.show();
+                    int position = getAdapterPosition();
+                    LocalFavImages image = list.remove(position);
+                    String url = image.getUrl();
+                    long time = image.getFavTime();
+                    adapter.notifyItemRemoved(position);
+                    LocalFavImages.setThisFavedOrNot(false, realm, url);
+                    // 不需要考虑作用域？
+                    Snackbar.make(recyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi->{
+                        LocalFavImages delete = LocalFavImages.setThisFavedOrNot(true, realm, url, time);
+                        list.add(position, delete);
+                        adapter.notifyItemInserted(position);
+                    }).show();
                     return true;
                 });
             }

@@ -7,12 +7,15 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
@@ -58,7 +61,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
-        initToolbarWithLeftDrawerAndMenu(toolbar, "煎蛋阅读", R.menu.menu_reading_fragment, this);
+        initToolbarWithLeftDrawerAndMenu(toolbar, "煎蛋阅读", R.menu.offline, this);
         return root;
     }
 
@@ -101,6 +104,10 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
      * */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
+        if (item.getItemId() == R.id.offline) {
+            Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.OPEN_DRAWER_AND_LOCK));
+            return true;
+        }
         return false;
     }
 

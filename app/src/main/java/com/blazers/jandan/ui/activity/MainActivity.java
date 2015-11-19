@@ -4,19 +4,14 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,8 +21,11 @@ import com.blazers.jandan.rxbus.event.*;
 import com.blazers.jandan.services.OfflineDownloadService;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.*;
-import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.ClipboardHelper;
+import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.util.Unique;
+import com.facebook.drawee.view.SimpleDraweeView;
+
 
 /**
  * Update @ 2015 11-16
@@ -115,9 +113,7 @@ public class MainActivity extends BaseActivity {
                                 if (fragment != null)
                                     transaction.hide(fragment);
                             }
-                            /*TODO
-                            * http://stackoverflow.com/questions/22489703/trying-to-remove-fragment-from-view-gives-me-nullpointerexception-on-mnextanim
-                            * */
+                            // TODO http://stackoverflow.com/questions/22489703/trying-to-remove-fragment-from-view-gives-me-nullpointerexception-on-mnextanim
                             transaction.show(SettingFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_setting;
@@ -139,30 +135,11 @@ public class MainActivity extends BaseActivity {
         }else {
             navigationView.setBackgroundColor(Color.rgb(250,250,250));
         }
+        // 头像
+        ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).
+        setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
     }
 
-    /**
-     * 将呈现的Fragment的Toolbar绑定到Drawer上去 TODO:重新整理代码结构 减少耦合度 Apply代码放入正确的Cla
-     * */
-    private void initDrawerWithToolbar(Toolbar toolbar) {
-//        initToolbarByTypeWithShadow(null, toolbar, ToolbarType.NORMAL);
-//        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-//                R.string.drawer_open, R.string.drawer_close);
-//        drawerToggle.syncState();
-//        drawerLayout.setDrawerListener(drawerToggle);
-//        /* 貌似上面的方法会还原默认ICON 所以需要重新更换NavIcon */
-//        if (isNowNightModeOn) {
-//            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
-//            upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-//            toolbar.setNavigationIcon(upArrow);
-//        } else {
-//            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
-//            upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
-//            toolbar.setNavigationIcon(upArrow);
-//        }
-//        /* 需不需要放在此处? */
-//        invalidateOptionsMenu();
-    }
 
     /**
      * 滑入评论Fragment
@@ -208,6 +185,7 @@ public class MainActivity extends BaseActivity {
             }
             transaction.show(defaultFragment).commitAllowingStateLoss();
             nowSelectedNavId = R.id.nav_jandan;
+            navigationView.setCheckedItem(R.id.nav_jandan);
             return;
         }
         // 3 点击退出
@@ -308,5 +286,6 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(serviceConnection);
+        DBHelper.releaseAllTempRealm();
     }
 }

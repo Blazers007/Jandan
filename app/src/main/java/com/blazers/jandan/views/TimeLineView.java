@@ -33,7 +33,7 @@ public class TimeLineView extends RelativeLayout {
         ((TextView) findViewById(R.id.date)).setText(timeline.date);
         //auto stack
         AutoLayoutLinearLayout autoLayoutLinearLayout = (AutoLayoutLinearLayout) findViewById(R.id.auto);
-
+        autoLayoutLinearLayout.removeAllViews();
         /* 宽度应该是固定的 */
         int w = (int)((Dppx.getScreenWidth(getContext()) - Dppx.Dp2Px(getContext(), 88)) / 3) - 30;
 

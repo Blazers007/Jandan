@@ -2,7 +2,6 @@ package com.blazers.jandan.ui.activity;
 
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,14 +9,12 @@ import android.view.*;
 import android.widget.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.Dppx;
 import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.views.fresco.ZoomableDraweeView;
@@ -29,7 +26,6 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.imagepipeline.image.ImageInfo;
-import io.realm.Realm;
 import rx.Observable;
 
 public class ImageViewerActivity extends BaseActivity {
@@ -56,7 +52,7 @@ public class ImageViewerActivity extends BaseActivity {
         initToolbarByTypeWithShadow(null, toolbar, ToolbarType.FINISH);
         setContentFloatingModeEnabled(true);
         setToolbarTitle("");
-        extras.setPadding(0, 0, 0, getNavationBarHeight());
+        extras.setPadding(0, 0, 0, getNavigationBarHeight());
         toggleUI();
         // 判断数值是否正确送入
         event = (ViewImageEvent)getIntent().getSerializableExtra(ViewImageEvent.KEY);
@@ -151,7 +147,7 @@ public class ImageViewerActivity extends BaseActivity {
         Log.e("C","C");
         if (uiIsShowing) {
             // hide
-            hideNavigationBar(toolbar);
+            hideSystemUI(toolbar);
             extras.animate().translationY(extras.getMeasuredHeight()).setDuration(400).setStartDelay(200).start();
             uiIsShowing = false;
         } else {
@@ -197,7 +193,7 @@ public class ImageViewerActivity extends BaseActivity {
      * */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_image_viewer, menu);
+        getMenuInflater().inflate(R.menu.image_viewer, menu);
         return true;
     }
 

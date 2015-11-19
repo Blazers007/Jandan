@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Blazers on 2015/8/28.
+ *
  */
 public class ImageDownloader {
 
@@ -35,24 +36,43 @@ public class ImageDownloader {
         return INSTANCE;
     }
 
+    /**
+     * 根据Url地址直接缓存图像
+     * @param url 图像地址
+     * @return 返回一个LocalImage对象 映射Url与本地File路径
+     * */
     public LocalImage doSimpleCaching(String url) {
         return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
     }
 
+    /**
+     * 根据Url地址直接缓存图像
+     * @param imageRelateToPost RecyclerView中的图像对象
+     * @return 返回一个LocalImage对象 映射Url与本地File路径
+     * */
     public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
         return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
     }
 
+    /**
+     * 同上 目录不同
+     * */
+    public LocalImage doSavingImage(String url) {
+        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
+    }
+
+    /**
+     * 同上 目录不同
+     * */
     public LocalImage doSavingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
         return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
     }
 
-    public LocalImage doSavingImage(String url) {
-        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
-    }
-
+    /**
+     * 根据Url获取文件类型
+     * */
     private String getTypeByUrl(String url){
         String type = url.substring(url.lastIndexOf(".") + 1);
         if (type.isEmpty())
@@ -60,6 +80,9 @@ public class ImageDownloader {
         return type;
     }
 
+    /**
+     * 下载并返回LocalImage对象
+     * */
     private LocalImage doSimpleDownload(String url, File file) {
         Request request = new Request.Builder()
             .url(url)

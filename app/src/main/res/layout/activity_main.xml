@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:headerLayout="@layout/partial_left_menu_header"
-            app:menu="@menu/menu_left_drawer"
+            app:menu="@menu/left_drawer"
             />
     <!--app:itemTextColor="#fafafa"-->
     <!--  Download -->

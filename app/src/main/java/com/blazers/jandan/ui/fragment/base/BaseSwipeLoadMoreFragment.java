@@ -1,8 +1,8 @@
 package com.blazers.jandan.ui.fragment.base;
 
-import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -10,13 +10,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.views.GreySpaceItemDecoration;
+import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
 import com.blazers.jandan.views.loadmore.PullCallback;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
-import io.realm.Realm;
 //import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
@@ -40,7 +37,8 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
         if (null != loadMoreRecyclerView && null != adapter) {
             loadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-            loadMoreRecyclerView.addItemDecoration(new GreySpaceItemDecoration(getActivity()));
+            loadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 24, Color.rgb(241, 242, 241)));
+            loadMoreRecyclerView.setItemAnimator(new DefaultItemAnimator());
 //            loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
             loadMoreRecyclerView.setPullCallback(new PullCallback() {
                 @Override

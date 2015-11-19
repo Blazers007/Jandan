@@ -80,8 +80,9 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
                 .subscribe(list -> {
                     refreshComplete();
                     // 更新UI
+                    int size = mNewsPostArrayList.size();
                     mNewsPostArrayList.clear();
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemRangeRemoved(0, size);
                     //
                     mNewsPostArrayList.addAll(list);
                     adapter.notifyItemRangeInserted(0, list.size());
@@ -90,12 +91,13 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
                     Log.e("News", throwable.toString());
                 });
         } else {
-            List<NewsPost> list = NewsPost.getAllPost(realm, mPage);
-            if (null != list && list.size() > 0) {
+            List<NewsPost> data = NewsPost.getAllPost(realm, mPage);
+            if (null != data && data.size() > 0) {
                 mNewsPostArrayList.clear();
+                adapter.notifyItemRangeRemoved(-1, data.size());
                 //
-                mNewsPostArrayList.addAll(list);
-                adapter.notifyItemRangeInserted(0, list.size());
+                mNewsPostArrayList.addAll(data);
+                adapter.notifyItemRangeInserted(0, data.size());
             } else {
                 Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
             }
@@ -113,22 +115,20 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
                 .doOnNext(list -> DBHelper.saveToRealm(realm, list))
                 .subscribe(data -> {
                     loadMoreComplete();
-                    // 更新UI
+                    // 更新UI TODO:封装此类方法至RecyclerView中
                     int start = mNewsPostArrayList.size();
                     mNewsPostArrayList.addAll(data);
-//                    adapter.notifyItemRangeInserted(start, data.size());
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemRangeInserted(start, data.size());
                 }, throwable -> {
                     loadMoreError();
                     Log.e("News LoadMore", throwable.toString());
                 });
         } else {
-            List<NewsPost> list = NewsPost.getAllPost(realm, mPage);
-            if (null != list && list.size() > 0) {
+            List<NewsPost> data = NewsPost.getAllPost(realm, mPage);
+            if (null != data && data.size() > 0) {
                 int start = mNewsPostArrayList.size();
-                mNewsPostArrayList.addAll(list);
-//                adapter.notifyItemRangeInserted(start, list.size());
-                adapter.notifyDataSetChanged();
+                mNewsPostArrayList.addAll(data);
+                adapter.notifyItemRangeInserted(start, data.size());
             } else {
                 Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
             }
@@ -169,7 +169,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
             return mNewsPostArrayList.size();
         }
 
-        class NewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        class NewsHolder extends RecyclerView.ViewHolder {
 
             public SimpleDraweeView draweeView;
             public TextView title, content;
@@ -180,17 +180,14 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
                 title = (TextView) itemView.findViewById(R.id.news_title);
                 content = (TextView) itemView.findViewById(R.id.news_content);
 
-                itemView.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View view) {
-                NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
-                startActivity(
+                itemView.setOnClickListener(v->{
+                    NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
+                    startActivity(
                         new Intent(getActivity(), NewsReadActivity.class)
-                                .putExtra("id", newsList.getId())
-                                .putExtra("title", newsList.getTitle())
-                );
+                            .putExtra("id", newsList.getId())
+                            .putExtra("title", newsList.getTitle())
+                    );
+                });
             }
         }
     }

@@ -13,14 +13,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalFavImages;
+import com.blazers.jandan.models.db.local.LocalFavJokes;
+import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteJokesFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteImageFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteNewsFragment;
-import com.blazers.jandan.ui.fragment.favoritesub.FavoriteTimelineFragment;
+import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.util.Unique;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -33,7 +38,8 @@ public class FavoriteFragment extends BaseFragment {
     public static final String TAG = FavoriteFragment.class.getSimpleName();
     private static FavoriteFragment INSTANCE;
 
-    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
+//    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
+    private static final String[] titles = new String[]{"新鲜事", "图片", "文字"};
 
     /* Vars */
     private ArrayList<Fragment> fragments;
@@ -41,6 +47,10 @@ public class FavoriteFragment extends BaseFragment {
     @Bind(R.id.avatar) SimpleDraweeView avatar;
     @Bind(R.id.view_pager) ViewPager viewPager;
     @Bind(R.id.tab_layout) TabLayout tabLayout;
+    @Bind(R.id.user_name) TextView userName;
+    @Bind(R.id.fav_news_count) TextView favNewsCount;
+    @Bind(R.id.fav_images_count) TextView favImagesCount;
+    @Bind(R.id.fav_jokes_count) TextView favJokesCount;
 
 
     public static FavoriteFragment getInstance() {
@@ -57,20 +67,30 @@ public class FavoriteFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_holder_favorite, container, false);
         ButterKnife.bind(this, root);
         initToolbarAndLeftDrawer(toolbar, "收藏");
-        initTest();
+        initFavFragments();
         setupTabLayoutTheme();
+        loadFavCounts();
         return root;
     }
 
-    void initTest() {
-        avatar.setImageURI(Uri.parse("http://eightbitavatar.herokuapp.com/?id=blazers&s=male&size=320"));
+    void initFavFragments() {
+        String name = SPHelper.getStringSP(getActivity(), SPHelper.NAME, null);
+        userName.setText(name == null ? Unique.generateName(getActivity()) : name);
+        avatar.setImageURI(Uri.parse(Unique.generateGavatar(getActivity(), null)));
         fragments = new ArrayList<>();
-        fragments.add(new FavoriteTimelineFragment());
+//        fragments.add(new FavoriteTimelineFragment());  // 暂时不使用
         fragments.add(new FavoriteNewsFragment());
         fragments.add(new FavoriteImageFragment());
         fragments.add(new FavoriteJokesFragment());
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
         tabLayout.setupWithViewPager(viewPager);
+        // 点击修改名字
+    }
+
+    void loadFavCounts() {
+        favNewsCount.setText(String.format("%d", realm.where(LocalFavNews.class).count()));
+        favImagesCount.setText(String.format("%d", realm.where(LocalFavImages.class).count()));
+        favJokesCount.setText(String.format("%d", realm.where(LocalFavJokes.class).count()));
     }
 
     /**

@@ -23,7 +23,7 @@ public abstract class BaseSwipeRefreshFragment extends BaseFragment {
     @Bind(R.id.swipe_container) public SwipeRefreshLayout swipeRefreshLayout;
 
     /* Vars */
-    public Realm realm;
+
     protected String type;
 
     @Override
@@ -32,11 +32,6 @@ public abstract class BaseSwipeRefreshFragment extends BaseFragment {
         type = TAG; // 没有指定的默认为TAG的值
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        realm = Realm.getInstance(context);
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -65,22 +60,16 @@ public abstract class BaseSwipeRefreshFragment extends BaseFragment {
     public void refreshComplete() {
         SPHelper.setLastRefreshTime(getActivity(), type);
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
             Log.i(TAG, "刷新成功");
         }
     }
 
     public void refreshError() {
         if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 1200);
+            swipeRefreshLayout.postDelayed(()->swipeRefreshLayout.setRefreshing(false), 800);
             Log.i(TAG, "刷新失败");
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        realm.close();
     }
 
 }

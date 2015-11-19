@@ -1,9 +1,6 @@
 package com.blazers.jandan.ui.fragment;
 
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
@@ -18,14 +15,24 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.db.local.LocalFavImages;
+import com.blazers.jandan.models.pojo.favorite.Favorite;
+import com.blazers.jandan.network.BlazersAPI;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.SdcardHelper;
-import com.blazers.jandan.views.nightwatch.NightWatcher;
 import com.blazers.jandan.views.nightwatch.WatchTextView;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import io.realm.RealmObject;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 
 /**
@@ -140,6 +147,43 @@ public class SettingFragment extends BaseFragment {
                         )
         );
         SdcardHelper.calculateCacheSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
+    }
+
+    /**
+     * Create Or Update Fav data on server
+     * */
+    void createOrUpdateData() {
+        try {
+            BlazersAPI service = Favorite.getRetrofitServiceInstance();
+            Favorite.getLocalFavorite(getActivity())
+                .flatMap(json->service.postUserFavorite("bqvSgbP6G", json))
+                .compose(RxHelper.applySchedulers())
+                .subscribe(state->{
+                    Log.e("State",state);
+                }, throwable -> Log.e("POST", throwable.toString()));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sync Data from Server
+     * @param fullCopy true 同样也备份用户UUID
+     * */
+    void syncDataFromServer(boolean fullCopy) {
+        BlazersAPI service = null;
+        try {
+            service = Favorite.getRetrofitServiceInstance();
+            service.getUserFavorite("bqvSgbP6G")
+                .compose(RxHelper.applySchedulers())
+                .subscribe(favorite->{
+                    for(LocalFavImages image : favorite.images) {
+                        Log.i("Url", image.getUrl());
+                    }
+                }, throwable -> Log.e("Error", throwable.toString()));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

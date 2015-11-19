@@ -19,6 +19,7 @@ import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
+import io.realm.Realm;
 import rx.Subscription;
 
 /**
@@ -27,6 +28,7 @@ import rx.Subscription;
 public abstract class BaseFragment extends Fragment {
 
     /* Vars */
+    public Realm realm;
     public String TAG = "BaseFragment";
     private Toolbar toolbar;
     private String title;
@@ -54,7 +56,7 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Context context) {
         Log.i(TAG, "Attach");
         super.onAttach(context);
-        /* 读取模式 */
+        realm = Realm.getInstance(context);
         isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 
@@ -122,6 +124,8 @@ public abstract class BaseFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.i(TAG, "OnDetach");
+        if (null != realm)
+            realm.close();
     }
 
 

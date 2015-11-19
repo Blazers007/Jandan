@@ -35,19 +35,12 @@
                         android:layout_height="64dp"
                         android:layout_margin="12dp"
                         />
-                <ImageButton
-                        android:id="@+id/edit_name"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_alignParentRight="true"
-                        />
                 <TextView
                         android:id="@+id/user_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/avatar"
                         android:layout_alignTop="@id/avatar"
-                        android:layout_toLeftOf="@id/edit_name"
                         android:layout_marginLeft="8dp"
                         android:textSize="18sp"
                         android:textStyle="bold"
@@ -64,28 +57,24 @@
                     <TextView
                             style="@style/FavSegmentTitle"
                             android:id="@+id/fav_news"
-                            android:text="新鲜事"
-                            android:drawableLeft="@drawable/ic_news"
+                            android:text="· 新鲜事"
                             />
                     <TextView
                             style="@style/FavSegmentTitle"
                             android:id="@+id/fav_images"
                             android:layout_toRightOf="@id/fav_news"
-                            android:drawableLeft="@drawable/ic_pic"
-                            android:text="图片"
+                            android:text="· 图片"
                             />
                     <TextView
                             style="@style/FavSegmentTitle"
                             android:id="@+id/fav_jokes"
                             android:layout_toRightOf="@id/fav_images"
-                            android:drawableLeft="@drawable/ic_joke"
-                            android:text="段子"
+                            android:text="· 段子"
                             />
                     <!-- Count -->
                     <TextView
                             style="@style/FavSegmentText"
                             android:id="@+id/fav_news_count"
-                            android:text="123"
                             android:layout_below="@id/fav_news"
                             />
                     <TextView
@@ -93,14 +82,12 @@
                             android:id="@+id/fav_images_count"
                             android:layout_below="@id/fav_news"
                             android:layout_toRightOf="@id/fav_news_count"
-                            android:text="123"
                             />
                     <TextView
                             style="@style/FavSegmentText"
                             android:id="@+id/fav_jokes_count"
                             android:layout_below="@id/fav_news"
                             android:layout_toRightOf="@id/fav_images_count"
-                            android:text="123"
                             />
                 </com.zhy.android.percent.support.PercentRelativeLayout>
             </RelativeLayout>

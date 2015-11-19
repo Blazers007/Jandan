@@ -4,12 +4,15 @@ import android.content.Context;
 import io.realm.Realm;
 import io.realm.RealmObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Blazers on 2015/10/26.
  */
 public class DBHelper {
+
+    private static final List<Realm> realms = new ArrayList<>();
 
     /**
      * 存储数组到数据库中
@@ -61,5 +64,22 @@ public class DBHelper {
             object.removeFromRealm();
             realm.commitTransaction();
         }
+    }
+
+    /**
+     * 缓存Realm在退出的时候释放掉
+     * */
+    public static Realm generateTempRealm(Context context) {
+        Realm realm = Realm.getInstance(context);
+        realms.add(realm);
+        return realm;
+    }
+
+    /**
+     *
+     * */
+    public static void releaseAllTempRealm() {
+        for (Realm realm : realms)
+            realm.close();
     }
 }

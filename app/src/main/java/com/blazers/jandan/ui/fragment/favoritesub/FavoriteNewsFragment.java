@@ -1,8 +1,12 @@
 package com.blazers.jandan.ui.fragment.favoritesub;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +17,9 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.models.db.sync.NewsPost;
+import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
+import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.blazers.jandan.views.nightwatch.WatchTextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -28,6 +34,7 @@ import java.util.List;
 public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
     private List<LocalFavNews> list;
+    private FavNewsAdapter adapter;
 
     @Nullable
     @Override
@@ -42,17 +49,26 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
         trySetupSwipeRefreshLayout();
         // Init
         list = new ArrayList<>();
-        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", false);
-        if (null != addons)
-            list.addAll(addons);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new FavNewsAdapter());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
+        recyclerView.setAdapter(adapter = new FavNewsAdapter());
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refresh();
     }
 
     @Override
     public void refresh() {
-
+        list.clear();
+        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", false);
+        if (null != addons)
+            list.addAll(addons);
+        adapter.notifyDataSetChanged();
+        refreshComplete();
     }
 
     /**
@@ -84,6 +100,31 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
             public NewsHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
+                //
+                itemView.setOnClickListener(v->{
+                    NewsPost post = list.get(getAdapterPosition()).getNewsPost();
+                    startActivity(
+                        new Intent(getActivity(), NewsReadActivity.class)
+                            .putExtra("id", post.getId())
+                            .putExtra("title", post.getTitle())
+                    );
+                });
+                //
+                itemView.setOnLongClickListener(v->{
+                    int position = getAdapterPosition();
+                    LocalFavNews news = list.remove(position);
+                    long id = news.getId();
+                    long time = news.getFavTime();
+                    adapter.notifyItemRemoved(position);
+                    LocalFavNews.setThisFavedOrNot(false, realm, id);
+                    // 不需要考虑作用域？会不会导致临时变量无法释放?
+                    Snackbar.make(recyclerView, "已经删除该收藏",Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+                        LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
+                        list.add(position, delete);
+                        adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1
+                    }).show();
+                    return true;
+                });
             }
         }
     }

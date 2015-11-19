@@ -11,6 +11,8 @@ import java.util.HashMap;
 public class SPHelper {
     public static final String SP_NAME = "blazers";
     /* Default Keys */
+    public static final String NAME = "name";
+    public static final String USER_ID = "userId";
     public static final String NIGHT_MODE_ON = "night_mode_on";
     public static final String AUTO_GIF_MODE_ON = "auto_gif_mode_on";
     public static final String MEIZI_MODE_ON = "meizi_mode_on";
@@ -48,8 +50,6 @@ public class SPHelper {
     public static void putStringSP(Context context, String key, String value) {
         context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putString(key, value).apply();
     }
-
-
 
     /* 刷新 */
     private static HashMap<String, Long> tempLong = new HashMap<>();
