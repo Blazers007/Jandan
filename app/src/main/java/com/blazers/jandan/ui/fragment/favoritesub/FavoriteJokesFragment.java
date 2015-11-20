@@ -51,11 +51,6 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
         recyclerView.setAdapter(adapter = new FavJokeAdapter());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         refresh();
     }
 

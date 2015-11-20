@@ -64,7 +64,7 @@ public class CommentFragment extends BaseFragment {
         View root = inflater.inflate(R.layout.fragment_comments, container, false);
         ButterKnife.bind(this, root);
 
-        toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_black_24dp);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitle("评论");
         toolbar.setNavigationOnClickListener(v -> Rxbus.getInstance().send(new CommentEvent(-1)));
 

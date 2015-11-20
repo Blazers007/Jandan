@@ -53,11 +53,6 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
         recyclerView.setAdapter(adapter = new FavNewsAdapter());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         refresh();
     }
 

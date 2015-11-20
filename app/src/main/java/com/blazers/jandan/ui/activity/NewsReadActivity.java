@@ -1,9 +1,12 @@
 package com.blazers.jandan.ui.activity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -63,6 +66,16 @@ public class NewsReadActivity extends BaseActivity {
         initWebview();
         // 加载
         loadWebviewArticle();
+        // Transition
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Explode explode = new Explode();
+            explode.setDuration(1000);
+            getWindow().setEnterTransition(explode);
+
+            Slide slide = new Slide();
+            slide.setDuration(1000);
+            getWindow().setReturnTransition(slide);
+        }
     }
 
     /**

@@ -1,10 +1,7 @@
 <resources>
 
     <!-- Base application theme. Day Mode TODO:实现主题颜色切换 -->
-    <style name="AppTheme" parent="Base.AppTheme">
-
-    </style>
-
+    <style name="AppTheme" parent="Base.AppTheme"/>
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Other attributes like colorPrimary, colorAccent etc. -->
         <item name="colorPrimary">#fafafa</item>

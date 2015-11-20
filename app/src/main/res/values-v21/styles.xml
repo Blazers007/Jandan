@@ -1,20 +1,10 @@
 <resources>
     <style name="AppTheme" parent="Base.AppTheme">
-
-    </style>
-
-    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Other attributes like colorPrimary, colorAccent etc. -->
-        <!--<item name="colorPrimary">#328bff</item>-->
-        <!--<item name="colorPrimaryDark">#2c70d7</item>-->
-        <!--<item name="colorAccent">#ff5722</item>-->
-        <item name="colorPrimary">#fafafa</item>
-        <item name="colorPrimaryDark">#363636</item>
-        <item name="colorAccent">#3c4043</item>
-        <!--  -->
-        <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>-->
-        <item name="windowActionModeOverlay">true</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
     </style>
 
     <style name="NeedDrawerStyle" parent="AppTheme">  <!--http://stackoverflow.com/questions/26440879/how-do-i-use-drawerlayout-to-display-over-the-actionbar-toolbar-and-under-the-st/26440880  -->

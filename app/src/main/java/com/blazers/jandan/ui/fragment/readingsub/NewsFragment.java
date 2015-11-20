@@ -2,9 +2,12 @@ package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Explode;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,8 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.ViewArticleEvent;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.*;
@@ -182,11 +187,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
 
                 itemView.setOnClickListener(v->{
                     NewsPost newsList = mNewsPostArrayList.get(getAdapterPosition());
-                    startActivity(
-                        new Intent(getActivity(), NewsReadActivity.class)
-                            .putExtra("id", newsList.getId())
-                            .putExtra("title", newsList.getTitle())
-                    );
+                    Rxbus.getInstance().send(new ViewArticleEvent(newsList.getId(), newsList.getTitle()));
                 });
             }
         }

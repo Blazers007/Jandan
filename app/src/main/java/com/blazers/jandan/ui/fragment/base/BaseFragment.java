@@ -188,13 +188,13 @@ public abstract class BaseFragment extends Fragment {
         if (isNowNightModeOn) {
             toolbar.setBackgroundColor(Color.rgb(44, 44, 44));
             toolbar.setTitleTextColor(Color.rgb(190, 190, 190));
-            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_menu_grey600_24dp);
             upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
             toolbar.setNavigationIcon(upArrow);
         } else {
             toolbar.setBackgroundColor(Color.rgb(250, 250, 250));
             toolbar.setTitleTextColor(Color.rgb(60, 64, 67));
-            final Drawable upArrow = getResources().getDrawable(R.mipmap.ic_menu_grey600_24dp);
+            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_menu_grey600_24dp);
             upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
             toolbar.setNavigationIcon(upArrow);
         }

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -165,6 +166,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return 0;
     }
+
+
+    /**
+     * 生命周期相关
+     * */
 
     @Override
     protected void onResume() {

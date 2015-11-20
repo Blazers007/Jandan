@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.*;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,16 +47,12 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter = new FavImageAdapter());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         refresh();
     }
 
     @Override
     public void refresh() {
+        list.clear();
         List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", false);
         if (null != addons)
             list.addAll(addons);
@@ -90,10 +88,14 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
                 ButterKnife.bind(this, itemView);
                 itemView.setOnClickListener(v->{
                     LocalFavImages images = list.get(getAdapterPosition());
-                    startActivity(
-                        new Intent(getActivity(), ImageViewerActivity.class)
-                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
-                    );
+//                    startActivity(
+//                        new Intent(getActivity(), ImageViewerActivity.class)
+//                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
+//                    );
+                    Intent intent = new Intent(getActivity(), ImageViewerActivity.class)
+                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""));
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), simpleDraweeView, "sharedView");
+                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                 });
                 //
                 itemView.setOnLongClickListener(v->{

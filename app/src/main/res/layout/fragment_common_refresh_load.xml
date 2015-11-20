@@ -31,6 +31,7 @@
             app:spb_stroke_width="20dp"
             app:spb_stroke_separator_length="2dp"
             app:spb_mirror_mode="true"
+            app:spb_reversed="true"
             app:spb_progressiveStart_activated="true"
             app:spb_progressiveStart_speed="1.5"
             app:spb_progressiveStop_speed="3.4"

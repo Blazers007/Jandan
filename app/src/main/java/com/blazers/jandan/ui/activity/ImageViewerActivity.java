@@ -2,8 +2,12 @@ package com.blazers.jandan.ui.activity;
 
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -61,6 +65,13 @@ public class ImageViewerActivity extends BaseActivity {
         }
         initScalableImage();
         initExtra();
+        // Transition
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Fade fade = new Fade();
+            fade.setDuration(200);
+            getWindow().setEnterTransition(fade);
+            getWindow().setReturnTransition(fade);
+        }
     }
 
     void initScalableImage() {

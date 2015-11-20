@@ -43,7 +43,7 @@
             android:id="@+id/close"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@mipmap/ic_close_black_24dp"
+            android:src="@drawable/ic_close_black_24dp"
             android:padding="12dp"
             android:clickable="true"
             />

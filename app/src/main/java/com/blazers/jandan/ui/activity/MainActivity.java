@@ -5,13 +5,18 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,6 +65,13 @@ public class MainActivity extends BaseActivity {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
         /* 设置NavigationView */
         setupNavigationView();
+        /* Setup Transition */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Fade fade = new Fade();
+            fade.setDuration(200);
+            getWindow().setExitTransition(fade);
+            getWindow().setReenterTransition(fade);
+        }
     }
 
     @Override
@@ -210,6 +222,16 @@ public class MainActivity extends BaseActivity {
             } else {
                 popupCommentFragment();
             }
+        } else if(event instanceof ViewArticleEvent){
+            ViewArticleEvent v = (ViewArticleEvent) event;
+//            startActivity(new Intent(this, NewsReadActivity.class)
+//                        .putExtra("id", v.id)
+//                        .putExtra("title", v.title)
+//            );
+            Intent intent = new Intent(this, NewsReadActivity.class)
+                .putExtra("id", v.id)
+                .putExtra("title", v.title);
+            ActivityCompat.startActivity(this, intent, null);
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
             ViewImageEvent imageEvent = ((ViewImageEvent) event);
