@@ -20,7 +20,12 @@ import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.activity.ImageViewerActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +76,13 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
 
         @Override
         public void onBindViewHolder(MeizhiHolder holder, int position) {
-            holder.simpleDraweeView.setImageURI(Uri.parse(list.get(position).getUrl()));
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(list.get(position).getUrl()))
+                .setResizeOptions(new ResizeOptions(320, 320))
+                .build();
+            holder.simpleDraweeView.setController(Fresco.newDraweeControllerBuilder()
+                .setOldController(holder.simpleDraweeView.getController())
+                .setImageRequest(request)
+                .build());
         }
 
         @Override
@@ -88,14 +99,14 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
                 ButterKnife.bind(this, itemView);
                 itemView.setOnClickListener(v->{
                     LocalFavImages images = list.get(getAdapterPosition());
-//                    startActivity(
-//                        new Intent(getActivity(), ImageViewerActivity.class)
-//                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
-//                    );
-                    Intent intent = new Intent(getActivity(), ImageViewerActivity.class)
-                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""));
-                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), simpleDraweeView, "sharedView");
-                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+                    startActivity(
+                        new Intent(getActivity(), ImageViewerActivity.class)
+                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
+                    );
+//                    Intent intent = new Intent(getActivity(), ImageViewerActivity.class)
+//                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""));
+//                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), simpleDraweeView, "sharedView");
+//                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                 });
                 //
                 itemView.setOnLongClickListener(v->{

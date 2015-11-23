@@ -22,6 +22,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
+import com.blazers.jandan.common.Static;
 import com.blazers.jandan.rxbus.event.*;
 import com.blazers.jandan.services.OfflineDownloadService;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
@@ -30,6 +31,7 @@ import com.blazers.jandan.util.ClipboardHelper;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.Unique;
 import com.facebook.drawee.view.SimpleDraweeView;
+import jonathanfinerty.once.Once;
 
 
 /**
@@ -66,12 +68,12 @@ public class MainActivity extends BaseActivity {
         /* 设置NavigationView */
         setupNavigationView();
         /* Setup Transition */
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Fade fade = new Fade();
-            fade.setDuration(200);
-            getWindow().setExitTransition(fade);
-            getWindow().setReenterTransition(fade);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            Fade fade = new Fade();
+//            fade.setDuration(200);
+//            getWindow().setExitTransition(fade);
+//            getWindow().setReenterTransition(fade);
+//        }
     }
 
     @Override
@@ -116,6 +118,10 @@ public class MainActivity extends BaseActivity {
                             transaction.show(FavoriteFragment.getInstance());
                         }
                         nowSelectedNavId = R.id.nav_fav;
+                        // 提示 长按取消收藏
+                        if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
+                            Toast.makeText(this, R.string.remove_fav_hint, Toast.LENGTH_SHORT).show();
+                        }
                         break;
                     case R.id.nav_setting:
                         if (getSupportFragmentManager().findFragmentByTag(SETTING_TAG) == null) {

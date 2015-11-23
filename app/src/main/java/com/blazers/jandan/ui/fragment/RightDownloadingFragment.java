@@ -1,5 +1,9 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -10,6 +14,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -18,6 +23,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
+import com.blazers.jandan.models.pojo.count.Count;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
@@ -48,8 +54,32 @@ import java.util.List;
 
 public class RightDownloadingFragment extends Fragment {
 
+    public static final String ACTION_COUNT = "action.count";
+
     @Bind({R.id.seg_news, R.id.seg_wuliao, R.id.seg_jokes, R.id.seg_meizi}) List<SelectableTextView> segments;
     @Bind(R.id.page_seek_bar) InfiniteSeekBar pageSeekBar;
+    // 控制显示与隐藏于数量的更新
+    @Bind(R.id.meizhi_title) TextView meizhiTitle;
+    @Bind({R.id.news_count, R.id.wuliao_count, R.id.joke_count, R.id.meizhi_count}) List<TextView> countLabels;
+    private CountReceiver receiver;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        receiver = new CountReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_COUNT);
+        context.registerReceiver(receiver, filter);
+
+    }
+
+    @Override
+    public void onDetach() {
+        if (null != receiver) {
+            getContext().unregisterReceiver(receiver);
+        }
+        super.onDetach();
+    }
 
     @Nullable
     @Override
@@ -63,7 +93,12 @@ public class RightDownloadingFragment extends Fragment {
     void init() {
         if (!SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false)) {
             segments.get(3).setVisibility(View.GONE);
+            meizhiTitle.setVisibility(View.GONE);
+            countLabels.get(3).setVisibility(View.GONE);
         }
+        // Read Count from sp
+        for (int i = 0 ; i < 4 ; i ++)
+            countLabels.get(i).setText(String.format("%d", SPHelper.getLongSP(getActivity(), "Count" + i, 0)));
     }
 
     @OnClick(R.id.button)
@@ -84,6 +119,9 @@ public class RightDownloadingFragment extends Fragment {
         }
     }
 
+    /**
+     * 开始离线阅读
+     * */
     private void startDownload() {
         IOfflineDownloadInterface binder = ((MainActivity) getActivity()).getOfflineBinder();
         if (binder != null) {
@@ -118,5 +156,19 @@ public class RightDownloadingFragment extends Fragment {
     @OnClick(R.id.close)
     public void closeDrawer(){
         Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.CLOSE_DRAWER_AND_LOCK));
+    }
+
+    /**
+     * 监听
+     * */
+    class CountReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Count count = (Count)intent.getSerializableExtra("data");
+            countLabels.get(count.type).setText(String.format("%d", count.count));
+            // Save
+            SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
+        }
     }
 }

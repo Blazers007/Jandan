@@ -1,6 +1,7 @@
 package com.blazers.jandan.network;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import com.blazers.jandan.common.URL;
 import com.blazers.jandan.models.db.local.LocalArticleHtml;
@@ -8,6 +9,8 @@ import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.models.db.sync.JokePost;
 import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.models.pojo.comment.Comments;
+import com.blazers.jandan.models.pojo.count.Count;
+import com.blazers.jandan.ui.fragment.RightDownloadingFragment;
 import com.blazers.jandan.util.NetworkHelper;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -110,7 +113,7 @@ public class Parser {
 
     /**
      * @param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
-     * @param type 获取的类型 目前仅有 无聊图 妹子图
+     * @param type 获取的类型 目前仅有 无聊图 妹子图  TODO:最后一页判定！
      */
     public Observable<List<ImagePost>> getPictureData(int page, String type) {
         return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
@@ -121,6 +124,12 @@ public class Parser {
                 JSONObject object = new JSONObject(json);
                 JSONArray comments = object.getJSONArray("comments");
                 String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
+                /* 广播总数 */
+                long totalCount = object.getLong("total_comments");
+                context.sendBroadcast(
+                    new Intent(RightDownloadingFragment.ACTION_COUNT)
+                        .putExtra("data", new Count(type.equals("wuliao") ? Count.WULIAO : Count.MEIZI, totalCount))
+                );
                 for (int i = 0; i < comments.length(); i++) {
                         /* ImagePost */
                     JSONObject comment = comments.getJSONObject(i);
@@ -139,7 +148,7 @@ public class Parser {
                     post.setPicsArray(sb.toString());
                     postses.add(post);
                 }
-                    /* 请求评论数量 */
+                /* 请求评论数量 */
                 String commentInfo = simpleHttpRequest(commentInfoUrl);
                 JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
                 for (ImagePost post : postses) {
@@ -168,6 +177,9 @@ public class Parser {
                 String json = simpleHttpRequest(URL.getJandanNewsAtPage(page));
                 JSONObject object = new JSONObject(json);
                 JSONArray posts = object.getJSONArray("posts");
+                /* 广播总数 */
+                long totalCount = object.getLong("count_total");
+                context.sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.NEWS, totalCount)));
                 for (int i = 0; i < posts.length(); i++) {
                     JSONObject post = posts.getJSONObject(i);
                     NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
@@ -231,6 +243,9 @@ public class Parser {
                 String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));
                 JSONObject object = new JSONObject(json);
                 JSONArray comments = object.getJSONArray("comments");
+                /* 广播总数 */
+                long totalCount = object.getLong("total_comments");
+                context.sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.JOKE, totalCount)));
                 /* 评论数量URL */
                 String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                 for (int i = 0; i < comments.length(); i++) {

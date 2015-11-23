@@ -96,6 +96,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    public void setNormalWindow() {
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+    }
+
     public void showSystemUI(Toolbar toolbar) {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
@@ -112,6 +122,18 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .setDuration(400)
                     .setStartDelay(200).start();
         }
+    }
+
+    public void setFullWindow() {
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
+            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏 Navigation bar
+            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
+        }
+        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 
     public void hideSystemUI(Toolbar toolbar) {

@@ -4,6 +4,7 @@ import android.app.Application;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.util.ImagePipelineConfigFactory;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import jonathanfinerty.once.Once;
 //import com.nostra13.universalimageloader.core.ImageLoader;
 //import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
@@ -20,6 +21,8 @@ public class JandanApp extends Application {
         Fresco.initialize(this, ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
         // 初始化OKHTTP解析
         Parser.init(this);
+        // Once
+        Once.initialise(this);
     }
 
 }

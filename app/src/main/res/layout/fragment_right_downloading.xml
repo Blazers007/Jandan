@@ -15,12 +15,56 @@
             />
     <!-- Jandan信息 -->
     <TextView
+            android:id="@+id/meizhi_count"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="8dp"
+            android:layout_alignBottom="@id/background"
+            android:layout_alignParentRight="true"
+            android:gravity="center_horizontal"
+            android:textSize="15sp"
+            android:textColor="#666"
+            />
+    <TextView
+            android:id="@+id/meizhi_title"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/meizhi_count"
+            android:gravity="center_horizontal"
+            android:textSize="19sp"
+            android:textColor="#333"
+            android:text="妹子图"
+            android:layout_above="@+id/meizhi_count" android:layout_marginBottom="8dp"/>
+
+    <TextView
+            android:id="@+id/joke_title"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/meizhi_title"
+            android:layout_alignTop="@id/meizhi_title"
+            android:gravity="center_horizontal"
+            android:textSize="19sp"
+            android:textColor="#333"
+            android:text="段子"
+            />
+    <TextView
+            android:id="@+id/joke_count"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/joke_title"
+            android:layout_alignRight="@id/joke_title"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:textSize="15sp"
+            android:textColor="#666"
+            />
+    <TextView
             android:id="@+id/wuliao_title"
             android:layout_width="72dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_toLeftOf="@id/joke_title"
+            android:layout_alignTop="@id/meizhi_title"
             android:gravity="center_horizontal"
             android:textSize="19sp"
             android:textColor="#333"
@@ -36,7 +80,28 @@
             android:gravity="center_horizontal"
             android:textSize="15sp"
             android:textColor="#666"
-            android:text="194008"
+            />
+    <TextView
+            android:id="@+id/news_title"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/wuliao_title"
+            android:layout_alignTop="@id/meizhi_title"
+            android:gravity="center_horizontal"
+            android:textSize="19sp"
+            android:textColor="#333"
+            android:text="新鲜事"
+            />
+    <TextView
+            android:id="@+id/news_count"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/news_title"
+            android:layout_alignRight="@id/news_title"
+            android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
+            android:textSize="15sp"
+            android:textColor="#666"
             />
     <!-- 取消 -->
     <ImageView

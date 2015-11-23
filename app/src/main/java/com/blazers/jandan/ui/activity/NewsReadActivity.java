@@ -67,15 +67,15 @@ public class NewsReadActivity extends BaseActivity {
         // 加载
         loadWebviewArticle();
         // Transition
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Explode explode = new Explode();
-            explode.setDuration(1000);
-            getWindow().setEnterTransition(explode);
-
-            Slide slide = new Slide();
-            slide.setDuration(1000);
-            getWindow().setReturnTransition(slide);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            Explode explode = new Explode();
+//            explode.setDuration(1000);
+//            getWindow().setEnterTransition(explode);
+//
+//            Slide slide = new Slide();
+//            slide.setDuration(1000);
+//            getWindow().setReturnTransition(slide);
+//        }
     }
 
     /**

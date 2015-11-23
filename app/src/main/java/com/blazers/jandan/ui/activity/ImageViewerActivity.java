@@ -36,6 +36,7 @@ public class ImageViewerActivity extends BaseActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.viewer) ZoomableDraweeView view;
+//    @Bind(R.id.photo_drawee_view) PhotoDraweeView photoDraweeView;
     @Bind(R.id.btn_save) ImageButton btnSave;
     @Bind(R.id.content) TextView content;
     @Bind(R.id.image_view_extra) RelativeLayout extras;
@@ -57,7 +58,7 @@ public class ImageViewerActivity extends BaseActivity {
         setContentFloatingModeEnabled(true);
         setToolbarTitle("");
         extras.setPadding(0, 0, 0, getNavigationBarHeight());
-        toggleUI();
+//        toggleUI();
         // 判断数值是否正确送入
         event = (ViewImageEvent)getIntent().getSerializableExtra(ViewImageEvent.KEY);
         if (null == event){
@@ -66,12 +67,12 @@ public class ImageViewerActivity extends BaseActivity {
         initScalableImage();
         initExtra();
         // Transition
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Fade fade = new Fade();
-            fade.setDuration(200);
-            getWindow().setEnterTransition(fade);
-            getWindow().setReturnTransition(fade);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            Fade fade = new Fade();
+//            fade.setDuration(200);
+//            getWindow().setEnterTransition(fade);
+//            getWindow().setReturnTransition(fade);
+//        }
     }
 
     void initScalableImage() {
@@ -84,7 +85,7 @@ public class ImageViewerActivity extends BaseActivity {
         } else {
             uri = event.originUrl;
         }
-        // 显示图片
+//        // 显示图片
         DraweeController ctrl = Fresco.newDraweeControllerBuilder()
             .setUri(Uri.parse(uri))
             .setTapToRetryEnabled(true)
@@ -96,6 +97,8 @@ public class ImageViewerActivity extends BaseActivity {
             .setProgressBarImage(new ProgressBarDrawable())
             .build();
 
+        view.setController(ctrl);
+        view.setHierarchy(hierarchy);
         view.setController(ctrl);
         view.setHierarchy(hierarchy);
         // 触摸
@@ -181,20 +184,12 @@ public class ImageViewerActivity extends BaseActivity {
             if (imageInfo == null) {
                 return;
             }
-            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048)
+            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048){
                 view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            else
+            } else
                 view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-        }
-
-        @Override
-        public void onFailure(String s, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onRelease(String s) {
-            Log.i("Release Image", s);
+            if (null != animatable)
+                animatable.start();
         }
     }
 

@@ -43,6 +43,14 @@ public class SPHelper {
         context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putInt(key, value).apply();
     }
 
+    public static long getLongSP(Context context, String key, long def) {
+        return context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).getLong(key, def);
+    }
+
+    public static void putLongSP(Context context, String key, long value) {
+        context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putLong(key, value).apply();
+    }
+
     public static String getStringSP(Context context, String key, String def) {
         return context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).getString(key, def);
     }
