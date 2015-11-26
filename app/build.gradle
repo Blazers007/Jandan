@@ -4,7 +4,7 @@ apply plugin: 'checkstyle'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "com.blazers.jandan"
@@ -64,7 +64,8 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.4.2@aar'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.github.ivbaranov:materialfavoritebutton:0.1.1'
     compile 'com.ms-square:expandableTextView:0.1.4'

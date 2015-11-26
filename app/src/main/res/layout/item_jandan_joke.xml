@@ -80,14 +80,15 @@
             />
     <com.github.ivbaranov.mfb.MaterialFavoriteButton
             android:id="@+id/btn_fav"
-            android:layout_height="40dp"
-            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="-4dp"
             android:layout_alignBottom="@id/btn_oo"
             app:mfb_padding="16"
             app:mfb_animate_favorite="true"
-            app:mfb_animate_unfavorite="false"
+            app:mfb_animate_unfavorite="true"
             app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
             app:mfb_not_favorite_image="@mipmap/ic_favorite_grey600_16dp"
             />

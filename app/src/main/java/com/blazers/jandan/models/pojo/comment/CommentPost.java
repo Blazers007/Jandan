@@ -14,25 +14,9 @@ public class CommentPost {
     // For Divider
     public int _type;
     public String _dividerName;
-
-    public String post_id; //"6204830194721915649"
-    public String thread_id; //"6204757592596103937"
-    public String status;
-
+    //
     public String message;
     public String created_at; //2015-10-12T21:51:56+08:00
-
-//    public String parent_id;
-//    public String root_id;
-    public long reposts;
-    public long comments;
-
-    public long likes;
-    public long dislikes;
-
-    public String author_id;
-    public String author_key;
-
     public List<String> parents;
 
     // Nested

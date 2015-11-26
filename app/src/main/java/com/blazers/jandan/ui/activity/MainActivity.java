@@ -1,8 +1,10 @@
 package com.blazers.jandan.ui.activity;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -12,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -31,6 +34,7 @@ import com.blazers.jandan.util.ClipboardHelper;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.Unique;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tbruyelle.rxpermissions.RxPermissions;
 import jonathanfinerty.once.Once;
 
 
@@ -121,6 +125,7 @@ public class MainActivity extends BaseActivity {
                         // 提示 长按取消收藏
                         if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
                             Toast.makeText(this, R.string.remove_fav_hint, Toast.LENGTH_SHORT).show();
+                            Once.markDone(Static.HINT_FAV);
                         }
                         break;
                     case R.id.nav_setting:
@@ -154,28 +159,21 @@ public class MainActivity extends BaseActivity {
             navigationView.setBackgroundColor(Color.rgb(250,250,250));
         }
         // 头像
-        ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).
-        setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+        if (Build.VERSION.SDK_INT >= 23) {
+            RxPermissions.getInstance(this)
+                .request(Manifest.permission.READ_PHONE_STATE)
+                .subscribe(granted->{
+                    if (granted) {
+                        ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+                    } else {
+                        Toast.makeText(this, "XX", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        } else {
+            ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+        }
     }
 
-
-    /**
-     * 滑入评论Fragment
-     * */
-    private void pushInCommentFragment(long id) {
-        getSupportFragmentManager().beginTransaction()
-            .setCustomAnimations(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out, R.anim.activity_slide_right_in, R.anim.activity_slide_right_out)
-            .add(R.id.fragment_wrapper, CommentFragment.NewInstance(id))
-            .addToBackStack(null)
-            .commitAllowingStateLoss();
-    }
-
-    /**
-     * 滑出Fragment
-     * */
-    private void popupCommentFragment() {
-        getSupportFragmentManager().popBackStack();
-    }
 
 
     /**
@@ -216,28 +214,20 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 处理Event消息
+     * 处理Event消息  TODO: 尽量精简 避免不必要的Event通信
      * */
     @Override
     public void handleRxEvent(Object event) {
         if (event instanceof CommentEvent) {
             /* 查看评论页面 或离 开评 论页面 */
             long id = ((CommentEvent) event).id;
-            if (id >= 0){
-                pushInCommentFragment(id);
-            } else {
-                popupCommentFragment();
-            }
+            startActivity(new Intent(this, CommentActivity.class).putExtra("commentId", id));
         } else if(event instanceof ViewArticleEvent){
             ViewArticleEvent v = (ViewArticleEvent) event;
-//            startActivity(new Intent(this, NewsReadActivity.class)
-//                        .putExtra("id", v.id)
-//                        .putExtra("title", v.title)
-//            );
-            Intent intent = new Intent(this, NewsReadActivity.class)
-                .putExtra("id", v.id)
-                .putExtra("title", v.title);
-            ActivityCompat.startActivity(this, intent, null);
+            startActivity(new Intent(this, NewsReadActivity.class)
+                    .putExtra("id", v.id)
+                    .putExtra("title", v.title)
+            );
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
             ViewImageEvent imageEvent = ((ViewImageEvent) event);
@@ -315,5 +305,6 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         unbindService(serviceConnection);
         DBHelper.releaseAllTempRealm();
+        // Marked as closed so Service need to finish by itself
     }
 }

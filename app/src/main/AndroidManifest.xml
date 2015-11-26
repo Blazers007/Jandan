@@ -47,6 +47,10 @@
                   android:screenOrientation="portrait"
                   android:theme="@style/ImageViewStyle"
                 />
+        <!--  Comment -->
+        <activity android:name=".ui.activity.CommentActivity"
+                  android:label="@string/title_activity_comment"
+                  android:screenOrientation="portrait"/>
         <!-- Service -->
         <service android:name=".services.OfflineDownloadService"/>
 

@@ -91,7 +91,6 @@ public class Parser {
                 .build();
         Response response = client.newCall(request).execute();
         String str = response.body().string();
-//        Log.i("[Response]", str);
         return str;
     }
 
@@ -107,7 +106,6 @@ public class Parser {
             .build();
         Response response = client.newCall(request).execute();
         String str = response.body().string();
-//        Log.i("[Response]", str);
         return str;
     }
 
@@ -149,7 +147,7 @@ public class Parser {
                     postses.add(post);
                 }
                 /* 请求评论数量 */
-                String commentInfo = simpleHttpRequest(commentInfoUrl);
+                String commentInfo = simpleHttpRequest(commentInfoUrl.substring(0, commentInfoUrl.length() - 1));
                 JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
                 for (ImagePost post : postses) {
                     String key = "comment-" + post.getComment_ID();
@@ -255,7 +253,7 @@ public class Parser {
                     commentInfoUrl += ("comment-" + jokePost.getComment_ID() + ",");
                 }
                 /* 获取数量 */
-                String commentInfo = simpleHttpRequest(commentInfoUrl);
+                String commentInfo = simpleHttpRequest(commentInfoUrl.substring(0, commentInfoUrl.length() - 1));
                 JSONObject commentJSON = new JSONObject(commentInfo).getJSONObject("response");
                 for (JokePost post : jokePostList) {
                     String key = "comment-" + post.getComment_ID();

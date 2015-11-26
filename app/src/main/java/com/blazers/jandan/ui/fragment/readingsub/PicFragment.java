@@ -213,7 +213,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             holder.author.setText(String.format("@+%s", post.getComment_author()));
             holder.date.setText(post.getComment_date());
             holder.oo.setThumbText(post.getVote_positive());
-            holder.xx.setThumbText(post.getVote_negative());
+            holder.xx.setThumbText(post.getVote_negative());;
             holder.comment.setThumbText(String.format("%s", post.getCommentNumber()));
             holder.content.setAspectRatio(1.418f);
             holder.typeHint.setImageDrawable(null);
@@ -341,6 +341,32 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             @OnClick(R.id.btn_comment)
             public void showComment(){
                 Rxbus.getInstance().send(new CommentEvent(imageArrayList.get(getAdapterPosition()).holder.getComment_ID()));
+            }
+
+            /**
+             * 分享
+             * */
+            @OnClick(R.id.btn_share)
+            public void share() {
+                ImageRelateToPost image = imageArrayList.get(getAdapterPosition());
+                LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, image.url);
+                if (null != localImage && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
+                    doShare(image.holder.getText_content(), localImage.getLocalUrl());
+                } else {
+                    Observable.just(imageArrayList.get(getAdapterPosition()))
+                        .map(ImageDownloader.getInstance()::doSavingImage)
+                        .compose(RxHelper.applySchedulers())
+                        .subscribe(local -> {
+                            doShare(image.holder.getText_content(), local.getLocalUrl());
+                            DBHelper.saveToRealm(getActivity(), local);
+                        }, throwable -> {
+                            Log.e("Error", throwable.toString());
+                        });
+                }
+            }
+
+            void doShare(String text, String filePath) {
+                ShareHelper.shareImage(getActivity(), type.equals("wuliao")? "无聊图" : "妹子图", text, filePath);
             }
         }
     }

@@ -203,7 +203,6 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
             public JokeHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
-                //
                 fav.setOnFavoriteChangeListener(
                     (view, favorite)-> LocalFavJokes.setThisFavedOrNot(favorite, realm, mList.get(getAdapterPosition()).getComment_ID())
                 );
@@ -247,9 +246,20 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment{
                 }
             }
 
+            /**
+             * 评论
+             * */
             @OnClick(R.id.btn_comment)
             public void showComment(){
                 Rxbus.getInstance().send(new CommentEvent(mList.get(getAdapterPosition()).getComment_ID()));
+            }
+
+            /**
+             * 分享
+             * */
+            @OnClick(R.id.btn_share)
+            public void share() {
+                ShareHelper.shareText(getActivity(), "新鲜事", mList.get(getAdapterPosition()).getComment_content());
             }
         }
     }

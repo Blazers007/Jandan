@@ -168,6 +168,7 @@ public class OfflineDownloadService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
+        Log.e(">>Service<<", "Bind");
         return binder;
     }
 
@@ -176,6 +177,7 @@ public class OfflineDownloadService extends Service {
      * */
     @Override
     public boolean onUnbind(Intent intent) {
+        Log.e(">>Service<<", "Unbind");
         return super.onUnbind(intent);
     }
 
@@ -184,6 +186,7 @@ public class OfflineDownloadService extends Service {
      * */
     @Override
     public void onCreate() {
+        Log.e(">>Service<<", "Create");
         super.onCreate();
         realm = Realm.getInstance(this);
     }
@@ -193,6 +196,7 @@ public class OfflineDownloadService extends Service {
      * */
     @Override
     public void onDestroy() {
+        Log.e(">>Service<<", "Dectory");
         super.onDestroy();
         if (null != realm)
             realm.close();

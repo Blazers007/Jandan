@@ -17,15 +17,16 @@ import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalArticleHtml;
 import com.blazers.jandan.models.db.local.LocalFavNews;
+import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.db.sync.NewsPost;
+import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.ShareHelper;
+import com.blazers.jandan.util.*;
 import com.blazers.jandan.views.ObservableWebView;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -210,8 +211,25 @@ public class NewsReadActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.action_comment:
+                // 跳转到评论页面
+                break;
             case R.id.action_share:
                 ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl());
+//                LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, post.getThumbUrl());
+//                if (null != localImage && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
+//                    ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl(), localImage.getLocalUrl());
+//                } else {
+//                    Observable.just(post.getThumbUrl())
+//                        .map(ImageDownloader.getInstance()::doSavingImage)
+//                        .compose(RxHelper.applySchedulers())
+//                        .subscribe(local -> {
+//                            ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl(), local.getLocalUrl());
+//                            DBHelper.saveToRealm(this, local);
+//                        }, throwable -> {
+//                            Log.e("Error", throwable.toString());
+//                        });
+//                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

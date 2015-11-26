@@ -4,6 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_news_read">NewsReadActivity</string>
+    <string name="title_activity_image_viewer">NewsReadActivity</string>
+    <string name="title_activity_comment">评论列表</string>
 
     <!-- Drawer State -->
     <string name="drawer_open">open</string>
@@ -19,6 +21,7 @@
 
     <!-- Menu -->
     <string name="action_share">分享</string>
+    <string name="action_comment">评论</string>
 
     <!-- Setting -->
     <string name="setting_night_mode">夜间模式(实验特性)</string>
