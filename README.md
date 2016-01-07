@@ -18,15 +18,19 @@
 
 
 ####利用到的开源库
-- Facebook的 [Fresco](https://github.com/facebook/fresco) 图片加载库。
-- Square的 [Okhttp](https://github.com/square/okhttp) 网络访问模块。
-- [Realm](https://github.com/realm/realm-java) orm数据库。
-- [Retrofit]() [Butterknife]() 等...
+- [Retrolambda](https://github.com/evant/gradle-retrolambda)
+- [Rxandroid](https://github.com/ReactiveX/RxAndroid)
+- [Fresco](https://github.com/facebook/fresco)
+- [Okhttp](https://github.com/square/okhttp)
+- [Realm](https://github.com/realm/realm-java)
+- [Retrofit](https://github.com/square/retrofit) 
+- [Butterknife](https://github.com/JakeWharton/butterknife)
+- [Gson](http://mvnrepository.com/artifact/com.google.code.gson/gson/2.2.2)
 
 ---
 ####截图
-![http://i4.tietuku.com/88f241ab20ac5822.png](http://i4.tietuku.com/88f241ab20ac5822t.jpg) ![http://i4.tietuku.com/99a7cc2fbfeda2a5.png](http://i4.tietuku.com/99a7cc2fbfeda2a5t.jpg)
+![http://i4.tietuku.com/88f241ab20ac5822.png](http://i4.tietuku.com/88f241ab20ac5822s.png) ![http://i4.tietuku.com/99a7cc2fbfeda2a5.png](http://i4.tietuku.com/99a7cc2fbfeda2a5s.png)
 
-![http://i4.tietuku.com/4e273f630a2e7694.png](http://i4.tietuku.com/4e273f630a2e7694t.jpg) ![http://i4.tietuku.com/0819e6a2a3e31c39.png](http://i4.tietuku.com/0819e6a2a3e31c39t.jpg)
+![http://i4.tietuku.com/4e273f630a2e7694.png](http://i4.tietuku.com/4e273f630a2e7694s.png) ![http://i4.tietuku.com/0819e6a2a3e31c39.png](http://i4.tietuku.com/0819e6a2a3e31c39s.png)
 
-![http://i4.tietuku.com/7184bffd264a455c.png](http://i4.tietuku.com/7184bffd264a455ct.jpg) ![http://i4.tietuku.com/31a1deff49508dbf.png](http://i4.tietuku.com/31a1deff49508dbft.jpg) ![http://i4.tietuku.com/140055d1261b8884.png](http://i4.tietuku.com/140055d1261b8884t.jpg)
+![http://i4.tietuku.com/7184bffd264a455c.png](http://i4.tietuku.com/7184bffd264a455cs.png) ![http://i4.tietuku.com/31a1deff49508dbf.png](http://i4.tietuku.com/31a1deff49508dbfs.png) ![http://i4.tietuku.com/140055d1261b8884.png](http://i4.tietuku.com/140055d1261b8884s.png)
