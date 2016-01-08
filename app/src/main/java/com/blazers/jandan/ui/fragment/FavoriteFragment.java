@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,6 +22,7 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavImages;
 import com.blazers.jandan.models.db.local.LocalFavJokes;
 import com.blazers.jandan.models.db.local.LocalFavNews;
+import com.blazers.jandan.rxbus.event.EnterSelectModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteJokesFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteImageFragment;
@@ -51,6 +54,7 @@ public class FavoriteFragment extends BaseFragment {
     @Bind(R.id.fav_news_count) TextView favNewsCount;
     @Bind(R.id.fav_images_count) TextView favImagesCount;
     @Bind(R.id.fav_jokes_count) TextView favJokesCount;
+//    @Bind(R.id.fab_fav) FloatingActionButton floatingActionButton;
 
 
     public static FavoriteFragment getInstance() {
@@ -70,6 +74,7 @@ public class FavoriteFragment extends BaseFragment {
         initFavFragments();
         setupTabLayoutTheme();
         loadFavCounts();
+        registerEventReceiver();
         return root;
     }
 
@@ -105,6 +110,21 @@ public class FavoriteFragment extends BaseFragment {
             tabLayout.setBackgroundColor(Color.rgb(250, 250, 250));
             tabLayout.setTabTextColors(Color.parseColor("#989898"), Color.parseColor("#343434"));
             tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#434343"));
+        }
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unregisterEventReceiver();
+    }
+
+    @Override
+    public void handleRxEvent(Object event) {
+        super.handleRxEvent(event);
+        if (event instanceof EnterSelectModeEvent) {
+//            floatingActionButton.animate().scaleX(1).scaleY(1).setDuration(400).setInterpolator(new BounceInterpolator()).start();
         }
     }
 

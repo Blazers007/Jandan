@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.PointF;
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.SPHelper;
@@ -29,6 +31,7 @@ public class AutoScaleFrescoView extends SimpleDraweeView {
 
     public AutoScaleFrescoView(Context context) {
         super(context);
+        setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
     }
     public AutoScaleFrescoView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,11 +44,13 @@ public class AutoScaleFrescoView extends SimpleDraweeView {
     private boolean imageLoaded = false;
     private ImageView tag;
 
-    public void showImage(ImageView tag, String url) {
+    public void showImage(@Nullable ImageView tag, String url) {
         // 显示Tag
-        this.tag = tag;
-        if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
-            tag.setImageResource(R.mipmap.ic_gif_corner_24dp);
+        if (null != tag) {
+            this.tag = tag;
+            if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
+                tag.setImageResource(R.mipmap.ic_gif_corner_24dp);
+        }
         // 显示图片
         ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(url));
         PipelineDraweeControllerBuilder builder = Fresco.newDraweeControllerBuilder()
@@ -69,7 +74,7 @@ public class AutoScaleFrescoView extends SimpleDraweeView {
             int width = imageInfo.getWidth();
             int height = imageInfo.getHeight();
             // 判断大小 显示提示图片
-            if (width > 2048 || height > 2048) {
+            if (width > 2048 || height > 2048 && null != tag) {
                 tag.setImageResource(R.mipmap.ic_more_corner_24dp);
             }
             // 控制硬件加速 以及宽高比

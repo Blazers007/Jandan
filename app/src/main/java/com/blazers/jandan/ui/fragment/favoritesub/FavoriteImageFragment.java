@@ -8,18 +8,27 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.*;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavImages;
 import com.blazers.jandan.models.db.local.LocalFavNews;
+import com.blazers.jandan.rxbus.Rxbus;
+import com.blazers.jandan.rxbus.event.EnterSelectModeEvent;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.ui.activity.ImageDetailActivity;
 import com.blazers.jandan.ui.activity.ImageViewerActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
+import com.blazers.jandan.views.PopupActionModeBar;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -27,16 +36,18 @@ import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by Blazers on 2015/11/12.
  */
 public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
 
-    private ArrayList<LocalFavImages> list;
+    private List<LocalFavImages> list, mCache;
+    private Set<LocalFavImages> mSelectedFavItems;
     private FavImageAdapter adapter;
+    private PopupActionModeBar mPopupActionModeBar;
+
 
     @Nullable
     @Override
@@ -62,6 +73,7 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
         if (null != addons)
             list.addAll(addons);
         refreshComplete();
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -83,6 +95,17 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
                 .setOldController(holder.simpleDraweeView.getController())
                 .setImageRequest(request)
                 .build());
+            if (null != mSelectedFavItems && mSelectedFavItems.contains(list.get(position))) {
+                // 显示并播放动画
+                holder.select.setVisibility(View.VISIBLE);
+                holder.select.animate().scaleX(1).scaleY(1).setDuration(250).setInterpolator(new BounceInterpolator()).withStartAction(()->{
+                    holder.select.setScaleX(0.6f);
+                    holder.select.setScaleY(0.6f);
+                }).start();
+            } else {
+                // 隐藏
+                holder.select.setVisibility(View.GONE);
+            }
         }
 
         @Override
@@ -93,35 +116,93 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
         class MeizhiHolder extends RecyclerView.ViewHolder {
 
             @Bind(R.id.content) SimpleDraweeView simpleDraweeView;
+            @Bind(R.id.select) ImageView select;
 
             public MeizhiHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
                 itemView.setOnClickListener(v->{
-                    LocalFavImages images = list.get(getAdapterPosition());
-                    startActivity(
-                        new Intent(getActivity(), ImageViewerActivity.class)
-                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
-                    );
+                    if (null == mPopupActionModeBar) {
+                        ArrayList<String> stringList = new ArrayList<>();
+                        for (LocalFavImages item : list)
+                            stringList.add(item.getUrl());
+                        Intent intent = new Intent(getActivity(), ImageDetailActivity.class)
+                                .putExtra("Position", getAdapterPosition())
+                                .putStringArrayListExtra("List", stringList);
+                        startActivity(intent);
+                    } else {
+                        LocalFavImages item = list.get(getAdapterPosition());
+                        if (mSelectedFavItems.contains(item)) {
+                            // 取消选择
+                            mSelectedFavItems.remove(item);
+                            notifyItemChanged(getAdapterPosition());
+                            mPopupActionModeBar.minusSelection();
+                        } else {
+                            mSelectedFavItems.add(item);
+                            notifyItemChanged(getAdapterPosition());
+                            mPopupActionModeBar.addSelection();
+                        }
+                    }
+//                    LocalFavImages images = list.get(getAdapterPosition());
+                    //                    startActivity(
+//                        new Intent(getActivity(), ImageViewerActivity.class)
+//                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""))
+//                    );
 //                    Intent intent = new Intent(getActivity(), ImageViewerActivity.class)
 //                            .putExtra(ViewImageEvent.KEY, new ViewImageEvent(images.getUrl(), ""));
 //                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), simpleDraweeView, "sharedView");
 //                    ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
                 });
-                //
+                /**
+                 * 长按进入编辑模式
+                 * */
                 itemView.setOnLongClickListener(v->{
-                    int position = getAdapterPosition();
-                    LocalFavImages image = list.remove(position);
-                    String url = image.getUrl();
-                    long time = image.getFavTime();
-                    adapter.notifyItemRemoved(position);
-                    LocalFavImages.setThisFavedOrNot(false, realm, url);
-                    // 不需要考虑作用域？
-                    Snackbar.make(recyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi->{
-                        LocalFavImages delete = LocalFavImages.setThisFavedOrNot(true, realm, url, time);
-                        list.add(position, delete);
-                        adapter.notifyItemInserted(position);
-                    }).show();
+                    mPopupActionModeBar = new PopupActionModeBar(getActivity(), new PopupActionModeBar.ActionbarCallback() {
+                        @Override
+                        public void onBackPressed() {
+                            mPopupActionModeBar = null;
+                            mSelectedFavItems.clear();
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onDeletePress() {
+                            mPopupActionModeBar = null;
+                            mCache = new ArrayList<>();
+                            mCache.addAll(list);
+                            // 首先删除List使显示改变
+                            for(LocalFavImages item : mSelectedFavItems) {
+                                list.remove(item);
+                            }
+                            notifyDataSetChanged();
+                            Runnable runnable = ()-> {
+                                // 真正的移除工作
+                                if (null == mSelectedFavItems)
+                                    return;
+                                for(LocalFavImages item : mSelectedFavItems)
+                                    LocalFavImages.setThisFavedOrNot(false, realm, item.getUrl());
+                                mSelectedFavItems = null;
+                                mCache = null;
+                            };
+                            Snackbar.make(recyclerView, "已经删除以上收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销",vi->{
+                                // 缓存变量 并返还原有值
+                                if (null == mCache)
+                                    return;
+                                recyclerView.removeCallbacks(runnable);
+                                list.clear();
+                                list.addAll(mCache);
+                                notifyDataSetChanged();
+                                mSelectedFavItems = null;
+                                mCache = null;
+                            }).show();
+                            // 若短时间内再次点击 会出现问题
+                            recyclerView.postDelayed(runnable, 3000);
+                        }
+                    });
+                    mSelectedFavItems = new HashSet<>();
+                    mSelectedFavItems.add(list.get(getAdapterPosition()));
+                    notifyItemChanged(getAdapterPosition());
+//                    Rxbus.getInstance().send(new EnterSelectModeEvent());
                     return true;
                 });
             }
