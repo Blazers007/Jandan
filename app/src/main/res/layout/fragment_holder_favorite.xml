@@ -76,19 +76,19 @@
                             style="@style/FavSegmentText"
                             android:id="@+id/fav_news_count"
                             android:layout_below="@id/fav_news"
-                            />
+                            android:textSize="15sp" android:textStyle="bold"/>
                     <TextView
                             style="@style/FavSegmentText"
                             android:id="@+id/fav_images_count"
                             android:layout_below="@id/fav_news"
                             android:layout_toRightOf="@id/fav_news_count"
-                            />
+                            android:textSize="15sp" android:textStyle="bold"/>
                     <TextView
                             style="@style/FavSegmentText"
                             android:id="@+id/fav_jokes_count"
                             android:layout_below="@id/fav_news"
                             android:layout_toRightOf="@id/fav_images_count"
-                            />
+                            android:textSize="15sp" android:textStyle="bold"/>
                 </com.zhy.android.percent.support.PercentRelativeLayout>
             </RelativeLayout>
             <!--  Toolbar -->
@@ -118,4 +118,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    <!-- FAB -->
+    <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/fab_fav"-->
+            <!--android:scaleX="0"-->
+            <!--android:scaleY="0"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:layout_anchor="@id/view_pager"-->
+            <!--app:layout_anchorGravity="bottom|right|end"-->
+            <!--android:src="@drawable/ic_delete_white_24dp"-->
+            <!--android:layout_marginRight="16dp"-->
+            <!--android:layout_marginBottom="16dp"/>-->
 </android.support.design.widget.CoordinatorLayout>

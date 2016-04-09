@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ActionModeAnima">
+        <item name="android:windowEnterAnimation">@anim/action_bar_mode_in</item>
+        <item name="android:windowExitAnimation">@anim/action_bar_mode_out</item>
+    </style>
+</resources>

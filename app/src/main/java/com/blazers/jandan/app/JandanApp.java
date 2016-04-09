@@ -1,4 +1,4 @@
-package com.blazers.jandan;
+package com.blazers.jandan.app;
 
 import android.app.Application;
 import com.blazers.jandan.network.Parser;
