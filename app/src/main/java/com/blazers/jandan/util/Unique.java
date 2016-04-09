@@ -24,7 +24,8 @@ public class Unique {
 
     public static String generateName(Context context) {
         if (null == SPHelper.getStringSP(context, SPHelper.USER_ID, null)) {
-            String imei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+//            String imei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+            String imei = "1234567890";
             String binary = Long.toBinaryString(Long.parseLong(imei));
             while (binary.length() < 54)
                 binary = "0" + binary;

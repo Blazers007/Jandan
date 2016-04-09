@@ -15,9 +15,10 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import io.realm.Realm;
 import io.realm.RealmObject;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
+import io.realm.Sort;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 
 import java.util.List;
@@ -84,9 +85,9 @@ public class Favorite {
 
 
     public static Favorite getLocalFavorite(Realm realm) {
-        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", false);
-        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", false);
-        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", false);
+        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
+        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
+        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
         return new Favorite(newses, images, jokes);
     }
 }

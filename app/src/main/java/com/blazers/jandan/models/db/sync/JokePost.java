@@ -2,6 +2,7 @@ package com.blazers.jandan.models.db.sync;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 import java.io.Serializable;
@@ -87,6 +88,6 @@ public class JokePost extends RealmObject implements Serializable{
 
     /* APIs */
     public static List<JokePost> getAllPost(Realm realm, int page) {
-        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_date", false);
+        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
     }
 }

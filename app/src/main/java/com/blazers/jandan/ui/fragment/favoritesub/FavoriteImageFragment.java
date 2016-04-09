@@ -26,6 +26,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", false);
+        List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
         if (null != addons)
             list.addAll(addons);
         refreshComplete();

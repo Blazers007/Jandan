@@ -1,7 +1,7 @@
 package com.blazers.jandan.network;
 
 import com.blazers.jandan.models.pojo.favorite.Favorite;
-import retrofit.http.*;
+import retrofit2.http.*;
 import rx.Observable;
 /**
  * Created by Blazers on 2015/11/17.

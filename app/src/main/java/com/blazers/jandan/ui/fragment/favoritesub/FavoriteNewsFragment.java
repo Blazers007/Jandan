@@ -22,6 +22,7 @@ import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.blazers.jandan.views.nightwatch.WatchTextView;
 import com.facebook.drawee.view.SimpleDraweeView;
+import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", false);
+        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
         if (null != addons)
             list.addAll(addons);
         adapter.notifyDataSetChanged();

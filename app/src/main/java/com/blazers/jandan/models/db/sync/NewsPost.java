@@ -2,6 +2,7 @@ package com.blazers.jandan.models.db.sync;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
 import java.io.Serializable;
@@ -100,7 +101,7 @@ public class NewsPost extends RealmObject implements Serializable {
 
     /* APIs */
     public static List<NewsPost> getAllPost(Realm realm, long page) {
-        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", false);
+        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", Sort.DESCENDING);
     }
 
 

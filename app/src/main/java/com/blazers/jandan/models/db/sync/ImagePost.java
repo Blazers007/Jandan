@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.Sort;
 import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.RealmClass;
@@ -137,7 +138,7 @@ public class ImagePost extends RealmObject {
 
     /* APIs */
     public static List<ImagePost> getImagePosts(Realm realm, long page, String type) {
-        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_date", false);
+        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
     }
 
     /**

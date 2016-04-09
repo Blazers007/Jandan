@@ -19,6 +19,7 @@ import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
+import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
         trySetupSwipeRefreshLayout();
         // init
         list = new ArrayList<>();
-        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", false);
+        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
         if (null != addons)
             list.addAll(addons);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -57,7 +58,7 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", false);
+        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
         if (null != addons)
             list.addAll(addons);
         refreshComplete();

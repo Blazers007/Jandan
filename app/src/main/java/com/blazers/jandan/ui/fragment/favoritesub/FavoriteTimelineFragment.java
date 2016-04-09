@@ -16,6 +16,7 @@ import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.views.TimeLineView;
+import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
         list = new ArrayList<>();
         Map<String, Timeline> timelineHashMap = new HashMap<>();
         // 遍历Image
-        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", false);
+        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
         for (LocalFavImages image : images) {
             String time = TimeHelper.getDate(image.getFavTime());
             if (timelineHashMap.containsKey(time)) {
@@ -75,7 +76,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
             }
         }
         // 遍历News
-        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", false);
+        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
         for (LocalFavNews news : newses) {
             String time = TimeHelper.getDate(news.getFavTime());
             if (timelineHashMap.containsKey(time)) {
@@ -88,7 +89,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
             }
         }
         // 遍历Jokes
-        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", false);
+        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
         for (LocalFavJokes joke : jokes) {
             String time = TimeHelper.getDate(joke.getFavTime());
             if (timelineHashMap.containsKey(time)) {
