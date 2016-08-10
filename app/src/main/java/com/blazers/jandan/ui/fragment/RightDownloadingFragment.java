@@ -10,16 +10,16 @@ import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
-import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import butterknife.Bind;
+
+import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
@@ -56,11 +56,15 @@ public class RightDownloadingFragment extends Fragment {
 
     public static final String ACTION_COUNT = "action.count";
 
-    @Bind({R.id.seg_news, R.id.seg_wuliao, R.id.seg_jokes, R.id.seg_meizi}) List<SelectableTextView> segments;
-    @Bind(R.id.page_seek_bar) InfiniteSeekBar pageSeekBar;
+    @BindViews({R.id.seg_news, R.id.seg_wuliao, R.id.seg_jokes, R.id.seg_meizi})
+    List<SelectableTextView> segments;
+    @BindView(R.id.page_seek_bar)
+    InfiniteSeekBar pageSeekBar;
     // 控制显示与隐藏于数量的更新
-    @Bind(R.id.meizhi_title) TextView meizhiTitle;
-    @Bind({R.id.news_count, R.id.wuliao_count, R.id.joke_count, R.id.meizhi_count}) List<TextView> countLabels;
+    @BindView(R.id.meizhi_title)
+    TextView meizhiTitle;
+    @BindViews({R.id.news_count, R.id.wuliao_count, R.id.joke_count, R.id.meizhi_count})
+    List<TextView> countLabels;
     private CountReceiver receiver;
 
     @Override

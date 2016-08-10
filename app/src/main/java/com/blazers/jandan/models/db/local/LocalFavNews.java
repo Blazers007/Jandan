@@ -4,6 +4,7 @@ import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.google.gson.annotations.Expose;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -19,6 +20,31 @@ public class LocalFavNews extends RealmObject {
     @Expose
     private long favTime;
     private NewsPost newsPost;
+
+    /* Public APIs */
+    public static boolean isThisFaved(Realm realm, long id) {
+        return realm.where(LocalFavNews.class).equalTo("id", id).findFirst() != null;
+    }
+
+    public static LocalFavNews setThisFavedOrNot(boolean fav, Realm realm, long id) {
+        return setThisFavedOrNot(fav, realm, id, TimeHelper.currentTime());
+    }
+
+    public static LocalFavNews setThisFavedOrNot(boolean fav, Realm realm, long id, long time) {
+        if (fav) {
+            LocalFavNews local = new LocalFavNews();
+            local.setId(id);
+            local.setFavTime(time);
+            NewsPost post = realm.where(NewsPost.class).equalTo("id", id).findFirst();
+            local.setNewsPost(post);
+            DBHelper.saveToRealm(realm, local);
+            return local;
+        } else {
+            LocalFavNews local = realm.where(LocalFavNews.class).equalTo("id", id).findFirst();
+            DBHelper.removeFromRealm(realm, local);
+            return null;
+        }
+    }
 
     public long getId() {
         return id;
@@ -42,30 +68,5 @@ public class LocalFavNews extends RealmObject {
 
     public void setNewsPost(NewsPost newsPost) {
         this.newsPost = newsPost;
-    }
-
-    /* Public APIs */
-    public static boolean isThisFaved(Realm realm, long id) {
-        return realm.where(LocalFavNews.class).equalTo("id", id).findFirst() != null;
-    }
-
-    public static LocalFavNews setThisFavedOrNot(boolean fav, Realm realm, long id) {
-        return setThisFavedOrNot(fav, realm, id, TimeHelper.currentTime());
-    }
-
-    public static LocalFavNews setThisFavedOrNot(boolean fav, Realm realm, long id, long time) {
-        if (fav)  {
-            LocalFavNews local = new LocalFavNews();
-            local.setId(id);
-            local.setFavTime(time);
-            NewsPost post = realm.where(NewsPost.class).equalTo("id", id).findFirst();
-            local.setNewsPost(post);
-            DBHelper.saveToRealm(realm, local);
-            return local;
-        } else {
-            LocalFavNews local = realm.where(LocalFavNews.class).equalTo("id", id).findFirst();
-            DBHelper.removeFromRealm(realm, local);
-            return null;
-        }
     }
 }

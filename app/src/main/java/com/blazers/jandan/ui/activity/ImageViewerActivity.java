@@ -2,17 +2,18 @@ package com.blazers.jandan.ui.activity;
 
 import android.graphics.drawable.Animatable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
-import android.transition.Fade;
-import android.transition.Slide;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.network.ImageDownloader;
@@ -30,16 +31,24 @@ import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.imagepipeline.image.ImageInfo;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Observable;
 
 public class ImageViewerActivity extends BaseActivity {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.viewer) ZoomableDraweeView view;
-//    @Bind(R.id.photo_drawee_view) PhotoDraweeView photoDraweeView;
-    @Bind(R.id.btn_save) ImageButton btnSave;
-    @Bind(R.id.content) TextView content;
-    @Bind(R.id.image_view_extra) RelativeLayout extras;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.viewer)
+    ZoomableDraweeView view;
+    //    @Bind(R.id.photo_drawee_view) PhotoDraweeView photoDraweeView;
+    @BindView(R.id.btn_save)
+    ImageButton btnSave;
+    @BindView(R.id.content)
+    TextView content;
+    @BindView(R.id.image_view_extra)
+    RelativeLayout extras;
 
     /* Vars */
     private boolean uiIsShowing = true;
@@ -60,8 +69,8 @@ public class ImageViewerActivity extends BaseActivity {
         extras.setPadding(0, 0, 0, getNavigationBarHeight());
 //        toggleUI();
         // 判断数值是否正确送入
-        event = (ViewImageEvent)getIntent().getSerializableExtra(ViewImageEvent.KEY);
-        if (null == event){
+        event = (ViewImageEvent) getIntent().getSerializableExtra(ViewImageEvent.KEY);
+        if (null == event) {
             return;
         }
         initScalableImage();
@@ -87,22 +96,22 @@ public class ImageViewerActivity extends BaseActivity {
         }
 //        // 显示图片
         DraweeController ctrl = Fresco.newDraweeControllerBuilder()
-            .setUri(Uri.parse(uri))
-            .setTapToRetryEnabled(true)
-            .setAutoPlayAnimations(true)
-            .setControllerListener(new FrescoControlListener())
-            .build();
+                .setUri(Uri.parse(uri))
+                .setTapToRetryEnabled(true)
+                .setAutoPlayAnimations(true)
+                .setControllerListener(new FrescoControlListener())
+                .build();
         GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
-            .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-            .setProgressBarImage(new ProgressBarDrawable())
-            .build();
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setProgressBarImage(new ProgressBarDrawable())
+                .build();
 
         view.setController(ctrl);
         view.setHierarchy(hierarchy);
         view.setController(ctrl);
         view.setHierarchy(hierarchy);
         // 触摸
-        view.setOnTouchListener((v, event)->{
+        view.setOnTouchListener((v, event) -> {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN:
                     if (event.getPointerCount() == 1) {
@@ -113,8 +122,8 @@ public class ImageViewerActivity extends BaseActivity {
                     break;
                 case MotionEvent.ACTION_UP:
                     if (System.currentTimeMillis() - touchStartTime < 400
-                        && event.getPointerCount() == 1
-                        && Math.abs(Math.pow(touchStartX-event.getX(), 2) + Math.pow(touchStartY-event.getY(), 2)) < 200) {
+                            && event.getPointerCount() == 1
+                            && Math.abs(Math.pow(touchStartX - event.getX(), 2) + Math.pow(touchStartY - event.getY(), 2)) < 200) {
                         toggleUI();
                     }
                     break;
@@ -125,7 +134,7 @@ public class ImageViewerActivity extends BaseActivity {
 
     /**
      * 初始化下方额外内容区域
-     * */
+     */
     void initExtra() {
         // 内容
         content.setText(event.contentStr);
@@ -134,31 +143,31 @@ public class ImageViewerActivity extends BaseActivity {
             btnSave.setClickable(false);
             btnSave.setImageResource(R.mipmap.ic_publish_16dp);
         } else {
-            btnSave.setOnClickListener(v->{
+            btnSave.setOnClickListener(v -> {
                 if (downloading)
                     return;
                 downloading = true;
                 Observable.just(event.originUrl)
-                    .map(ImageDownloader.getInstance()::doSavingImage)
-                    .compose(RxHelper.applySchedulers())
-                    .subscribe(localImage -> {
-                        Toast.makeText(this, "图片保存成功", Toast.LENGTH_SHORT).show();
-                        btnSave.setImageResource(R.mipmap.ic_publish_16dp);
-                        btnSave.setClickable(false);
-                        DBHelper.saveToRealm(realm, localImage);
-                    }, throwable -> {
-                        downloading = false;
-                        Log.e("Error", throwable.toString());
-                    });
+                        .map(ImageDownloader.getInstance()::doSavingImage)
+                        .compose(RxHelper.applySchedulers())
+                        .subscribe(localImage -> {
+                            Toast.makeText(this, "图片保存成功", Toast.LENGTH_SHORT).show();
+                            btnSave.setImageResource(R.mipmap.ic_publish_16dp);
+                            btnSave.setClickable(false);
+                            DBHelper.saveToRealm(realm, localImage);
+                        }, throwable -> {
+                            downloading = false;
+                            Log.e("Error", throwable.toString());
+                        });
             });
         }
     }
 
     /**
      * 隐藏 / 全屏
-     * */
-    public void toggleUI(){
-        Log.e("C","C");
+     */
+    public void toggleUI() {
+        Log.e("C", "C");
         if (uiIsShowing) {
             // hide
             hideSystemUI(toolbar);
@@ -172,31 +181,9 @@ public class ImageViewerActivity extends BaseActivity {
         }
     }
 
-
-
-    /**
-     * 控制硬件加速开启与否
-     * */
-    class FrescoControlListener extends BaseControllerListener<ImageInfo> {
-
-        @Override
-        public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
-            if (imageInfo == null) {
-                return;
-            }
-            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048){
-                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-            } else
-                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-            if (null != animatable)
-                animatable.start();
-        }
-    }
-
-
     /**
      * Toolbar Menu
-     * */
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.image_viewer, menu);
@@ -206,5 +193,24 @@ public class ImageViewerActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 控制硬件加速开启与否
+     */
+    class FrescoControlListener extends BaseControllerListener<ImageInfo> {
+
+        @Override
+        public void onFinalImageSet(String s, ImageInfo imageInfo, Animatable animatable) {
+            if (imageInfo == null) {
+                return;
+            }
+            if (imageInfo.getWidth() > 2048 || imageInfo.getHeight() > 2048) {
+                view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            } else
+                view.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            if (null != animatable)
+                animatable.start();
+        }
     }
 }

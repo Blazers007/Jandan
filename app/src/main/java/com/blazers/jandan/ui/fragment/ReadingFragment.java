@@ -10,9 +10,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
-import android.view.*;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.rxbus.event.DrawerEvent;
@@ -26,24 +28,29 @@ import com.blazers.jandan.views.nightwatch.NightWatcher;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Blazers on 2015/10/12.
- *
+ * <p>
  * 主 Fragment负责管理四个阅读板块
- *
  */
-public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener{
+public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener {
 
     public static final String TAG = ReadingFragment.class.getSimpleName();
     private static ReadingFragment INSTANCE;
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.tab_layout) TabLayout tabLayout;
-    @Bind(R.id.container) ViewPager viewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.container)
+    ViewPager viewPager;
 
 
     private ArrayList<Fragment> fragments;
-    private String[] titles = {"新鲜事" , "无聊图", "段子", "妹子图"};
+    private String[] titles = {"新鲜事", "无聊图", "段子", "妹子图"};
 
     public static ReadingFragment getInstance() {
         if (null == INSTANCE) {
@@ -57,7 +64,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root =  inflater.inflate(R.layout.fragment_holder_reading, container, false);
+        View root = inflater.inflate(R.layout.fragment_holder_reading, container, false);
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
@@ -67,7 +74,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     /**
      * 初始化各个Fragment
-     * */
+     */
     void initJandanFragments() {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
@@ -85,7 +92,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     /**
      * 初始化TabLayout的主题
-     * */
+     */
     void setupTabLayoutTheme() {
         if (isNowNightModeOn) {
             tabLayout.setBackgroundColor(Color.rgb(44, 44, 44));
@@ -101,7 +108,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
 
     /**
      * 点击Menu
-     * */
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.offline) {
@@ -111,9 +118,20 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
         return false;
     }
 
+    @Override
+    public void handleRxEvent(Object event) {
+        if (event instanceof NightModeEvent) {
+            isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
+            applyToolbarIconAndTheme();
+            NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
+            /* Extra 改变TabLayout */
+            setupTabLayoutTheme();
+        }
+    }
+
     /**
      * Adapter
-     * */
+     */
     class FragmentAdapter extends FragmentPagerAdapter {
 
         public FragmentAdapter(FragmentManager fm) {
@@ -133,17 +151,6 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
         @Override
         public CharSequence getPageTitle(int position) {
             return titles[position];
-        }
-    }
-
-    @Override
-    public void handleRxEvent(Object event) {
-        if (event instanceof NightModeEvent) {
-            isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
-            applyToolbarIconAndTheme();
-            NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
-            /* Extra 改变TabLayout */
-            setupTabLayoutTheme();
         }
     }
 }

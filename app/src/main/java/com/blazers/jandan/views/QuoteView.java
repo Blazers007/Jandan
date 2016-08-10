@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.pojo.comment.CommentPost;
@@ -24,10 +25,14 @@ import java.util.List;
  */
 public class QuoteView extends RelativeLayout {
 
-    @Bind(R.id.user_head) SimpleDraweeView userHead;
-    @Bind(R.id.user_name) TextView userName;
-    @Bind(R.id.message) TextView message;
-    @Bind(R.id.parent_quote) FrameLayout wrapper;
+    @BindView(R.id.user_head)
+    SimpleDraweeView userHead;
+    @BindView(R.id.user_name)
+    TextView userName;
+    @BindView(R.id.message)
+    TextView message;
+    @BindView(R.id.parent_quote)
+    FrameLayout wrapper;
 
     public QuoteView(Context context) {
         super(context);

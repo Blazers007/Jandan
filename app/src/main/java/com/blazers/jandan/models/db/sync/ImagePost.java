@@ -1,24 +1,20 @@
 package com.blazers.jandan.models.db.sync;
 
 import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
-import com.google.gson.JsonArray;
-import io.realm.Realm;
-import io.realm.RealmList;
-import io.realm.RealmObject;
-import io.realm.Sort;
-import io.realm.annotations.Ignore;
-import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.RealmClass;
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.Sort;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.RealmClass;
+
 /**
  * Created by Blazers on 15/8/25.
- *
+ * <p>
  * JSON 转数据库持久化
- *
  */
 @RealmClass
 public class ImagePost extends RealmObject {
@@ -39,6 +35,62 @@ public class ImagePost extends RealmObject {
     private long page;
     private int commentNumber;
     /* Getter & Setter */
+
+    /* APIs */
+    public static List<ImagePost> getImagePosts(Realm realm, long page, String type) {
+        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
+    }
+
+    /**
+     * 从数据库中读取图片数据
+     */
+    public static List<ImageRelateToPost> getAllImagesFromDB(Realm realm, long page, String type) {
+        List<ImageRelateToPost> imageRelateToPostList = new ArrayList<>();
+        List<ImagePost> posts = getImagePosts(realm, page, type);
+        if (null != posts) {
+            for (ImagePost post : posts) {
+                if (null != post.getPicsArray()) {
+                    String[] pics = post.getPicsArray().split(",");
+                    for (String url : pics) {
+                        ImageRelateToPost image = new ImageRelateToPost(post, url);
+                        imageRelateToPostList.add(image);
+                    }
+                }
+            }
+        }
+        return imageRelateToPostList;
+    }
+
+    /**
+     * 直接从ImagePost列表中提取图片数据  TODO:修改与上一个方法 讨论哪一个更加合适
+     */
+    public static List<ImageRelateToPost> getAllImageFromList(List<ImagePost> posts) {
+        List<ImageRelateToPost> imageRelateToPostList = new ArrayList<>();
+        if (null != posts) {
+            for (ImagePost post : posts) {
+                if (null != post.getPicsArray()) {
+                    String[] pics = post.getPicsArray().split(",");
+                    for (String url : pics) {
+                        ImageRelateToPost image = new ImageRelateToPost(post, url);
+                        imageRelateToPostList.add(image);
+                    }
+                }
+            }
+        }
+        return imageRelateToPostList;
+    }
+
+    /**
+     * 从列表获取可以供下载的对象
+     */
+
+    public static int calculateImageSize(List<ImagePost> posts) {
+        int sum = 0;
+        for (ImagePost post : posts) {
+            sum += post.getPicsArray().split(",").length;
+        }
+        return sum;
+    }
 
     public long getComment_ID() {
         return comment_ID;
@@ -134,62 +186,5 @@ public class ImagePost extends RealmObject {
 
     public void setCommentNumber(int commentNumber) {
         this.commentNumber = commentNumber;
-    }
-
-    /* APIs */
-    public static List<ImagePost> getImagePosts(Realm realm, long page, String type) {
-        return realm.where(ImagePost.class).equalTo("type", type).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
-    }
-
-    /**
-     * 从数据库中读取图片数据
-     * */
-    public static List<ImageRelateToPost> getAllImagesFromDB(Realm realm, long page, String type) {
-        List<ImageRelateToPost> imageRelateToPostList = new ArrayList<>();
-        List<ImagePost> posts = getImagePosts(realm, page, type);
-        if (null != posts) {
-            for (ImagePost post : posts) {
-                if (null != post.getPicsArray()) {
-                    String[] pics = post.getPicsArray().split(",");
-                    for (String url : pics) {
-                        ImageRelateToPost image = new ImageRelateToPost(post, url);
-                        imageRelateToPostList.add(image);
-                    }
-                }
-            }
-        }
-        return imageRelateToPostList;
-    }
-
-    /**
-     * 直接从ImagePost列表中提取图片数据  TODO:修改与上一个方法 讨论哪一个更加合适
-     * */
-    public static List<ImageRelateToPost> getAllImageFromList(List<ImagePost> posts) {
-        List<ImageRelateToPost> imageRelateToPostList = new ArrayList<>();
-        if (null != posts) {
-            for (ImagePost post : posts) {
-                if (null != post.getPicsArray()) {
-                    String[] pics = post.getPicsArray().split(",");
-                    for (String url : pics) {
-                        ImageRelateToPost image = new ImageRelateToPost(post, url);
-                        imageRelateToPostList.add(image);
-                    }
-                }
-            }
-        }
-        return imageRelateToPostList;
-    }
-
-
-    /**
-     * 从列表获取可以供下载的对象
-     * */
-
-    public static int calculateImageSize(List<ImagePost> posts) {
-        int sum = 0;
-        for (ImagePost post : posts) {
-            sum += post.getPicsArray().split(",").length;
-        }
-        return sum;
     }
 }

@@ -1,17 +1,17 @@
 package com.blazers.jandan.models.db.sync;
 
+import java.io.Serializable;
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  * Created by Blazers on 2015/9/7.
  */
-public class JokePost extends RealmObject implements Serializable{
+public class JokePost extends RealmObject implements Serializable {
     @PrimaryKey
     private long comment_ID;
     private String comment_content;
@@ -21,6 +21,11 @@ public class JokePost extends RealmObject implements Serializable{
     private String vote_negative;
     private int commentNumber;
     private long page;
+
+    /* APIs */
+    public static List<JokePost> getAllPost(Realm realm, int page) {
+        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
+    }
 
     public long getComment_ID() {
         return comment_ID;
@@ -84,10 +89,5 @@ public class JokePost extends RealmObject implements Serializable{
 
     public void setPage(long page) {
         this.page = page;
-    }
-
-    /* APIs */
-    public static List<JokePost> getAllPost(Realm realm, int page) {
-        return realm.where(JokePost.class).equalTo("page", page).findAllSorted("comment_date", Sort.DESCENDING);
     }
 }

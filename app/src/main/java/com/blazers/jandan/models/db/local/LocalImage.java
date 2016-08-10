@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by Blazers on 2015/10/21.
- *
+ * <p>
  * 由于Image是跟单独Image关联 所以不采用Relationship
  */
 public class LocalImage extends RealmObject {
@@ -16,6 +16,11 @@ public class LocalImage extends RealmObject {
     private String localUrl;
     private long width;
     private long height;
+
+    /* Public APIs */
+    public static LocalImage getLocalImageByWebUrl(Realm realm, String url) {
+        return realm.where(LocalImage.class).equalTo("url", url).findFirst();
+    }
 
     public String getUrl() {
         return url;
@@ -47,10 +52,5 @@ public class LocalImage extends RealmObject {
 
     public void setHeight(long height) {
         this.height = height;
-    }
-
-    /* Public APIs */
-    public static LocalImage getLocalImageByWebUrl(Realm realm, String url) {
-        return realm.where(LocalImage.class).equalTo("url", url).findFirst();
     }
 }

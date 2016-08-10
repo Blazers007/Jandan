@@ -4,56 +4,79 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.os.Bundle;
-import android.transition.Fade;
-import android.transition.Slide;
 import android.widget.Toast;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
 import com.blazers.jandan.common.Static;
-import com.blazers.jandan.rxbus.event.*;
+import com.blazers.jandan.rxbus.event.CommentEvent;
+import com.blazers.jandan.rxbus.event.DrawerEvent;
+import com.blazers.jandan.rxbus.event.NightModeEvent;
+import com.blazers.jandan.rxbus.event.ViewArticleEvent;
+import com.blazers.jandan.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.services.OfflineDownloadService;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.ui.fragment.*;
+import com.blazers.jandan.ui.fragment.FavoriteFragment;
+import com.blazers.jandan.ui.fragment.ReadingFragment;
+import com.blazers.jandan.ui.fragment.SettingFragment;
 import com.blazers.jandan.util.ClipboardHelper;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.Unique;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tbruyelle.rxpermissions.RxPermissions;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import jonathanfinerty.once.Once;
 
 
 /**
  * Update @ 2015 11-16
- *  1: Activity不在持有Toolbar 以及 Menu 全部交付 Fragment管理
- * */
+ * 1: Activity不在持有Toolbar 以及 Menu 全部交付 Fragment管理
+ */
 public class MainActivity extends BaseActivity {
 
     public static final String JANDAN_TAG = "fragment_jandan";
     public static final String FAV_TAG = "fragment_fav";
     public static final String SETTING_TAG = "fragment_setting";
 
-    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
-    @Bind(R.id.left_nav) NavigationView navigationView;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.left_nav)
+    NavigationView navigationView;
 
     /* 缓存变量 */
     private int nowSelectedNavId = R.id.nav_jandan;
     private ReadingFragment defaultFragment;
+    /**
+     * 处理回退键
+     */
+    private long lastClickTime;
+    /**
+     * 绑定离线下载服务 TODO:修改为懒绑定
+     */
+    private IOfflineDownloadInterface offlineBinder;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            offlineBinder = (IOfflineDownloadInterface) service;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            offlineBinder = null;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +112,13 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 初始化各个Fragment 并采用懒加载的方式
-     * */
+     */
     void initFragments() {
         /* 显示阅读Fragment */
         getSupportFragmentManager()
-            .beginTransaction()
-            .add(R.id.fragment_wrapper, defaultFragment = ReadingFragment.getInstance(), JANDAN_TAG)
-            .commitAllowingStateLoss();
+                .beginTransaction()
+                .add(R.id.fragment_wrapper, defaultFragment = ReadingFragment.getInstance(), JANDAN_TAG)
+                .commitAllowingStateLoss();
         /* 设置导航选中状态 */
         navigationView.setCheckedItem(R.id.nav_jandan);
         /* 设置监听 */
@@ -151,35 +174,29 @@ public class MainActivity extends BaseActivity {
 
     /**
      * Setup NavigationView Background Color
-     * */
+     */
     void setupNavigationView() {
         if (isNowNightModeOn) {
-            navigationView.setBackgroundColor(Color.rgb(44,44,44));
-        }else {
-            navigationView.setBackgroundColor(Color.rgb(250,250,250));
+            navigationView.setBackgroundColor(Color.rgb(44, 44, 44));
+        } else {
+            navigationView.setBackgroundColor(Color.rgb(250, 250, 250));
         }
         // 头像
         if (Build.VERSION.SDK_INT >= 23) {
             RxPermissions.getInstance(this)
-                .request(Manifest.permission.READ_PHONE_STATE)
-                .subscribe(granted->{
-                    if (granted) {
-                        ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
-                    } else {
-                        Toast.makeText(this, "XX", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    .request(Manifest.permission.READ_PHONE_STATE)
+                    .subscribe(granted -> {
+                        if (granted) {
+                            ((SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+                        } else {
+                            Toast.makeText(this, "XX", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         } else {
-            ((SimpleDraweeView)navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+            ((SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.user_head_round)).setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
         }
     }
 
-
-
-    /**
-     * 处理回退键
-     * */
-    private long lastClickTime;
     @Override
     public void onBackPressed() {
         // 1 若打开了右侧Drawer关闭之
@@ -189,7 +206,7 @@ public class MainActivity extends BaseActivity {
             return;
         }
         // 2 若当前BackStack回退栈有Fragment 退出之
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0 ){
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
             return;
         }
@@ -208,21 +225,21 @@ public class MainActivity extends BaseActivity {
         if (System.currentTimeMillis() - lastClickTime > 2000) {
             Toast.makeText(this, "再次点击退出~", Toast.LENGTH_SHORT).show();
             lastClickTime = System.currentTimeMillis();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     /**
      * 处理Event消息  TODO: 尽量精简 避免不必要的Event通信
-     * */
+     */
     @Override
     public void handleRxEvent(Object event) {
         if (event instanceof CommentEvent) {
             /* 查看评论页面 或离 开评 论页面 */
             long id = ((CommentEvent) event).id;
             startActivity(new Intent(this, CommentActivity.class).putExtra("commentId", id));
-        } else if(event instanceof ViewArticleEvent){
+        } else if (event instanceof ViewArticleEvent) {
             ViewArticleEvent v = (ViewArticleEvent) event;
             startActivity(new Intent(this, NewsReadActivity.class)
                     .putExtra("id", v.id)
@@ -235,10 +252,10 @@ public class MainActivity extends BaseActivity {
             intent.putExtra(ViewImageEvent.KEY, imageEvent);
             startActivity(intent);
         } else if (event instanceof NightModeEvent) {
-            isNowNightModeOn = ((NightModeEvent)event).nightModeOn;
+            isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
             // 处理Activity内部的相关View  目前暂无
         } else if (event instanceof DrawerEvent) {
-            DrawerEvent drawerEvent = (DrawerEvent)event;
+            DrawerEvent drawerEvent = (DrawerEvent) event;
             switch (drawerEvent.messageType) {
                 case DrawerEvent.TOGGLE:
                     if (drawerLayout.isDrawerOpen(drawerEvent.gravity))
@@ -263,24 +280,8 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * 绑定离线下载服务 TODO:修改为懒绑定
-     * */
-    private IOfflineDownloadInterface offlineBinder;
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            offlineBinder = (IOfflineDownloadInterface) service;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            offlineBinder = null;
-        }
-    };
-
-    /**
      * 由于Bind是异步的 建议提前绑定
-     * */
+     */
     public IOfflineDownloadInterface getOfflineBinder() {
         if (offlineBinder == null)
             Toast.makeText(this, "离线下载服务还木有准备完毕", Toast.LENGTH_SHORT).show();
@@ -290,7 +291,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 解除监听Clipboard
-     * */
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -299,7 +300,7 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 释放
-     * */
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

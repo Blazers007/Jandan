@@ -30,6 +30,7 @@ public class URL {
     public static String getJandanNewsAtPage(long page) {
         return JANDAN_NEWS_API_PREFIX + page + JANDAN_NEWS_API_END;
     }
+
     public static String getJandanNewsContentById(long id) {
         return JANDAN_NEWS_CONTENT + id + JANDAN_NEWS_CONTENT_END;
     }

@@ -8,7 +8,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavImages;
@@ -26,7 +27,8 @@ public class ImageDetailActivity extends AppCompatActivity implements ViewPager.
 
     private static final float MIN_SCALE = 0.75f;
 
-    @Bind(R.id.view_pager) ViewPager mViewPager;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
 
     // Vars
     private List<String> mUrls;

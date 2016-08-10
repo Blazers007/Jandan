@@ -1,17 +1,18 @@
 package com.blazers.jandan.models.db.sync;
 
+import java.io.Serializable;
+import java.util.List;
+
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.Sort;
 import io.realm.annotations.PrimaryKey;
 
-import java.io.Serializable;
-import java.util.List;
-
 /**
  * Created by Blazers on 2015/9/1.
  */
 public class NewsPost extends RealmObject implements Serializable {
+    
     @PrimaryKey
     private long id;
     private String url;
@@ -26,6 +27,15 @@ public class NewsPost extends RealmObject implements Serializable {
     private long page;               // 所属的页码
 
     /* Getter & Setter */
+
+    /* APIs */
+    public static List<NewsPost> getAllPost(Realm realm, long page) {
+        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", Sort.DESCENDING);
+    }
+
+    public static NewsPost getPostById(Realm realm, long id) {
+        return realm.where(NewsPost.class).equalTo("id", id).findFirst();
+    }
 
     public long getId() {
         return id;
@@ -63,16 +73,16 @@ public class NewsPost extends RealmObject implements Serializable {
         return thumbUrl;
     }
 
+    public void setThumbUrl(String thumbUrl) {
+        this.thumbUrl = thumbUrl;
+    }
+
     public String getAuthorName() {
         return authorName;
     }
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
-    }
-
-    public void setThumbUrl(String thumbUrl) {
-        this.thumbUrl = thumbUrl;
     }
 
     public long getViews() {
@@ -97,16 +107,6 @@ public class NewsPost extends RealmObject implements Serializable {
 
     public void setPage(long page) {
         this.page = page;
-    }
-
-    /* APIs */
-    public static List<NewsPost> getAllPost(Realm realm, long page) {
-        return realm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", Sort.DESCENDING);
-    }
-
-
-    public static NewsPost getPostById(Realm realm, long id) {
-        return realm.where(NewsPost.class).equalTo("id", id).findFirst();
     }
 
 }

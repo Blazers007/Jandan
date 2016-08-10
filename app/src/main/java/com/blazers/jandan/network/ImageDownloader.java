@@ -1,11 +1,10 @@
 package com.blazers.jandan.network;
 
 import android.util.Log;
+
 import com.blazers.jandan.models.db.local.LocalImage;
 import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.util.SdcardHelper;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,9 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+
 /**
  * Created by Blazers on 2015/8/28.
- *
  */
 public class ImageDownloader {
 
@@ -24,9 +25,10 @@ public class ImageDownloader {
 
     private OkHttpClient client;
 
-    private ImageDownloader(){
-        client = new OkHttpClient();
-        client.setConnectTimeout(10, TimeUnit.SECONDS);
+    private ImageDownloader() {
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .build();
     }
 
     public static ImageDownloader getInstance() {
@@ -38,18 +40,20 @@ public class ImageDownloader {
 
     /**
      * 根据Url地址直接缓存图像
+     *
      * @param url 图像地址
      * @return 返回一个LocalImage对象 映射Url与本地File路径
-     * */
+     */
     public LocalImage doSimpleCaching(String url) {
         return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
     }
 
     /**
      * 根据Url地址直接缓存图像
+     *
      * @param imageRelateToPost RecyclerView中的图像对象
      * @return 返回一个LocalImage对象 映射Url与本地File路径
-     * */
+     */
     public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
         return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
@@ -57,14 +61,14 @@ public class ImageDownloader {
 
     /**
      * 同上 目录不同
-     * */
+     */
     public LocalImage doSavingImage(String url) {
         return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
     }
 
     /**
      * 同上 目录不同
-     * */
+     */
     public LocalImage doSavingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
         return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
@@ -72,8 +76,8 @@ public class ImageDownloader {
 
     /**
      * 根据Url获取文件类型
-     * */
-    private String getTypeByUrl(String url){
+     */
+    private String getTypeByUrl(String url) {
         String type = url.substring(url.lastIndexOf(".") + 1);
         if (type.isEmpty())
             type = "cache";
@@ -82,17 +86,17 @@ public class ImageDownloader {
 
     /**
      * 下载并返回LocalImage对象
-     * */
+     */
     private LocalImage doSimpleDownload(String url, File file) {
         Request request = new Request.Builder()
-            .url(url)
-            .build();
+                .url(url)
+                .build();
         Log.i("Downloading", url);
         try {
             InputStream inputStream = client.newCall(request).execute().body().byteStream();
             FileOutputStream fos = new FileOutputStream(file);
-            byte[] buffer = new byte[1024*10];
-            while(true){
+            byte[] buffer = new byte[1024 * 10];
+            while (true) {
                 int length = inputStream.read(buffer);
                 if (length == -1)
                     break;

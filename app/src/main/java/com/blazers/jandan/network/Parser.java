@@ -11,20 +11,22 @@ import com.blazers.jandan.models.db.sync.NewsPost;
 import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.models.pojo.count.Count;
 import com.blazers.jandan.ui.fragment.RightDownloadingFragment;
-import com.blazers.jandan.util.NetworkHelper;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.squareup.okhttp.*;
-import io.realm.Realm;
 import io.realm.RealmObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 import java.io.IOException;
@@ -52,8 +54,9 @@ public class Parser {
         if (context == null) {
             throw new IllegalStateException("You must call static method Parser.Init(context) first");
         }
-        client = new OkHttpClient();
-        client.setReadTimeout(12, TimeUnit.SECONDS);
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .build();
 
         /* Init Gson  */
         gson = new GsonBuilder()
@@ -185,7 +188,7 @@ public class Parser {
                     newsPost.setAuthorName(post.getJSONObject("author").getString("name"));
                     newsPost.setTagTitle(post.getJSONArray("tags").getJSONObject(0).getString("title"));
                     newsPost.setThumbUrl(post.getJSONObject("custom_fields").getJSONArray("thumb_c").getString(0));
-                    newsPost.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
+//                    newsPost.setViews(post.getJSONObject("custom_fields").getJSONArray("views").getLong(0));
                     newsPostList.add(newsPost);
                 }
                 subscriber.onNext(newsPostList);
@@ -296,7 +299,7 @@ public class Parser {
     public Observable<Boolean> voteByCommentIdAndVote(long id, boolean vote) {
         return Observable.create(subscriber -> {
             try {
-                RequestBody body = new FormEncodingBuilder()
+                RequestBody body = new FormBody.Builder()
                     .add("ID", id+"")
                     .build();
                 String str = simpleHttpPostRequest(URL.JANDAN_VOTE_API + (vote ? "1" : "0"), body);

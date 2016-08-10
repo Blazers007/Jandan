@@ -13,14 +13,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import butterknife.Bind;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.pojo.comment.CommentPost;
 import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.CommentEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.QuoteView;
@@ -39,11 +38,16 @@ public class CommentActivity extends BaseActivity {
 
     public static final String TAG = CommentActivity.class.getSimpleName();
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.nothing_hint) LinearLayout hint;
-    @Bind(R.id.comment_swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.comment_recycler_view) RecyclerView commentRecyclerView;
-    @Bind(R.id.progress_wheel) CircularProgressBar progressWheel;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.nothing_hint)
+    LinearLayout hint;
+    @BindView(R.id.comment_swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.comment_recycler_view)
+    RecyclerView commentRecyclerView;
+    @BindView(R.id.progress_wheel)
+    CircularProgressBar progressWheel;
 
     //
     private long commentId;
@@ -193,13 +197,15 @@ public class CommentActivity extends BaseActivity {
          * 评论Holder
          * */
         class CommentHolder extends RecyclerView.ViewHolder{
-            @Bind(R.id.user_name)
+            @BindView(R.id.user_name)
             TextView userName;
-            @Bind(R.id.user_head)
+            @BindView(R.id.user_head)
             SimpleDraweeView userHead;
-            @Bind(R.id.comment_date) TextView commentDate;
-            @Bind(R.id.message) TextView message;
-            @Bind(R.id.quote)
+            @BindView(R.id.comment_date)
+            TextView commentDate;
+            @BindView(R.id.message)
+            TextView message;
+            @BindView(R.id.quote)
             QuoteView quoteView;
 
             public CommentHolder(View itemView) {
@@ -212,9 +218,9 @@ public class CommentActivity extends BaseActivity {
          * 分隔线Holder
          * */
         class DividerHolder extends RecyclerView.ViewHolder {
-            @Bind(R.id.divider_icon)
+            @BindView(R.id.divider_icon)
             ImageView icon;
-            @Bind(R.id.divider_text) TextView text;
+            @BindView(R.id.divider_text) TextView text;
             public DividerHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);

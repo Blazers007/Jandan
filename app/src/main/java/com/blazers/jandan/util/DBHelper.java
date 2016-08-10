@@ -28,7 +28,7 @@ public class DBHelper {
      * 存储数组到数据库中 2
      * */
     public static <E extends RealmObject> void saveToRealm(Context context, Iterable<E> objects) {
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(objects);
         realm.commitTransaction();
@@ -48,7 +48,7 @@ public class DBHelper {
      * 存储单个到数据库中 2
      * */
     public static <E extends RealmObject> void saveToRealm(Context context, E object) {
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         realm.copyToRealmOrUpdate(object);
         realm.commitTransaction();
@@ -62,7 +62,7 @@ public class DBHelper {
     public static <E extends RealmObject> void removeFromRealm(Realm realm, E object) {
         if (null != object) {
             realm.beginTransaction();
-            object.removeFromRealm();
+            object.deleteFromRealm();
             realm.commitTransaction();
         }
     }
@@ -71,7 +71,7 @@ public class DBHelper {
      * 缓存Realm在退出的时候释放掉
      * */
     public static Realm generateTempRealm(Context context) {
-        Realm realm = Realm.getInstance(context);
+        Realm realm = Realm.getDefaultInstance();
         realms.add(realm);
         return realm;
     }

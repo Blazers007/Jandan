@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
  * Created by Blazers on 2015/11/19.
  */
 public class JokeSerializer implements JsonSerializer<LocalFavJokes> {
+
     @Override
     public JsonElement serialize(LocalFavJokes src, Type typeOfSrc, JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();

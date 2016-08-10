@@ -1,8 +1,14 @@
 package com.blazers.jandan.network;
 
 import com.blazers.jandan.models.pojo.favorite.Favorite;
-import retrofit2.http.*;
+
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
 import rx.Observable;
+
 /**
  * Created by Blazers on 2015/11/17.
  */
@@ -10,7 +16,7 @@ public interface BlazersAPI {
 
     /**
      * 获取指定ID下的Favorite
-     * */
+     */
     @GET("api/users/{userId}/favorite")
     Observable<Favorite> getUserFavorite(@Path("userId") String userId);
 

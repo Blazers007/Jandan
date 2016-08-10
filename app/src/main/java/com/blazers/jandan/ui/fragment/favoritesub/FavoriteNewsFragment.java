@@ -12,8 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.models.db.sync.NewsPost;
@@ -22,14 +21,17 @@ import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.blazers.jandan.views.nightwatch.WatchTextView;
 import com.facebook.drawee.view.SimpleDraweeView;
-import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.realm.Sort;
+
 /**
  * Created by Blazers on 2015/11/13.
- *
+ * <p>
  * 不存在LoadMore模块
  */
 public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
@@ -69,7 +71,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
     /**
      * Adapter
-     * */
+     */
     class FavNewsAdapter extends RecyclerView.Adapter<FavNewsAdapter.NewsHolder> {
         @Override
         public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -90,23 +92,25 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
         class NewsHolder extends RecyclerView.ViewHolder {
 
-            @Bind(R.id.news_image) SimpleDraweeView simpleDraweeView;
-            @Bind(R.id.news_title) WatchTextView watchTextView;
+            @BindView(R.id.news_image)
+            SimpleDraweeView simpleDraweeView;
+            @BindView(R.id.news_title)
+            WatchTextView watchTextView;
 
             public NewsHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
                 //
-                itemView.setOnClickListener(v->{
+                itemView.setOnClickListener(v -> {
                     NewsPost post = list.get(getAdapterPosition()).getNewsPost();
                     startActivity(
-                        new Intent(getActivity(), NewsReadActivity.class)
-                            .putExtra("id", post.getId())
-                            .putExtra("title", post.getTitle())
+                            new Intent(getActivity(), NewsReadActivity.class)
+                                    .putExtra("id", post.getId())
+                                    .putExtra("title", post.getTitle())
                     );
                 });
                 //
-                itemView.setOnLongClickListener(v->{
+                itemView.setOnLongClickListener(v -> {
                     int position = getAdapterPosition();
                     LocalFavNews news = list.remove(position);
                     long id = news.getId();
@@ -114,7 +118,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
                     adapter.notifyItemRemoved(position);
                     LocalFavNews.setThisFavedOrNot(false, realm, id);
                     // 不需要考虑作用域？会不会导致临时变量无法释放?
-                    Snackbar.make(recyclerView, "已经删除该收藏",Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+                    Snackbar.make(recyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
                         LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
                         list.add(position, delete);
                         adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1

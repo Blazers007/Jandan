@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,18 +13,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.BounceInterpolator;
 import android.widget.TextView;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavImages;
 import com.blazers.jandan.models.db.local.LocalFavJokes;
 import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.rxbus.event.EnterSelectModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
-import com.blazers.jandan.ui.fragment.favoritesub.FavoriteJokesFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteImageFragment;
+import com.blazers.jandan.ui.fragment.favoritesub.FavoriteJokesFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteNewsFragment;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.Unique;
@@ -33,29 +30,37 @@ import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Blazers on 2015/10/12.
  */
 public class FavoriteFragment extends BaseFragment {
 
     public static final String TAG = FavoriteFragment.class.getSimpleName();
-    private static FavoriteFragment INSTANCE;
-
-//    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
+    //    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
     private static final String[] titles = new String[]{"新鲜事", "图片", "文字"};
-
+    private static FavoriteFragment INSTANCE;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.avatar)
+    SimpleDraweeView avatar;
+    @BindView(R.id.view_pager)
+    ViewPager viewPager;
+    @BindView(R.id.tab_layout)
+    TabLayout tabLayout;
+    @BindView(R.id.user_name)
+    TextView userName;
+    @BindView(R.id.fav_news_count)
+    TextView favNewsCount;
+    @BindView(R.id.fav_images_count)
+    TextView favImagesCount;
+    @BindView(R.id.fav_jokes_count)
+    TextView favJokesCount;
     /* Vars */
     private ArrayList<Fragment> fragments;
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.avatar) SimpleDraweeView avatar;
-    @Bind(R.id.view_pager) ViewPager viewPager;
-    @Bind(R.id.tab_layout) TabLayout tabLayout;
-    @Bind(R.id.user_name) TextView userName;
-    @Bind(R.id.fav_news_count) TextView favNewsCount;
-    @Bind(R.id.fav_images_count) TextView favImagesCount;
-    @Bind(R.id.fav_jokes_count) TextView favJokesCount;
 //    @Bind(R.id.fab_fav) FloatingActionButton floatingActionButton;
-
 
     public static FavoriteFragment getInstance() {
         if (null == INSTANCE) {
@@ -100,7 +105,7 @@ public class FavoriteFragment extends BaseFragment {
 
     /**
      * 初始化TabLayout的主题
-     * */
+     */
     void setupTabLayoutTheme() {
         if (isNowNightModeOn) {
             tabLayout.setBackgroundColor(Color.rgb(44, 44, 44));
@@ -130,7 +135,7 @@ public class FavoriteFragment extends BaseFragment {
 
     /**
      * Adapter
-     * */
+     */
     class FragmentAdapter extends FragmentPagerAdapter {
 
         public FragmentAdapter(FragmentManager fm) {

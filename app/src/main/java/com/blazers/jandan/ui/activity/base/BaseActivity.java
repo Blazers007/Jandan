@@ -5,20 +5,17 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.LinearLayout;
-import com.blazers.jandan.R;
+
 import com.blazers.jandan.rxbus.Rxbus;
 import com.blazers.jandan.util.Dppx;
 import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
+
 import io.realm.Realm;
 import rx.Subscription;
 
@@ -28,23 +25,24 @@ import rx.Subscription;
 @SuppressLint("Registered")
 public abstract class BaseActivity extends AppCompatActivity {
 
-    /* Static */
-    public enum ToolbarType {
-        NORMAL,
-        FINISH
-    }
-
     /* Vars */
     protected Toolbar toolbar;
-    private ViewGroup toolbarWithShadow;
     /* Vars */
     protected boolean isNowNightModeOn;
     protected Realm realm;
+    private ViewGroup toolbarWithShadow;
+    /**
+     * 注册事件机制
+     * <p>
+     * 通过此方法则采用自动注册方式 否则需要自己 在 Resume与Pause中注册 解注册
+     */
+    private boolean isRegisterEventDemand = false;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = Realm.getInstance(this);
+        realm = Realm.getDefaultInstance();
         /* 读取模式 */
         isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
     }
@@ -67,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void setToolbarTitle(String titleText) {
-        if ( null != toolbar ) {
+        if (null != toolbar) {
             getSupportActionBar().setTitle(titleText);
         }
     }
@@ -76,11 +74,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         return toolbar;
     }
 
-
-
     /* Screen Display APIs */
     public void setContentFloatingModeEnabled(boolean enabled) {
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             /* 首先设置内容浮动在status bar navigation bar 之后 */
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
@@ -88,7 +84,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             );
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
             Log.i("SET", "Color set 16");
-        } else if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ) {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(Color.BLACK);
             getWindow().setNavigationBarColor(Color.BLACK);
             toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
@@ -98,8 +94,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setNormalWindow() {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
         }
@@ -126,10 +122,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public void setFullWindow() {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
-            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏 Navigation bar
-            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+                | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏 Navigation bar
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
         }
@@ -156,10 +152,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
     /**
      * 获取StatusBar 高度
-     * */
+     */
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -171,14 +166,14 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 获取导航条高度
-     * */
+     */
     public int getNavigationBarHeight() {
         int resIdShow = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
         boolean hasNavigationBar = false;
-        if(resIdShow > 0){
+        if (resIdShow > 0) {
             hasNavigationBar = getResources().getBoolean(resIdShow);//是否显示底部navigationBar
         }
-        if(hasNavigationBar) {
+        if (hasNavigationBar) {
             int resIdNavigationBar = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
             int navigationbarHeight = 0;
             if (resIdNavigationBar > 0) {
@@ -189,10 +184,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         return 0;
     }
 
-
     /**
      * 生命周期相关
-     * */
+     */
 
     @Override
     protected void onResume() {
@@ -210,27 +204,20 @@ public abstract class BaseActivity extends AppCompatActivity {
             unregisterEventReceiver();
     }
 
-    /**
-     * 注册事件机制
-     *
-     * 通过此方法则采用自动注册方式 否则需要自己 在 Resume与Pause中注册 解注册
-     * */
-    private boolean isRegisterEventDemand = false;
-    private Subscription subscription;
     public void setHasRegisterDemand(boolean has) {
         isRegisterEventDemand = has;
     }
 
     /**
      * 注册事件
-     * */
+     */
     public void registerEventReceiver() {
         subscription = Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
     }
 
     /**
      * 解注事件
-     * */
+     */
     public void unregisterEventReceiver() {
         if (null != subscription)
             subscription.unsubscribe();
@@ -238,8 +225,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * 处理时间
-     * */
-    public void handleRxEvent(Object event){
+     */
+    public void handleRxEvent(Object event) {
 
     }
 
@@ -249,5 +236,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (null != realm) {
             realm.close();
         }
+    }
+
+    /* Static */
+    public enum ToolbarType {
+        NORMAL,
+        FINISH
     }
 }

@@ -56,7 +56,7 @@ public abstract class BaseFragment extends Fragment {
     public void onAttach(Context context) {
         Log.i(TAG, "Attach");
         super.onAttach(context);
-        realm = Realm.getInstance(context);
+        realm = Realm.getDefaultInstance();
         isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 

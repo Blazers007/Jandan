@@ -12,6 +12,11 @@ public class LocalVote extends RealmObject {
     private long id;
     private int vote; // -1 0 1
 
+    /* Public APIs */
+    public static LocalVote getLocalVoteById(Realm realm, long id) {
+        return realm.where(LocalVote.class).equalTo("id", id).findFirst();
+    }
+
     public long getId() {
         return id;
     }
@@ -26,10 +31,5 @@ public class LocalVote extends RealmObject {
 
     public void setVote(int vote) {
         this.vote = vote;
-    }
-
-    /* Public APIs */
-    public static LocalVote getLocalVoteById(Realm realm, long id) {
-        return realm.where(LocalVote.class).equalTo("id", id).findFirst();
     }
 }

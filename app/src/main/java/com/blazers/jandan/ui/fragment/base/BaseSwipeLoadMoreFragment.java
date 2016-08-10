@@ -6,13 +6,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.VerticalDividerItemDecoration;
 import com.blazers.jandan.views.loadmore.LoadMoreRecyclerView;
 import com.blazers.jandan.views.loadmore.PullCallback;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 //import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
@@ -21,8 +23,10 @@ import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
  */
 public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment {
 
-    @Bind(R.id.recycler_list) public LoadMoreRecyclerView loadMoreRecyclerView;
-    @Bind(R.id.load_more_progress) public SmoothProgressBar smoothProgressBar;
+    @BindView(R.id.recycler_list)
+    public LoadMoreRecyclerView loadMoreRecyclerView;
+    @BindView(R.id.load_more_progress)
+    public SmoothProgressBar smoothProgressBar;
 
     /* Vars */
     private boolean isLoading = false;
@@ -66,7 +70,7 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment
 
     /**
      * 上拉加载更多
-     * */
+     */
     private void invokeLoadMore() {
         smoothProgressBar.setVisibility(View.VISIBLE);
         loadMore();
@@ -74,7 +78,7 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment
 
     /**
      * 将Rx逻辑部分整理至该模块中 便于精简代码
-     * */
+     */
     public abstract void loadMore();
 
     public void loadMoreComplete() {
