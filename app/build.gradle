@@ -5,12 +5,12 @@ apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.1'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.blazers.jandan"
         minSdkVersion 17
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -65,7 +65,8 @@ checkstyle {
 
 dependencies {
     // 依赖库版本
-    def supportVersion = '24.1.1'
+    def supportVersion = '25.0.0'
+    def frescoVersion = '0.14.1'
     //
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //    compile 'org.jsoup:jsoup:1.8.3' // 解析HTML用的
@@ -79,31 +80,30 @@ dependencies {
     // Once
     compile 'com.jonathanfinerty.once:once:1.0.3'
     // Fresco
-    compile 'com.facebook.fresco:fresco:0.12.0'
-    compile 'com.facebook.fresco:animated-gif:0.12.0'
-    compile 'com.facebook.fresco:animated-webp:0.12.0'
+    compile "com.facebook.fresco:fresco:${frescoVersion}"
+    compile "com.facebook.fresco:animated-gif:${frescoVersion}"
+    compile "com.facebook.fresco:animated-webp:${frescoVersion}"
     // WEBP-SUPPORT
-    compile 'com.facebook.fresco:webpsupport:0.12.0'
-    // WEBP-SUPPORT
-    compile 'com.facebook.fresco:imagepipeline-okhttp3:0.12.0'
+//    compile "com.facebook.fresco:webpsupport:${frescoVersion}"
+    // Pipeline
+    compile "com.facebook.fresco:imagepipeline-okhttp3:${frescoVersion}"
     // ButterKnife
-    compile 'com.jakewharton:butterknife:8.2.1'
-    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
     // OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     // Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    // Permission Dispatcher
+    compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
+    apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
     // RxJava
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
-    // RxPermission
-    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.7.0@aar'
     // Material Dialog
-    compile('com.github.afollestad.material-dialogs:core:0.8.6.2@aar') {
-        transitive = true
-    }
+    compile 'com.afollestad.material-dialogs:core:0.9.0.2'
     // Smooth Progressbar
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'

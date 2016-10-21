@@ -21,7 +21,8 @@ public class JandanApp extends Application {
     public void onCreate() {
         super.onCreate();
         // Realm
-        RealmConfiguration config = new RealmConfiguration.Builder(this)
+        Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder()
                 .build();
         Realm.setDefaultConfiguration(config);
         // 初始化CrashHandler
