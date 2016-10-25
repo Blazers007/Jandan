@@ -44,8 +44,8 @@ public class ImageDownloader {
      * @param url 图像地址
      * @return 返回一个LocalImage对象 映射Url与本地File路径
      */
-    public LocalImage doSimpleCaching(String url) {
-        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
+    public LocalImage doSimpleOfflineCaching(String url) {
+        return doSimpleDownload(url, SdcardHelper.createOfflineImageFile(getTypeByUrl(url)));
     }
 
     /**
@@ -54,9 +54,9 @@ public class ImageDownloader {
      * @param imageRelateToPost RecyclerView中的图像对象
      * @return 返回一个LocalImage对象 映射Url与本地File路径
      */
-    public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
+    public LocalImage doOfflineCachingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
-        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
+        return doSimpleDownload(url, SdcardHelper.createOfflineImageFile(getTypeByUrl(url)));
     }
 
     /**
@@ -72,6 +72,11 @@ public class ImageDownloader {
     public LocalImage doSavingImage(ImageRelateToPost imageRelateToPost) {
         String url = imageRelateToPost.url;
         return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
+    }
+
+    public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
+        String url = imageRelateToPost.url;
+        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
     }
 
     /**

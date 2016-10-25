@@ -23,7 +23,7 @@ public class SdcardHelper {
     /**
      * 获取图片缓存路径
      * */
-    public static String getSdcardCachePath() {
+    public static String getSdcardOfflinePath() {
         File file = new File(Environment.getExternalStorageDirectory().getPath()+"/Jandan/Cached/");
         if (!file.exists())
             file.mkdirs();
@@ -31,10 +31,10 @@ public class SdcardHelper {
     }
 
     /**
-     * 创建缓存文件
+     * 创建离线文件
      * */
-    synchronized public static File createCachedImageFile(String type) {
-        return new File(getSdcardCachePath() + "/" + System.currentTimeMillis() + "." + type);
+    synchronized public static File createOfflineImageFile(String type) {
+        return new File(getSdcardOfflinePath() + "/" + System.currentTimeMillis() + "." + type);
     }
 
     /**
@@ -45,12 +45,19 @@ public class SdcardHelper {
     }
 
     /**
+     * 创建缓存文件
+     */
+    synchronized public static File createCachedImageFile(String type) {
+        return new File(Environment.getDownloadCacheDirectory() + "/" + System.currentTimeMillis() + "." + type);
+    }
+
+    /**
      * 清空某个目录
      * */
-    public static Observable<Boolean> cleanSDCardCache() {
+    public static Observable<Boolean> cleanSDCardOffline() {
         return Observable.create(subscriber -> {
             try {
-                File folder = new File(getSdcardCachePath());
+                File folder = new File(getSdcardOfflinePath());
                 deleteDir(folder);
                 subscriber.onNext(true);
             }catch (Exception e) {
@@ -64,10 +71,10 @@ public class SdcardHelper {
     /**
      * 计算大小
      * */
-    public static Observable<String> calculateCacheSize() {
+    public static Observable<String> calculateOfflineSize() {
         return Observable.create(subscriber -> {
             try {
-                File folder = new File(getSdcardCachePath());
+                File folder = new File(getSdcardOfflinePath());
                 double size = (getDirSize(folder)+0.0) / 1024 / 1024;
                 String str = size == 0 ? "0MB" : String.format("%.2fMB", size);
                 subscriber.onNext(str);

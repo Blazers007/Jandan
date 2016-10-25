@@ -67,38 +67,44 @@ dependencies {
     // 依赖库版本
     def supportVersion = '25.0.0'
     def frescoVersion = '0.14.1'
+    def butterKnifeVersion = '8.4.0'
+    def retrofitVersion = '2.1.0'
+    def permissionVersion = '2.2.0'
+
     //
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    //    compile 'org.jsoup:jsoup:1.8.3' // 解析HTML用的
-    //    compile 'com.commit451:PhotoView:1.2.4'
+
     // Support
     compile 'com.zhy:percent-support-extends:1.1.1'
     compile "com.android.support:support-v4:${supportVersion}"
     compile "com.android.support:appcompat-v7:${supportVersion}"
     compile "com.android.support:recyclerview-v7:${supportVersion}"
     compile "com.android.support:design:${supportVersion}"
-    // Once
-    compile 'com.jonathanfinerty.once:once:1.0.3'
+
     // Fresco
     compile "com.facebook.fresco:fresco:${frescoVersion}"
     compile "com.facebook.fresco:animated-gif:${frescoVersion}"
     compile "com.facebook.fresco:animated-webp:${frescoVersion}"
-    // WEBP-SUPPORT
-//    compile "com.facebook.fresco:webpsupport:${frescoVersion}"
     // Pipeline
     compile "com.facebook.fresco:imagepipeline-okhttp3:${frescoVersion}"
+    // WEBP-SUPPORT
+//    compile "com.facebook.fresco:webpsupport:${frescoVersion}"
+
+    // Once
+    compile 'com.jonathanfinerty.once:once:1.2.1'
+
     // ButterKnife
-    compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile "com.jakewharton:butterknife:${butterKnifeVersion}"
+    apt "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
     // OkHttp
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     // Retrofit
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
     // Permission Dispatcher
-    compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
-    apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
+    compile "com.github.hotchemi:permissionsdispatcher:${permissionVersion}"
+    apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionVersion}"
     // RxJava
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
@@ -115,4 +121,6 @@ dependencies {
     compile 'com.github.ivbaranov:materialfavoritebutton:0.1.2'
     // SpannableText
     compile 'com.ms-square:expandableTextView:0.1.4'
+    // JAVA8 Stream
+    compile 'com.annimon:stream:1.1.3'
 }

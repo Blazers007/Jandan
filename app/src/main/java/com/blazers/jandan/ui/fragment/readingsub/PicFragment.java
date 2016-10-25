@@ -1,6 +1,11 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +46,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnLongClick;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -49,11 +56,13 @@ import rx.android.schedulers.AndroidSchedulers;
  * <p>
  * 图片显示
  */
+@RuntimePermissions
 @SuppressWarnings("unused")
 public class PicFragment extends BaseSwipeLoadMoreFragment {
 
     private JandanImageAdapter adapter;
     private ArrayList<ImageRelateToPost> imageArrayList = new ArrayList<>();
+    private ImageRelateToPost mTempTask;
     private int mPage = 1;
 
 
@@ -314,15 +323,28 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             @OnLongClick(R.id.content)
             public boolean download() {
                 // 弹窗
-                Observable.just(imageArrayList.get(getAdapterPosition()))
-                        .map(ImageDownloader.getInstance()::doSavingImage)
-                        .compose(RxHelper.applySchedulers())
-                        .subscribe(localImage -> {
-                            Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
-                            DBHelper.saveToRealm(getActivity(), localImage);
-                        }, throwable -> {
-                            Log.e("Error", throwable.toString());
-                        });
+                if (Build.VERSION.SDK_INT >= 23
+                        && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    // 缓存任务
+                    mTempTask = imageArrayList.get(getAdapterPosition());
+                    // 请求权限
+                    PicFragmentPermissionsDispatcher.showWriteExternalStorageWithCheck(PicFragment.this);
+                } else {
+                    Observable.just(imageArrayList.get(getAdapterPosition()))
+                            .map(ImageDownloader.getInstance()::doSavingImage)
+                            .compose(RxHelper.applySchedulers())
+                            .subscribe(localImage -> {
+                                DBHelper.saveToRealm(getActivity(), localImage);
+                                Snackbar.make(loadMoreRecyclerView, "图片保存成功",Snackbar.LENGTH_SHORT)
+                                        .setActionTextColor(getResources().getColor(R.color.yellow500))
+                                        .setAction("撤销", v -> {
+                                            // TODO: 添加删除逻辑
+                                        })
+                                        .show();
+                            }, throwable -> {
+                                Log.e("Error", throwable.toString());
+                            });
+                }
                 return true;
             }
 
@@ -372,26 +394,45 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
              */
             @OnClick(R.id.btn_share)
             public void share() {
+                // 放入缓存目录中 TODO: 整合离线与缓存?
                 ImageRelateToPost image = imageArrayList.get(getAdapterPosition());
-                LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, image.url);
-                if (null != localImage && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
-                    doShare(image.holder.getText_content(), localImage.getLocalUrl());
-                } else {
-                    Observable.just(imageArrayList.get(getAdapterPosition()))
-                            .map(ImageDownloader.getInstance()::doSavingImage)
-                            .compose(RxHelper.applySchedulers())
-                            .subscribe(local -> {
-                                doShare(image.holder.getText_content(), local.getLocalUrl());
-                                DBHelper.saveToRealm(getActivity(), local);
-                            }, throwable -> {
-                                Log.e("Error", throwable.toString());
-                            });
-                }
+                Observable.just(imageArrayList.get(getAdapterPosition()))
+                        .map(ImageDownloader.getInstance()::doCachingImage)
+                        .compose(RxHelper.applySchedulers())
+                        .subscribe(local -> {
+                            doShare(image.holder.getText_content(), local.getLocalUrl());
+                            DBHelper.saveToRealm(getActivity(), local);
+                        }, throwable -> {
+                            Log.e("Error", throwable.toString());
+                        });
             }
 
             void doShare(String text, String filePath) {
                 ShareHelper.shareImage(getActivity(), type.equals("wuliao") ? "无聊图" : "妹子图", text, filePath);
             }
         }
+    }
+
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showWriteExternalStorage() {
+        // 已经允许读写SD卡
+        if (mTempTask != null) {
+            Observable.just(mTempTask)
+                    .map(ImageDownloader.getInstance()::doSavingImage)
+                    .compose(RxHelper.applySchedulers())
+                    .subscribe(localImage -> {
+                        Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
+                        DBHelper.saveToRealm(getActivity(), localImage);
+                    }, throwable -> {
+                        Log.e("Error", throwable.toString());
+                    });
+            mTempTask = null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PicFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 }

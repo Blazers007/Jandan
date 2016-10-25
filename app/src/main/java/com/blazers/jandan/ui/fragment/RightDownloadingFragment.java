@@ -1,12 +1,16 @@
 package com.blazers.jandan.ui.fragment;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -20,6 +24,9 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
@@ -52,6 +59,7 @@ import java.util.List;
  *
  * */
 
+@RuntimePermissions
 public class RightDownloadingFragment extends Fragment {
 
     public static final String ACTION_COUNT = "action.count";
@@ -106,20 +114,36 @@ public class RightDownloadingFragment extends Fragment {
     }
 
     @OnClick(R.id.button)
-    public void download() {
+    public void clickDownload() {
+        if (Build.VERSION.SDK_INT >= 23
+                && getActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            RightDownloadingFragmentPermissionsDispatcher.showWriteExternalStorageWithCheck(this);
+        } else {
+            tryDownload();
+        }
+    }
+
+
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showWriteExternalStorage() {
+        tryDownload();
+    }
+
+
+    private void tryDownload() {
         if (NetworkHelper.isWifi(getActivity())) {
             startDownload();
         } else {
             new MaterialDialog.Builder(getActivity())
-                .title(R.string.not_in_wifi)
-                .content(R.string.not_in_wifi_message)
-                .positiveText(R.string.do_offline_download)
-                .positiveColor(Color.rgb(240, 114, 175)) // 需要采用Color
-                .negativeText(R.string.negetive)
-                .negativeColor(Color.rgb(109, 109, 109))
-                .onPositive((dialog, action)->startDownload())
-                .build()
-                .show();
+                    .title(R.string.not_in_wifi)
+                    .content(R.string.not_in_wifi_message)
+                    .positiveText(R.string.do_offline_download)
+                    .positiveColor(Color.rgb(240, 114, 175)) // 需要采用Color
+                    .negativeText(R.string.negetive)
+                    .negativeColor(Color.rgb(109, 109, 109))
+                    .onPositive((dialog, action)->startDownload())
+                    .build()
+                    .show();
         }
     }
 
@@ -174,5 +198,11 @@ public class RightDownloadingFragment extends Fragment {
             // Save
             SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        RightDownloadingFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 }

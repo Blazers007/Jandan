@@ -138,17 +138,17 @@ public class SettingFragment extends BaseFragment {
         cleanCacheHolder = new TextHolder(setCleanCache,
                 R.string.setting_clean_cache, R.string.setting_clean_cache_describe,
                 "计算中", true,
-                (v) -> SdcardHelper.cleanSDCardCache()
+                (v) -> SdcardHelper.cleanSDCardOffline()
                         .compose(RxHelper.applySchedulers())
                         .subscribe(
                                 state -> {
                                     Toast.makeText(getActivity(), "清理完毕", Toast.LENGTH_SHORT).show();
-                                    SdcardHelper.calculateCacheSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
+                                    SdcardHelper.calculateOfflineSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
                                 }
                                 , throwable -> Log.e("Error", "清空失败")
                         )
         );
-        SdcardHelper.calculateCacheSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
+        SdcardHelper.calculateOfflineSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
     }
 
     /**

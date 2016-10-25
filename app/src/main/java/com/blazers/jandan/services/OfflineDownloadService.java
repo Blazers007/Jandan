@@ -57,7 +57,7 @@ public class OfflineDownloadService extends Service {
                     .doOnNext(list -> DBHelper.saveToRealm(OfflineDownloadService.this, list))
                     .flatMap(Observable::from)
                     .map(newsPost -> {
-                        DBHelper.saveToRealm(OfflineDownloadService.this, ImageDownloader.getInstance().doSimpleCaching(newsPost.getThumbUrl()));
+                        DBHelper.saveToRealm(OfflineDownloadService.this, ImageDownloader.getInstance().doSimpleOfflineCaching(newsPost.getThumbUrl()));
                         return newsPost.getId();
                     })
                     .flatMap(Parser.getInstance()::getNewsContentData)
@@ -114,7 +114,7 @@ public class OfflineDownloadService extends Service {
                     .map(ImagePost::getAllImageFromList)                                        // 3 - 解析出图片信息
                     .doOnNext(list -> imageSize = list.size())                                   // 4 - 记录图片数量
                     .flatMap(Observable::from)                                                  // 5 - 利用from操作符逐一处理
-                    .map(ImageDownloader.getInstance()::doCachingImage)                     // 6 - 利用map操作符完成下载与转换
+                    .map(ImageDownloader.getInstance()::doOfflineCachingImage)                     // 6 - 利用map操作符完成下载与转换
                     .filter(localImage -> localImage != null)                                   // 7 - 过滤掉没有下载成功的
                     .compose(RxHelper.applySchedulers())
                     .subscribe(
