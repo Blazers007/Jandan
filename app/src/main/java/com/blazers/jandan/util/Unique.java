@@ -3,6 +3,7 @@ package com.blazers.jandan.util;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 /**
  * Created by Blazers on 2015/11/17.
@@ -25,6 +26,9 @@ public class Unique {
     public static String generateName(Context context) {
         if (null == SPHelper.getStringSP(context, SPHelper.USER_ID, null)) {
             String imei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+            if (TextUtils.isEmpty(imei)) {
+                imei = "1234567890";
+            }
             String binary = Long.toBinaryString(Long.parseLong(imei));
             while (binary.length() < 54)
                 binary = "0" + binary;

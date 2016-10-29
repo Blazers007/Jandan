@@ -31,6 +31,10 @@ android {
             minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.config
+            manifestPlaceholders = [
+                    UMENG_APPKEY: '562ec5f467e58e1679000f52',
+                    UMENG_CHANNEL: getChannel()
+            ]
         }
         release {
             debuggable false
@@ -39,6 +43,10 @@ android {
             shrinkResources true
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            manifestPlaceholders = [
+                    UMENG_APPKEY: '562ec5f467e58e1679000f52',
+                    UMENG_CHANNEL: getChannel()
+            ]
         }
     }
     packagingOptions {
@@ -56,6 +64,10 @@ android {
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
     productFlavors {
     }
+}
+
+def getChannel() {
+    "CoolApk"
 }
 
 checkstyle {
