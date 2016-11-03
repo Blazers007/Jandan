@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient;
 
 /**
  * Created by Blazers on 2015/8/25.
+ * 程序的main application
  */
 public class JandanApp extends Application {
     @Override
@@ -25,8 +26,6 @@ public class JandanApp extends Application {
         RealmConfiguration config = new RealmConfiguration.Builder()
                 .build();
         Realm.setDefaultConfiguration(config);
-        // 初始化CrashHandler
-//        CrashHandler.getInstance().init(this);
         // 初始化Fresco
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new LoggintInterceptor())
@@ -35,9 +34,9 @@ public class JandanApp extends Application {
                 .newBuilder(this, okHttpClient)
                 .build();
         Fresco.initialize(this, imagePipelineConfig);
-        // 初始化OKHTTP解析
+        // 初始化OkHttp解析
         Parser.init(this);
-        // Once
+        // 初始化Once
         Once.initialise(this);
     }
 }

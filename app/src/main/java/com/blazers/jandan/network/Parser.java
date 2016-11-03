@@ -30,24 +30,26 @@ import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Blazers on 2015/9/11.
+ * 访问煎蛋API接口与解析返回结果的工具类
  */
 public class Parser {
 
     public static final String TAG = "[Parser]";
-    protected static final Object monitor = new Object();
+    private static final Object monitor = new Object();
     private static Parser INSTANCE;
-    private static Context context;
+    private static WeakReference<Context> context;
     private OkHttpClient client;
     private Gson gson;
 
     public static void init(Context context) {
-        Parser.context = context;
+        Parser.context = new WeakReference<>(context);
     }
 
     private Parser() {
@@ -93,8 +95,7 @@ public class Parser {
                 .url(url)
                 .build();
         Response response = client.newCall(request).execute();
-        String str = response.body().string();
-        return str;
+        return response.body().string();
     }
 
     /**
@@ -108,13 +109,12 @@ public class Parser {
             .post(body)
             .build();
         Response response = client.newCall(request).execute();
-        String str = response.body().string();
-        return str;
+        return response.body().string();
     }
 
     /**
      * @param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
-     * @param type 获取的类型 目前仅有 无聊图 妹子图  TODO:最后一页判定！
+     * @param type 获取的类型 目前仅有 无聊图 妹子图 // 自动跳过重复页面 并发出有新的刷新的提示！
      */
     public Observable<List<ImagePost>> getPictureData(int page, String type) {
         return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
@@ -127,7 +127,7 @@ public class Parser {
                 String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                 /* 广播总数 */
                 long totalCount = object.getLong("total_comments");
-                context.sendBroadcast(
+                context.get().sendBroadcast(
                     new Intent(RightDownloadingFragment.ACTION_COUNT)
                         .putExtra("data", new Count(type.equals("wuliao") ? Count.WULIAO : Count.MEIZI, totalCount))
                 );
@@ -180,7 +180,7 @@ public class Parser {
                 JSONArray posts = object.getJSONArray("posts");
                 /* 广播总数 */
                 long totalCount = object.getLong("count_total");
-                context.sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.NEWS, totalCount)));
+                context.get().sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.NEWS, totalCount)));
                 for (int i = 0; i < posts.length(); i++) {
                     JSONObject post = posts.getJSONObject(i);
                     NewsPost newsPost = gson.fromJson(post.toString(), NewsPost.class);
@@ -221,7 +221,7 @@ public class Parser {
                 sb.append("</head>");
                 sb.append(body);
                 sb.append("</body></html>");
-                //
+                // 本地缓存
                 LocalArticleHtml localArticleHtml = new LocalArticleHtml();
                 localArticleHtml.setId(id);
                 localArticleHtml.setHtml(sb.toString());
@@ -246,7 +246,7 @@ public class Parser {
                 JSONArray comments = object.getJSONArray("comments");
                 /* 广播总数 */
                 long totalCount = object.getLong("total_comments");
-                context.sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.JOKE, totalCount)));
+                context.get().sendBroadcast(new Intent(RightDownloadingFragment.ACTION_COUNT).putExtra("data", new Count(Count.JOKE, totalCount)));
                 /* 评论数量URL */
                 String commentInfoUrl = URL.JANDAN_COMMENT_COUNT;
                 for (int i = 0; i < comments.length(); i++) {

@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
-    <shortcut>
+    <!-- 打开煎蛋首页 不会Disabled 故不需要设置Disabled文字 -->
+    <shortcut
+        android:shortcutId="goto_website"
+        android:enabled="true"
+        android:icon="@mipmap/ic_logo_jandan_24dp"
+        android:shortcutShortLabel="@string/shortcut_view_jandan_label_short"
+        android:shortcutLongLabel="@string/shortcut_view_jandan_label_long">
         <intent
-            android:shortcutId="NightMode"/>
-        <categories/>
+            android:action="android.intent.action.VIEW"
+            android:data="http://jandan.net"/>
+        <categories android:name="android.shortcut.conversation"/>
     </shortcut>
 </shortcuts>

@@ -1,29 +1,28 @@
 package com.blazers.jandan.ui.activity;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavImages;
 import com.blazers.jandan.views.AutoScaleFrescoView;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by Blazers on 2016/1/8.
  */
-public class ImageDetailActivity extends AppCompatActivity implements ViewPager.PageTransformer{
+public class ImageDetailActivity extends AppCompatActivity implements ViewPager.PageTransformer {
 
     private static final float MIN_SCALE = 0.75f;
 
@@ -78,7 +77,7 @@ public class ImageDetailActivity extends AppCompatActivity implements ViewPager.
     /* Pager Adapter */
     class DetailPagerAdapter extends PagerAdapter {
 
-        private Map<Integer, View> mCache = new HashMap<>();
+        private SparseArray<View> mCache = new SparseArray<>();
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {

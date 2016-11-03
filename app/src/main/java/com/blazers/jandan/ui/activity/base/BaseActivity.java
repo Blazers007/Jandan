@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +17,7 @@ import com.blazers.jandan.util.Dppx;
 import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
 
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import rx.Subscription;
 
@@ -47,11 +49,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
     }
 
+    /**
+     * 自动Bind
+     * @param layoutResID 布局资源
+     */
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        super.setContentView(layoutResID);
+        ButterKnife.bind(this);
+    }
+
     /* Init functions */
     protected void initToolbarByTypeWithShadow(@Nullable ViewGroup holder, Toolbar toolbar, ToolbarType type) {
         this.toolbarWithShadow = holder;
         this.toolbar = toolbar;
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() == null)
+            return;
         switch (type) {
             case NORMAL:
                 getSupportActionBar().setHomeButtonEnabled(true); //设置返回键可用
@@ -65,7 +79,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void setToolbarTitle(String titleText) {
-        if (null != toolbar) {
+        if (null != toolbar && null != getSupportActionBar() ) {
             getSupportActionBar().setTitle(titleText);
         }
     }
@@ -175,10 +189,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         if (hasNavigationBar) {
             int resIdNavigationBar = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-            int navigationbarHeight = 0;
+            int navigationBarHeight;
             if (resIdNavigationBar > 0) {
-                navigationbarHeight = getResources().getDimensionPixelSize(resIdNavigationBar);//navigationBar高度
-                return navigationbarHeight;
+                navigationBarHeight = getResources().getDimensionPixelSize(resIdNavigationBar);//navigationBar高度
+                return navigationBarHeight;
             }
         }
         return 0;

@@ -68,6 +68,10 @@
     <string name="hot">热门评论</string>
     <string name="not_hot">评论列表</string>
 
+    <!-- Shortcuts文字 -->
+    <string name="shortcut_view_jandan_label_long">访问煎蛋网页</string>
+    <string name="shortcut_view_jandan_label_short">煎蛋Web</string>
+
     <!-- TestStrings -->
     <string name="longText">
         反法西斯就是为了我在想晒孩子的时候就可以晒孩子，我不想看阅兵的时候也不会招来谩骂，尊重个人意志，使个人意志不被集体意志和强权所裹挟。我觉得那些先烈们白牺牲了，他们反抗的东西至今还存在着，还披上了爱国的外衣

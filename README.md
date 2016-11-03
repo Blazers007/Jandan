@@ -9,28 +9,27 @@
 - 本地收藏。
 - 多页内容离线下载阅读。
 
+---
+####TODO
+- [x] Android 7.1 Shortcut support.
+- [ ] 添加Vote操作的动画效果。
+- [ ] 添加LoadMore加载的时候去重复与新内容到来的提示信息。
+- [ ] 长按下载图片的Progress提示效果。
+- [ ] 分享图片功能重构。
+- [ ] 多图阅读模式，ViewPager阅读图片模式。
 
-####待开发&不完整的功能
-- 收藏列表可以通过WEB端查看。
-- 夜间模式切换(目前配色有些问题)。
-- 评论功能添加。
-- 点赞(OO XX)功能。
-
-
+---
 ####利用到的开源库
 - [Retrolambda](https://github.com/evant/gradle-retrolambda)
 - [Rxandroid](https://github.com/ReactiveX/RxAndroid)
 - [Fresco](https://github.com/facebook/fresco)
 - [Okhttp](https://github.com/square/okhttp)
 - [Realm](https://github.com/realm/realm-java)
-- [Retrofit](https://github.com/square/retrofit) 
+- [Retrofit](https://github.com/square/retrofit)
 - [Butterknife](https://github.com/JakeWharton/butterknife)
 - [Gson](http://mvnrepository.com/artifact/com.google.code.gson/gson/2.2.2)
 
 ---
 ####截图
-![http://i4.tietuku.com/88f241ab20ac5822.png](http://i4.tietuku.com/88f241ab20ac5822s.png) ![http://i4.tietuku.com/99a7cc2fbfeda2a5.png](http://i4.tietuku.com/99a7cc2fbfeda2a5s.png)
 
-![http://i4.tietuku.com/4e273f630a2e7694.png](http://i4.tietuku.com/4e273f630a2e7694s.png) ![http://i4.tietuku.com/0819e6a2a3e31c39.png](http://i4.tietuku.com/0819e6a2a3e31c39s.png)
-
-![http://i4.tietuku.com/7184bffd264a455c.png](http://i4.tietuku.com/7184bffd264a455cs.png) ![http://i4.tietuku.com/31a1deff49508dbf.png](http://i4.tietuku.com/31a1deff49508dbfs.png) ![http://i4.tietuku.com/140055d1261b8884.png](http://i4.tietuku.com/140055d1261b8884s.png)
+~~图片链接失效~~
