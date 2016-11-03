@@ -241,4 +241,9 @@ public class NewsReadActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_left_out_backin, R.anim.activity_slide_right_in_backout);
+    }
 }

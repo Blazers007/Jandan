@@ -297,6 +297,7 @@ public class MainActivity extends BaseActivity {
                     .putExtra("id", v.id)
                     .putExtra("title", v.title)
             );
+            overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
         } else if (event instanceof ViewImageEvent) {
             /* 查看图片请求 */
             ViewImageEvent imageEvent = ((ViewImageEvent) event);
