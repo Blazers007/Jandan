@@ -20,10 +20,10 @@
         <!-- Umeng统计 -->
         <meta-data
                 android:name="UMENG_APPKEY"
-                android:value="562ec5f467e58e1679000f52"/>
+                android:value="${UMENG_APPKEY}"/>
         <meta-data
                 android:name="UMENG_CHANNEL"
-                android:value="Wandoujia"/>
+                android:value="${UMENG_CHANNEL}"/>
 
         <!-- Launcher -->
         <activity
@@ -36,6 +36,9 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
         </activity>
         <!-- Reading News -->
         <activity

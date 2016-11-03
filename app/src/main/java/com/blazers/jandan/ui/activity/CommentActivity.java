@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.views.QuoteView;
+import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
@@ -179,8 +181,14 @@ public class CommentActivity extends BaseActivity {
                     holder.userName.setText(String.format("@%s", post.author.name));
                     holder.commentDate.setText(post.created_at);
                     holder.message.setText(post.message);
-                    if (post.author.avatar_url == null)
-                        holder.userHead.setImageURI(Uri.parse("http://tp4.sinaimg.cn/3195783623/50/0/1")); //测试
+                    if (TextUtils.isEmpty(post.author.avatar_url))
+                        holder.userHead.setImageURI(
+                                // http://stackoverflow.com/questions/30887615/loading-drawable-image-resource-in-frescos-simpledraweeview
+                                new Uri.Builder()
+                                        .scheme(UriUtil.LOCAL_RESOURCE_SCHEME) // "res"
+                                        .path(String.valueOf(R.drawable.fakeimg))
+                                        .build()
+                        ); //测试
                     else
                         holder.userHead.setImageURI(Uri.parse(post.author.avatar_url));
                     if (post.parents.size() > 0) {
@@ -211,6 +219,9 @@ public class CommentActivity extends BaseActivity {
             public CommentHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
+                // Init PlaceHolder
+                userHead.getHierarchy()
+                        .setPlaceholderImage(R.drawable.fakeimg);
             }
         }
 
