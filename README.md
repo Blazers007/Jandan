@@ -1,4 +1,4 @@
-# Jandan
+# Jandan [![Build Status](https://travis-ci.org/Blazers007/Jandan.svg?branch=master)](https://travis-ci.org/Blazers007/Jandan)
 煎蛋网(http://jandan.net) 的个人仿制安卓客户端  React-Native版本 https://github.com/Blazers007/Jandan-React-Native
 
 主要是在闲暇之余一边学习Material-Design和Rx响应式编程一边练手做了这个App, 由于使用的相关的API并未与煎蛋网沟通，如果有任何侵权的地方我会及时删除相关代码，感谢~
@@ -11,6 +11,7 @@
 
 ---
 ####TODO
+- [x] 添加Travis-CI支持.
 - [x] Android 7.1 Shortcut support.
 - [ ] 添加Vote操作的动画效果。
 - [ ] 添加LoadMore加载的时候去重复与新内容到来的提示信息。
