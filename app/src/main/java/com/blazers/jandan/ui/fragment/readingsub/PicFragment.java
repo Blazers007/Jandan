@@ -2,6 +2,7 @@ package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.databinding.BindingAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -185,7 +186,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                     });
         } else {
             List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
-            if (null != list && list.size() > 0) {
+            if (list.size() > 0) {
                 List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
                 int start = imageArrayList.size();
                 int size = imageRelateToPostList.size();
@@ -199,6 +200,28 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         }
     }
 
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    void showWriteExternalStorage() {
+        // 已经允许读写SD卡
+        if (mTempTask != null) {
+            Observable.just(mTempTask)
+                    .map(ImageDownloader.getInstance()::doSavingImage)
+                    .compose(RxHelper.applySchedulers())
+                    .subscribe(localImage -> {
+                        Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
+                        DBHelper.saveToRealm(getActivity(), localImage);
+                    }, throwable -> {
+                        Log.e("Error", throwable.toString());
+                    });
+            mTempTask = null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PicFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
 
     /**
      * ----------------------------------------  Adapter
@@ -335,7 +358,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                             .compose(RxHelper.applySchedulers())
                             .subscribe(localImage -> {
                                 DBHelper.saveToRealm(getActivity(), localImage);
-                                Snackbar.make(loadMoreRecyclerView, "图片保存成功",Snackbar.LENGTH_SHORT)
+                                Snackbar.make(loadMoreRecyclerView, "图片保存成功", Snackbar.LENGTH_SHORT)
                                         .setActionTextColor(getResources().getColor(R.color.yellow500))
                                         .setAction("撤销", v -> {
                                             // TODO: 添加删除逻辑
@@ -358,6 +381,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                     Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // 播放动画 回馈后停止动画效果
                 switch (view.getId()) {
                     case R.id.btn_oo:
                         Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
@@ -411,28 +435,5 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                 ShareHelper.shareImage(getActivity(), type.equals("wuliao") ? "无聊图" : "妹子图", text, filePath);
             }
         }
-    }
-
-    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    void showWriteExternalStorage() {
-        // 已经允许读写SD卡
-        if (mTempTask != null) {
-            Observable.just(mTempTask)
-                    .map(ImageDownloader.getInstance()::doSavingImage)
-                    .compose(RxHelper.applySchedulers())
-                    .subscribe(localImage -> {
-                        Toast.makeText(getActivity(), "图片保存成功", Toast.LENGTH_SHORT).show();
-                        DBHelper.saveToRealm(getActivity(), localImage);
-                    }, throwable -> {
-                        Log.e("Error", throwable.toString());
-                    });
-            mTempTask = null;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PicFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
 }

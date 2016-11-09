@@ -108,7 +108,12 @@ public class ThumbTextButton extends ImageButton {
                 textPaint.setColor(FLOAT_TEXT_COLOR);
             else
                 textPaint.setColor(TEXT_COLOR);
-            canvas.drawText(textString, width - TEXT_RIGHT_PADDING - length, baseline, textPaint);
+            if (textString.length() > 2) {
+                // 超出两位数则画上99+
+                canvas.drawText("99+", width - TEXT_RIGHT_PADDING - length, baseline, textPaint);
+            } else {
+                canvas.drawText(textString, width - TEXT_RIGHT_PADDING - length, baseline, textPaint);
+            }
         }
         /* 动画 */
         for (AnimationParameters para : animationParameters) {

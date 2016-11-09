@@ -15,6 +15,10 @@ android {
         versionName "1.0"
     }
 
+    dataBinding {
+        enabled = true
+    }
+
     signingConfigs {
         config {
             keyAlias project.keyAlias
@@ -32,7 +36,7 @@ android {
             shrinkResources false
             signingConfig signingConfigs.config
             manifestPlaceholders = [
-                    UMENG_APPKEY: '562ec5f467e58e1679000f52',
+                    UMENG_APPKEY : '562ec5f467e58e1679000f52',
                     UMENG_CHANNEL: getChannel()
             ]
         }
@@ -44,7 +48,7 @@ android {
             signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             manifestPlaceholders = [
-                    UMENG_APPKEY: '562ec5f467e58e1679000f52',
+                    UMENG_APPKEY : '562ec5f467e58e1679000f52',
                     UMENG_CHANNEL: getChannel()
             ]
         }
@@ -54,15 +58,20 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     lintOptions {
         disable 'InvalidPackage'
     }
+
     sourceSets { main { assets.srcDirs = ['src/main/assets', 'src/main/assets/'] } }
+
     productFlavors {
+
     }
 }
 
@@ -105,34 +114,46 @@ dependencies {
     // Once
     compile 'com.jonathanfinerty.once:once:1.2.1'
 
-    // ButterKnife
+//    // ButterKnife
     compile "com.jakewharton:butterknife:${butterKnifeVersion}"
     apt "com.jakewharton:butterknife-compiler:${butterKnifeVersion}"
-    // OkHttp
+
+    // OkHttp & Retrofit
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    // Retrofit
     compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     compile "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
+
     // Permission Dispatcher
     compile "com.github.hotchemi:permissionsdispatcher:${permissionVersion}"
     apt "com.github.hotchemi:permissionsdispatcher-processor:${permissionVersion}"
+
     // RxJava
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
+
+    // 动画库
+    compile 'com.github.thunderrise:android-TNRAnimationHelper:-SNAPSHOT'
+
     // Material Dialog
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
+
     // Smooth Progressbar
     compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     compile 'com.github.castorflex.smoothprogressbar:library-circular:1.2.0'
+
     // Gson
     compile 'com.google.code.gson:gson:2.7'
+
     // U萌统计
     compile 'com.umeng.analytics:analytics:latest.integration'
+
     // Material Fav Button
     compile 'com.github.ivbaranov:materialfavoritebutton:0.1.2'
+
     // SpannableText
     compile 'com.ms-square:expandableTextView:0.1.4'
+
     // JAVA8 Stream
     compile 'com.annimon:stream:1.1.3'
 }
