@@ -3,6 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'realm-android'
 apply plugin: 'checkstyle'
 apply plugin: 'android-apt'
+apply plugin: 'im.fir.plugin.gradle'
 
 android {
     compileSdkVersion 25
@@ -73,6 +74,10 @@ android {
     productFlavors {
 
     }
+}
+
+fir {
+    apiToken '88f2f9a3ca9a001493aed0caba87a926'
 }
 
 def getChannel() {

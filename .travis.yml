@@ -14,3 +14,6 @@ before_script:
 
 script:
   - ./gradlew clean assembleDebug
+
+after_success:
+  - ./gradlew publishApkDebug
