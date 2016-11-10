@@ -9,7 +9,11 @@
         android:icon="@drawable/ic_favorite_outline_black_24dp"
         android:title="@string/sec_fav"/>
     <item
-        android:id="@+id/nav_setting"
-        android:icon="@drawable/ic_settings_black_24dp"
+        android:id="@+id/nav_downloading"
+        android:icon="@drawable/ic_download_black_24dp"
+        android:title="@string/sec_download"/>
+    <item
+        android:id="@+id/nav_mine"
+        android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/sec_setting"/>
 </menu>

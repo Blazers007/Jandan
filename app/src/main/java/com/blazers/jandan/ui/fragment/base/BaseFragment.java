@@ -7,14 +7,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.views.nightwatch.NightWatcher;
@@ -129,6 +127,9 @@ public abstract class BaseFragment extends Fragment {
     }
 
 
+    /**
+     * 初始化Toolbar与Title文字
+     * */
     protected void initToolbarAndLeftDrawer(Toolbar toolbar, String title) {
         initToolbarWithLeftDrawerAndMenu(toolbar, title, -1, null);
     }
@@ -145,7 +146,7 @@ public abstract class BaseFragment extends Fragment {
             toolbar.inflateMenu(menuId);
             toolbar.setOnMenuItemClickListener(listener);
         }
-        toolbar.setNavigationOnClickListener(v->Rxbus.getInstance().send(new DrawerEvent(GravityCompat.START, DrawerEvent.TOGGLE)));
+//        toolbar.setNavigationOnClickListener(v->Rxbus.getInstance().send(new DrawerEvent(GravityCompat.START, DrawerEvent.TOGGLE)));
         applyToolbarIconAndTheme();
     }
 

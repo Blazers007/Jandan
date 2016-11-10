@@ -6,9 +6,6 @@
         blz:wtg_day_bg="#fafafa"
         blz:wtg_night_bg="#4b4b4b"
         >
-    <include
-            android:id="@+id/toolbar_with_shadow"
-            layout="@layout/layout_toolbar_with_shadow"/>
     <ScrollView
             android:id="@+id/preferences"
             android:layout_marginTop="?actionBarSize"

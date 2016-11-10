@@ -43,8 +43,6 @@ public class SettingFragment extends BaseFragment {
     public static final String TAG = SettingFragment.class.getSimpleName();
     public static SettingFragment INSTANCE;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.set_night_mode)
     RelativeLayout setNightMode;
     @BindView(R.id.set_auto_gif)
@@ -75,7 +73,6 @@ public class SettingFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, root);
-        initToolbarAndLeftDrawer(toolbar, "设置");
         initSettingSegments();
         return root;
     }

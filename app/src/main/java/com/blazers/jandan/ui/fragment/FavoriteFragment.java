@@ -42,8 +42,7 @@ public class FavoriteFragment extends BaseFragment {
     //    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
     private static final String[] titles = new String[]{"新鲜事", "图片", "文字"};
     private static FavoriteFragment INSTANCE;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+
     @BindView(R.id.avatar)
     SimpleDraweeView avatar;
     @BindView(R.id.view_pager)
@@ -75,7 +74,6 @@ public class FavoriteFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_holder_favorite, container, false);
         ButterKnife.bind(this, root);
-        initToolbarAndLeftDrawer(toolbar, "收藏");
         initFavFragments();
         setupTabLayoutTheme();
         loadFavCounts();

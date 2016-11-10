@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
@@ -36,13 +35,11 @@ import butterknife.ButterKnife;
  * <p>
  * 主 Fragment负责管理四个阅读板块
  */
-public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemClickListener {
+public class ReadingFragment extends BaseFragment {
 
     public static final String TAG = ReadingFragment.class.getSimpleName();
     private static ReadingFragment INSTANCE;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
     @BindView(R.id.container)
@@ -68,7 +65,6 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
         ButterKnife.bind(this, root);
         initJandanFragments();
         setupTabLayoutTheme();
-        initToolbarWithLeftDrawerAndMenu(toolbar, "煎蛋阅读", R.menu.offline, this);
         return root;
     }
 
@@ -106,18 +102,6 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
     }
 
 
-    /**
-     * 点击Menu
-     */
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.offline) {
-            Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.OPEN_DRAWER_AND_LOCK));
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public void handleRxEvent(Object event) {
         if (event instanceof NightModeEvent) {
@@ -128,6 +112,7 @@ public class ReadingFragment extends BaseFragment implements Toolbar.OnMenuItemC
             setupTabLayoutTheme();
         }
     }
+
 
     /**
      * Adapter

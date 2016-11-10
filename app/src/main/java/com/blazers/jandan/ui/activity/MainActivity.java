@@ -4,20 +4,14 @@ import android.Manifest;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.annimon.stream.Stream;
@@ -25,7 +19,6 @@ import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
 import com.blazers.jandan.common.Static;
 import com.blazers.jandan.rxbus.event.CommentEvent;
-import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.rxbus.event.NightModeEvent;
 import com.blazers.jandan.rxbus.event.ViewArticleEvent;
 import com.blazers.jandan.rxbus.event.ViewImageEvent;
@@ -36,8 +29,6 @@ import com.blazers.jandan.ui.fragment.ReadingFragment;
 import com.blazers.jandan.ui.fragment.SettingFragment;
 import com.blazers.jandan.util.ClipboardHelper;
 import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.Unique;
-import com.facebook.drawee.view.SimpleDraweeView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,14 +52,15 @@ public class MainActivity extends BaseActivity {
     public static final String FAV_TAG = "fragment_fav";
     public static final String SETTING_TAG = "fragment_setting";
 
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.left_nav)
-    NavigationView navigationView;
+    @BindView(R.id.navigation_view)
+    BottomNavigationView mBottomNavigationView;
 
     /* 缓存变量 */
-    private int nowSelectedNavId = R.id.nav_jandan;
-    private ReadingFragment defaultFragment;
+    private Fragment mCurrentFragment;
+    private ReadingFragment mReadingFragment;
+    private FavoriteFragment mFavoriteFragment;
+    private SettingFragment mSettingFragment;
+
     /**
      * 处理回退键
      */
@@ -96,40 +88,19 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         /* RxBus 与Fragment中部分 进行代码整合  */
         setHasRegisterDemand(true);
-        /* 绑定离线下载服务 */
+        /* 绑定离线下载服务 todo: 重新整理结构 */
         startService(new Intent(this, OfflineDownloadService.class));
         bindService(new Intent(this, OfflineDownloadService.class), serviceConnection, BIND_AUTO_CREATE);
         /* 根据需要填充主界面所加载的Fragment */
-        initFragments();
-        /* 初始化Drawer */
-        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
-        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                // 打开时的时候如果SDK 》= 23 且没有允许权限 则询问权限
-                if (Build.VERSION.SDK_INT >= 23
-                        && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    MainActivityPermissionsDispatcher.showReadPhoneStateWithCheck(MainActivity.this);
-                }
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-
-            }
-
-            @Override
-            public void onDrawerStateChanged(int newState) {
-
-            }
-        });
-        /* 设置NavigationView */
-        setupNavigationView();
+        initFragmentsAndBottomNavigationView();
+        /**
+         *
+         * // 打开时的时候如果SDK 》= 23 且没有允许权限 则询问权限
+         if (Build.VERSION.SDK_INT >= 23
+         && checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+         MainActivityPermissionsDispatcher.showReadPhoneStateWithCheck(MainActivity.this);
+         }
+         */
         /* Setup Transition */
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            Fade fade = new Fade();
@@ -149,72 +120,82 @@ public class MainActivity extends BaseActivity {
     /**
      * 初始化各个Fragment 并采用懒加载的方式
      */
-    void initFragments() {
+    void initFragmentsAndBottomNavigationView() {
         /* 显示阅读Fragment */
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_wrapper, defaultFragment = ReadingFragment.getInstance(), JANDAN_TAG)
+                .add(R.id.fragment_wrapper, mCurrentFragment = ReadingFragment.getInstance(), JANDAN_TAG)
                 .commitAllowingStateLoss();
         /* 设置导航选中状态 */
-        navigationView.setCheckedItem(R.id.nav_jandan);
-        /* 设置监听 */
-        navigationView.setNavigationItemSelectedListener(menuItem -> {
-            if (menuItem.getItemId() != nowSelectedNavId) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_jandan:
-                        Stream.of(getSupportFragmentManager().getFragments())
-                                .filter(n -> n != null)
-                                .forEach(transaction::hide);
-                        transaction.show(defaultFragment);
-                        nowSelectedNavId = R.id.nav_jandan;
-                        break;
-                    case R.id.nav_fav:
-                        if (getSupportFragmentManager().findFragmentByTag(FAV_TAG) == null) {
-                            transaction.add(R.id.fragment_wrapper, FavoriteFragment.getInstance(), FAV_TAG);
-                        } else {
-                            Stream.of(getSupportFragmentManager().getFragments())
-                                    .filter(n -> n != null)
-                                    .forEach(transaction::hide);
-                            transaction.show(FavoriteFragment.getInstance());
-                        }
-                        nowSelectedNavId = R.id.nav_fav;
-                        // 提示 长按取消收藏
-                        if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
-                            Snackbar.make(navigationView, R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
-                                    .setActionTextColor(getResources().getColor(R.color.yellow500))
-                                    .setAction("不再提示", v -> {
-                                        Once.markDone(Static.HINT_FAV);
-                                    })
-                                    .show();
-                        }
-                        break;
-                    case R.id.nav_setting:
-                        if (getSupportFragmentManager().findFragmentByTag(SETTING_TAG) == null) {
-                            transaction.add(R.id.fragment_wrapper, SettingFragment.getInstance(), SETTING_TAG);
-                        } else {
-                            Stream.of(getSupportFragmentManager().getFragments())
-                                    .filter(n -> n != null)
-                                    .forEach(transaction::hide);
-                            // TODO http://stackoverflow.com/questions/22489703/trying-to-remove-fragment-from-view-gives-me-nullpointerexception-on-mnextanim
-                            transaction.show(SettingFragment.getInstance());
-                        }
-                        nowSelectedNavId = R.id.nav_setting;
-                        break;
-                }
-                transaction.commitAllowingStateLoss();
+        /**
+         * if (getSupportFragmentManager().findFragmentByTag(FAV_TAG) == null) {
+         transaction.add(R.id.fragment_wrapper, FavoriteFragment.getInstance(), FAV_TAG);
+         } else {
+         Stream.of(getSupportFragmentManager().getFragments())
+         .filter(n -> n != null)
+         .forEach(transaction::hide);
+         transaction.show(FavoriteFragment.getInstance());
+         }
+         nowSelectedNavId = R.id.nav_fav;
+         // 提示 长按取消收藏
+         if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
+         Snackbar.make(navigationView, R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
+         .setActionTextColor(getResources().getColor(R.color.yellow500))
+         .setAction("不再提示", v -> {
+         Once.markDone(Static.HINT_FAV);
+         })
+         .show();
+         }
+         *
+         *
+         */
+        mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.nav_jandan:
+                    switchCurrentFragment(JANDAN_TAG, ReadingFragment.getInstance());
+                    break;
+                case R.id.nav_fav:
+                    switchCurrentFragment(FAV_TAG, FavoriteFragment.getInstance());
+                    if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
+                        Snackbar.make(findViewById(R.id.coord), R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
+                                .setActionTextColor(getResources().getColor(R.color.yellow500))
+                                .setAction("不再提示", v -> {
+                                    Once.markDone(Static.HINT_FAV);
+                                })
+                                .show();
+                    }
+                    break;
+                case R.id.nav_downloading:
+                    break;
+                case R.id.nav_mine:
+                    switchCurrentFragment(SETTING_TAG, SettingFragment.getInstance());
+                    break;
             }
-            drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
+
     }
+
+    private void switchCurrentFragment(String tag, Fragment targetFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Stream.of(getSupportFragmentManager().getFragments())
+                .filter(n -> n != null)
+                .forEach(transaction::hide);
+        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+            transaction.add(R.id.fragment_wrapper, targetFragment, tag);
+        } else {
+            transaction.show(targetFragment);
+        }
+        transaction.commit();
+    }
+
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     void showReadPhoneState() {
         Toast.makeText(this, "已经允许,马上来新的头像", Toast.LENGTH_SHORT).show();
         // 权限已经被允许
-        ((SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.user_head_round))
-                .setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
+//        ((SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.user_head_round))
+//                .setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
     }
 
     @OnShowRationale(Manifest.permission.READ_PHONE_STATE)
@@ -233,47 +214,14 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    /**
-     * Setup NavigationView Background Color
-     */
-    void setupNavigationView() {
-        if (isNowNightModeOn) {
-            navigationView.setBackgroundColor(Color.rgb(44, 44, 44));
-        } else {
-            navigationView.setBackgroundColor(Color.rgb(250, 250, 250));
-        }
-        // 如果是低版本则直接显示头像
-        if (Build.VERSION.SDK_INT < 23) {
-            ((SimpleDraweeView) navigationView.getHeaderView(0).findViewById(R.id.user_head_round))
-                    .setImageURI(Uri.parse(Unique.generateGavatar(this, null)));
-        }
-    }
-
     @Override
     public void onBackPressed() {
-        // 1 若打开了右侧Drawer关闭之
-        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.closeDrawer(GravityCompat.END);
-            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END);
+        // 1 若当前的Fragment的BackStack回退栈有叠加的Fragment则退出之
+        if (mCurrentFragment != null && mCurrentFragment.getChildFragmentManager().getBackStackEntryCount() > 0) {
+            mCurrentFragment.getChildFragmentManager().popBackStack();
             return;
         }
-        // 2 若当前BackStack回退栈有Fragment 退出之
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-            return;
-        }
-        if (nowSelectedNavId != R.id.nav_jandan) {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
-                if (fragment != null)
-                    transaction.hide(fragment);
-            }
-            transaction.show(defaultFragment).commitAllowingStateLoss();
-            nowSelectedNavId = R.id.nav_jandan;
-            navigationView.setCheckedItem(R.id.nav_jandan);
-            return;
-        }
-        // 3 点击退出
+        // 2 点击退出
         if (System.currentTimeMillis() - lastClickTime > 2000) {
             Toast.makeText(this, "再次点击退出~", Toast.LENGTH_SHORT).show();
             lastClickTime = System.currentTimeMillis();
@@ -307,28 +255,6 @@ public class MainActivity extends BaseActivity {
         } else if (event instanceof NightModeEvent) {
             isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
             // 处理Activity内部的相关View  目前暂无
-        } else if (event instanceof DrawerEvent) {
-            DrawerEvent drawerEvent = (DrawerEvent) event;
-            switch (drawerEvent.messageType) {
-                case DrawerEvent.TOGGLE:
-                    if (drawerLayout.isDrawerOpen(drawerEvent.gravity))
-                        drawerLayout.closeDrawer(drawerEvent.gravity);
-                    else
-                        drawerLayout.openDrawer(drawerEvent.gravity);
-                    break;
-                case DrawerEvent.OPEN_DRAWER:
-                    drawerLayout.openDrawer(drawerEvent.gravity);
-                    break;
-                case DrawerEvent.OPEN_DRAWER_AND_LOCK:
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_OPEN, drawerEvent.gravity);
-                    break;
-                case DrawerEvent.CLOSE_DRAWER:
-                    drawerLayout.closeDrawer(drawerEvent.gravity);
-                    break;
-                case DrawerEvent.CLOSE_DRAWER_AND_LOCK:
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, drawerEvent.gravity);
-                    break;
-            }
         }
     }
 

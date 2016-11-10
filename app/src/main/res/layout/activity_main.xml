@@ -1,34 +1,39 @@
-<android.support.v4.widget.DrawerLayout
+<android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/drawer_layout"
+        android:id="@+id/coord"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activity.MainActivity"
         android:fitsSystemWindows="true"
-        ><!-- Fragments container-->
+        >
+    <!-- Fragment State -->
     <FrameLayout
-            android:id="@+id/fragment_wrapper"
+        android:id="@+id/fragment_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+        <View
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    <!-- Fragments container end-->
-    <!-- Navigation -->
-    <android.support.design.widget.NavigationView
-            android:id="@+id/left_nav"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:headerLayout="@layout/partial_left_menu_header"
-            app:menu="@menu/left_drawer"
-            />
-    <!--app:itemTextColor="#fafafa"-->
-    <!--  Download -->
-    <fragment
-            class="com.blazers.jandan.ui.fragment.RightDownloadingFragment"
-            android:id="@+id/right_downloading"
-            android:layout_gravity="end"
+            android:layout_height="4dp"
+            android:background="@drawable/shadow_bottom_to_top_light"/>
+        <!-- Bottom Navigation Menu Scroll Up Hide & Scroll Down Show -->
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/navigation_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#ffffff"
+            app:itemIconTint="@drawable/selector_bottom_menu_item_text_color"
+            app:itemTextColor="@drawable/selector_bottom_menu_item_text_color"
+            app:menu="@menu/bottom_navigation"
+            app:layout_scrollFlags="scroll|enterAlways"
             />
-</android.support.v4.widget.DrawerLayout>
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

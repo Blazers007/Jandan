@@ -14,6 +14,7 @@
     <!-- NAV -->
     <string name="sec_jandan">煎蛋</string>
     <string name="sec_fav">收藏</string>
+    <string name="sec_download">离线</string>
     <string name="sec_setting">设置</string>
 
     <!-- 煎蛋 -->

@@ -32,7 +32,6 @@ import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.pojo.count.Count;
 import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.DrawerEvent;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
@@ -174,16 +173,10 @@ public class RightDownloadingFragment extends Fragment {
                     toast += "妹子图,";
                 }
                 Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
-                Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.CLOSE_DRAWER_AND_LOCK));
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    @OnClick(R.id.close)
-    public void closeDrawer(){
-        Rxbus.getInstance().send(new DrawerEvent(GravityCompat.END, DrawerEvent.CLOSE_DRAWER_AND_LOCK));
     }
 
     /**

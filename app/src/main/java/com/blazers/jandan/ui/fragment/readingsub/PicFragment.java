@@ -2,7 +2,6 @@ package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.databinding.BindingAdapter;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;

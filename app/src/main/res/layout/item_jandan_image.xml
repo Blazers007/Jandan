@@ -1,152 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<com.blazers.jandan.views.nightwatch.WatchRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:blz="http://schemas.android.com/apk/res-auto"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <data/>
-
-    <com.blazers.jandan.views.nightwatch.WatchRelativeLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    blz:wtg_day_bg="#fff"
+    blz:wtg_night_bg="#4b4b4b"
+    >
+    <TextView
+        android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        blz:wtg_day_bg="#fff"
+        android:layout_below="@+id/content"
+        android:layout_marginTop="8dp"
+        tools:text="@string/longText"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="8dp"
+        style="@style/CommentTextStyle"
+        />
+    <com.blazers.jandan.views.AutoScaleFrescoView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        fresco:actualImageScaleType="fitCenter"
+        fresco:viewAspectRatio="1.418"
+        android:layout_below="@+id/author"
+        android:layout_marginTop="12dp"
+        />
+    <!-- Title and time-->
+    <com.blazers.jandan.views.nightwatch.WatchTextView
+        android:id="@+id/author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@Blazers"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
+        blz:wtv_day_textColor="#222"
+        blz:wtv_night_textColor="#dfdfdf"
+        />
+    <com.blazers.jandan.views.nightwatch.WatchTextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="3小时前"
+        android:layout_toRightOf="@+id/author"
+        android:layout_marginLeft="12dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/author"
+        blz:wtv_day_textColor="#666"
+        blz:wtv_night_textColor="#ccc"
+        />
+    <com.blazers.jandan.views.ThumbTextButton
+        style="@style/ThumbButtonBase"
+        android:id="@+id/btn_oo"
+        android:layout_below="@+id/divider_upper"
+        android:src="@drawable/selector_thumb_up"
+        app:ttb_floatTextColor="@color/thumbUp"
+        android:layout_marginLeft="8dp"
+        />
+    <com.blazers.jandan.views.ThumbTextButton
+        style="@style/ThumbDownSpec"
+        android:id="@+id/btn_xx"
+        app:ttb_floatTextColor="@color/thumbDown"
+        android:layout_toRightOf="@+id/btn_oo"
+        android:layout_alignTop="@+id/btn_oo"
+        android:src="@drawable/selector_thumb_down"
+        android:layout_marginLeft="8dp"
+        />
+    <com.blazers.jandan.views.ThumbTextButton
+        style="@style/ThumbDownSpec"
+        android:id="@+id/btn_comment"
+        android:layout_toRightOf="@+id/btn_xx"
+        android:layout_alignTop="@+id/btn_oo"
+        android:src="@drawable/selector_comment"
+        android:layout_marginLeft="8dp"
+        />
+    <com.github.ivbaranov.mfb.MaterialFavoriteButton
+        android:id="@+id/btn_fav"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:layout_alignBottom="@id/btn_oo"
+        app:mfb_padding="16"
+        app:mfb_animate_favorite="true"
+        app:mfb_animate_unfavorite="false"
+        app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
+        app:mfb_not_favorite_image="@mipmap/ic_favorite_grey600_16dp"
+        />
+    <ImageButton
+        style="@style/ImageButton40Base"
+        android:id="@+id/btn_share"
+        android:src="@drawable/selector_share"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        />
+    <!-- Type Hint -->
+    <ImageView
+        android:id="@+id/type_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_gif_corner_24dp"
+        android:layout_alignTop="@id/content"
+        android:layout_alignRight="@id/content"
+        android:layout_marginTop="12dp"
+        android:layout_marginRight="8dp"
+        />
+    <!-- Divider -->
+    <com.blazers.jandan.views.nightwatch.WachView
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_alignParentTop="true"
+        blz:wtg_day_bg="#e5e7e9"
+        blz:wtg_night_bg="#616161"
+        />
+    <com.blazers.jandan.views.nightwatch.WachView
+        android:id="@+id/divider_upper"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@+id/text"
+        blz:wtg_day_bg="#f3f3f3"
         blz:wtg_night_bg="#4b4b4b"
-        >
-
-        <TextView
-            style="@style/CommentTextStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="8dp"
-            tools:text="@string/longText"
-            />
-
-        <com.blazers.jandan.views.AutoScaleFrescoView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/author"
-            android:layout_marginTop="12dp"
-            fresco:actualImageScaleType="fitCenter"
-            fresco:viewAspectRatio="1.418"
-            />
-        <!-- Title and time-->
-        <com.blazers.jandan.views.nightwatch.WatchTextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="12dp"
-            blz:wtv_day_textColor="#222"
-            blz:wtv_night_textColor="#dfdfdf"
-            tools:text="@Blazers"
-            />
-
-        <com.blazers.jandan.views.nightwatch.WatchTextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/author"
-            android:layout_marginLeft="12dp"
-            android:layout_toRightOf="@+id/author"
-            android:gravity="center"
-            blz:wtv_day_textColor="#666"
-            blz:wtv_night_textColor="#ccc"
-            tools:text="3小时前"
-            />
-
-        <com.blazers.jandan.views.ThumbTextButton
-            android:id="@+id/btn_oo"
-            style="@style/ThumbButtonBase"
-            android:layout_below="@+id/divider_upper"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/selector_thumb_up"
-            app:ttb_floatTextColor="@color/thumbUp"
-            />
-
-        <com.blazers.jandan.views.ThumbTextButton
-            android:id="@+id/btn_xx"
-            style="@style/ThumbDownSpec"
-            android:layout_alignTop="@+id/btn_oo"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/btn_oo"
-            android:src="@drawable/selector_thumb_down"
-            app:ttb_floatTextColor="@color/thumbDown"
-            />
-
-        <com.blazers.jandan.views.ThumbTextButton
-            android:id="@+id/btn_comment"
-            style="@style/ThumbDownSpec"
-            android:layout_alignTop="@+id/btn_oo"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/btn_xx"
-            android:src="@drawable/selector_comment"
-            />
-
-        <com.github.ivbaranov.mfb.MaterialFavoriteButton
-            android:id="@+id/btn_fav"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignBottom="@id/btn_oo"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            app:mfb_animate_favorite="true"
-            app:mfb_animate_unfavorite="false"
-            app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
-            app:mfb_not_favorite_image="@mipmap/ic_favorite_grey600_16dp"
-            app:mfb_padding="16"
-            />
-
-        <ImageButton
-            android:id="@+id/btn_share"
-            style="@style/ImageButton40Base"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/selector_share"
-            />
-        <!-- Type Hint -->
-        <ImageView
-            android:id="@+id/type_hint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@id/content"
-            android:layout_alignTop="@id/content"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="12dp"
-            android:src="@mipmap/ic_gif_corner_24dp"
-            />
-        <!-- Divider -->
-        <com.blazers.jandan.views.nightwatch.WachView
-            android:id="@+id/top"
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:layout_alignParentTop="true"
-            blz:wtg_day_bg="#e5e7e9"
-            blz:wtg_night_bg="#616161"
-            />
-
-        <com.blazers.jandan.views.nightwatch.WachView
-            android:id="@+id/divider_upper"
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:layout_below="@+id/text"
-            blz:wtg_day_bg="#f3f3f3"
-            blz:wtg_night_bg="#4b4b4b"
-            />
-
-        <com.blazers.jandan.views.nightwatch.WachView
-            android:id="@+id/divider_lower"
-            android:layout_width="match_parent"
-            android:layout_height="2px"
-            android:layout_below="@+id/btn_oo"
-            blz:wtg_day_bg="#e5e7e9"
-            blz:wtg_night_bg="#616161"
-            />
-    </com.blazers.jandan.views.nightwatch.WatchRelativeLayout>
-</layout>
+        />
+    <com.blazers.jandan.views.nightwatch.WachView
+        android:id="@+id/divider_lower"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@+id/btn_oo"
+        blz:wtg_day_bg="#e5e7e9"
+        blz:wtg_night_bg="#616161"
+        />
+</com.blazers.jandan.views.nightwatch.WatchRelativeLayout>
