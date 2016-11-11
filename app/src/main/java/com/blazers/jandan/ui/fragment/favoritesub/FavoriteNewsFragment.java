@@ -16,10 +16,10 @@ import android.view.ViewGroup;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavNews;
 import com.blazers.jandan.models.db.sync.NewsPost;
-import com.blazers.jandan.ui.activity.NewsReadActivity;
+import com.blazers.jandan.ui.activity.ArticleReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
-import com.blazers.jandan.views.VerticalDividerItemDecoration;
-import com.blazers.jandan.views.nightwatch.WatchTextView;
+import com.blazers.jandan.ui.widgets.VerticalDividerItemDecoration;
+import com.blazers.jandan.ui.widgets.nightwatch.WatchTextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
                 itemView.setOnClickListener(v -> {
                     NewsPost post = list.get(getAdapterPosition()).getNewsPost();
                     startActivity(
-                            new Intent(getActivity(), NewsReadActivity.class)
+                            new Intent(getActivity(), ArticleReadActivity.class)
                                     .putExtra("id", post.getId())
                                     .putExtra("title", post.getTitle())
                     );

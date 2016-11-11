@@ -26,6 +26,9 @@ import rx.Observable;
 
 /**
  * Created by Blazers on 2015/10/22.
+ *
+ * TODO: 重构下载服务  下载结束后 自动结束Service 并提供 失败下载重试的操作！
+ *
  */
 public class OfflineDownloadService extends Service {
 
@@ -129,9 +132,8 @@ public class OfflineDownloadService extends Service {
                                         pendingIntent
                                 );
                                 DBHelper.saveToRealm(realm, localImage);
-                            }, throwable -> {
-                                Log.e("Error", throwable.toString());
-                            }, () -> {
+                            }, throwable -> Log.e("Error", throwable.toString()),
+                            () -> {
                                 Log.i(">>>>>下载全部完毕<<<<<", TimeHelper.getTime());
                                 NotificationHelper.showOfflineNotification(
                                         OfflineDownloadService.this,
@@ -154,15 +156,9 @@ public class OfflineDownloadService extends Service {
                     .flatMap(Parser.getInstance()::getJokeData)
                     .compose(RxHelper.applySchedulers())
                     .subscribe(
-                            list -> {
-                                DBHelper.saveToRealm(OfflineDownloadService.this, list);
-                            },
-                            throwable -> {
-                                Log.e("Error Joke", throwable.toString());
-                            },
-                            () -> {
-                                Log.e("离线端子", "全部下载完毕");
-                            }
+                            list -> DBHelper.saveToRealm(OfflineDownloadService.this, list),
+                            throwable -> Log.e("Error Joke", throwable.toString()),
+                            () -> Log.e("离线端子", "全部下载完毕")
                     );
         }
     };

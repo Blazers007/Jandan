@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
-            android:name=".app.JandanApp"
+            android:name=".JandanApp"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -42,13 +42,13 @@
         </activity>
         <!-- Reading News -->
         <activity
-                android:name=".ui.activity.NewsReadActivity"
+                android:name=".ui.activity.ArticleReadActivity"
                 android:label="@string/title_activity_news_read"
                 android:screenOrientation="portrait"
                 android:theme="@style/ReadingModeStyle">
         </activity>
         <!-- View Image-->
-        <activity android:name=".ui.activity.ImageViewerActivity"
+        <activity android:name=".ui.activity.ImageInspectActivity"
                   android:screenOrientation="portrait"
                   android:theme="@style/ImageViewStyle"
                 />

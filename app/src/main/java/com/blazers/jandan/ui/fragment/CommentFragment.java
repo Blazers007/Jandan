@@ -18,11 +18,11 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.models.pojo.comment.CommentPost;
 import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.CommentEvent;
+import com.blazers.jandan.util.rxbus.Rxbus;
+import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.views.QuoteView;
+import com.blazers.jandan.ui.widgets.QuoteView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 
@@ -73,7 +73,7 @@ public class CommentFragment extends BaseFragment {
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitle("评论");
-        toolbar.setNavigationOnClickListener(v -> Rxbus.getInstance().send(new CommentEvent(-1)));
+        toolbar.setNavigationOnClickListener(v -> Rxbus.getInstance().send(new ViewCommentEvent(-1)));
 
         hint.setVisibility(View.GONE);
 

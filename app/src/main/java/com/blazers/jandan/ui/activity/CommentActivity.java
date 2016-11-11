@@ -21,7 +21,8 @@ import com.blazers.jandan.models.pojo.comment.Comments;
 import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.views.QuoteView;
+import com.blazers.jandan.ui.widgets.QuoteView;
+import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
 import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
@@ -57,6 +58,11 @@ public class CommentActivity extends BaseActivity {
     private long commentId;
 
     @Override
+    public void initPresenter() {
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
@@ -64,7 +70,7 @@ public class CommentActivity extends BaseActivity {
         // 设置下拉刷新
         swipeRefreshLayout.setOnRefreshListener(() -> loadCommentById(commentId));
         // 获取数据
-        loadCommentById(commentId = getIntent().getLongExtra("commentId", -1));
+        loadCommentById(commentId = ((ViewCommentEvent) getIntent().getSerializableExtra(ViewCommentEvent.KEY)).id);
     }
 
     void loadCommentById(long id) {

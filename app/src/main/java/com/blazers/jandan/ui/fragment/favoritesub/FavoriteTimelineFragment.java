@@ -15,7 +15,7 @@ import com.blazers.jandan.models.pojo.timeline.Timeline;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.views.TimeLineView;
+import com.blazers.jandan.ui.widgets.TimeLineView;
 import io.realm.Sort;
 
 import java.util.ArrayList;

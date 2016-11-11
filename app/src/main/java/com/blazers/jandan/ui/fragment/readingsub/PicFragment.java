@@ -24,9 +24,9 @@ import com.blazers.jandan.models.db.sync.ImagePost;
 import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.CommentEvent;
-import com.blazers.jandan.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.util.rxbus.Rxbus;
+import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
+import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
@@ -35,8 +35,8 @@ import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.views.AutoScaleFrescoView;
-import com.blazers.jandan.views.ThumbTextButton;
+import com.blazers.jandan.ui.widgets.AutoScaleFrescoView;
+import com.blazers.jandan.ui.widgets.ThumbTextButton;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.ArrayList;
@@ -409,7 +409,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
             @OnClick(R.id.btn_comment)
             public void showComment() {
-                Rxbus.getInstance().send(new CommentEvent(imageArrayList.get(getAdapterPosition()).holder.getComment_ID()));
+                Rxbus.getInstance().send(new ViewCommentEvent(imageArrayList.get(getAdapterPosition()).holder.getComment_ID()));
             }
 
             /**

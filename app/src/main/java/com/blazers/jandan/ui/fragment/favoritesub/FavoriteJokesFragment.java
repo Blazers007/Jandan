@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.db.local.LocalFavJokes;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
-import com.blazers.jandan.views.VerticalDividerItemDecoration;
+import com.blazers.jandan.ui.widgets.VerticalDividerItemDecoration;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.ArrayList;

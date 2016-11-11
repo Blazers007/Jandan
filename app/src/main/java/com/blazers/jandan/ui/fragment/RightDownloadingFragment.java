@@ -9,16 +9,13 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.BindViews;
@@ -28,15 +25,12 @@ import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.blazers.jandan.IOfflineDownloadInterface;
 import com.blazers.jandan.R;
 import com.blazers.jandan.models.pojo.count.Count;
-import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.views.InfiniteSeekBar;
-import com.blazers.jandan.views.SelectableTextView;
+import com.blazers.jandan.ui.widgets.InfiniteSeekBar;
+import com.blazers.jandan.ui.widgets.SelectableTextView;
 
 import java.util.List;
 
@@ -150,33 +144,32 @@ public class RightDownloadingFragment extends Fragment {
      * 开始离线阅读
      * */
     private void startDownload() {
-        IOfflineDownloadInterface binder = ((MainActivity) getActivity()).getOfflineBinder();
-        if (binder != null) {
-            try {
-                int page = pageSeekBar.getSelectedValue();
-                String toast = "";
-                // 判断
-                if (segments.get(0).isSegSelected()) {
-                    binder.startDownloadNews(1, page);
-                    toast += "新鲜事,";
-                }
-                if (segments.get(1).isSegSelected()) {
-                    binder.startDownloadPicture("wuliao",1, page);
-                    toast += "无聊图,";
-                }
-                if (segments.get(2).isSegSelected()) {
-                    binder.startDownloadJokes(1, page);
-                    toast += "段子,";
-                }
-                if (segments.get(3).isSegSelected()) {
-                    binder.startDownloadPicture("meizi", 1, page);
-                    toast += "妹子图,";
-                }
-                Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
+//        if (binder != null) {
+//            try {
+//                int page = pageSeekBar.getSelectedValue();
+//                String toast = "";
+//                // 判断
+//                if (segments.get(0).isSegSelected()) {
+//                    binder.startDownloadNews(1, page);
+//                    toast += "新鲜事,";
+//                }
+//                if (segments.get(1).isSegSelected()) {
+//                    binder.startDownloadPicture("wuliao",1, page);
+//                    toast += "无聊图,";
+//                }
+//                if (segments.get(2).isSegSelected()) {
+//                    binder.startDownloadJokes(1, page);
+//                    toast += "段子,";
+//                }
+//                if (segments.get(3).isSegSelected()) {
+//                    binder.startDownloadPicture("meizi", 1, page);
+//                    toast += "妹子图,";
+//                }
+//                Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**

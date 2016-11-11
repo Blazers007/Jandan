@@ -1,133 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
+    <!--  android:fitsSystemWindows="true"  TODO: 探求 -->
     <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:orientation="vertical">
-
-        <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/collapse_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
-                app:titleEnabled="false"
-                app:contentScrim="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways">
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:titleEnabled="false">
             <!-- Extras -->
             <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#fafafa"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7"
+                >
+
+                <com.facebook.drawee.view.SimpleDraweeView
+                    android:id="@+id/avatar"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_margin="12dp"
+                    />
+
+                <TextView
+                    android:id="@+id/user_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="#fafafa"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.7"
-                    android:paddingTop="?attr/actionBarSize"
-                    >
-                <com.facebook.drawee.view.SimpleDraweeView
-                        android:id="@+id/avatar"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_margin="12dp"
-                        />
-                <TextView
-                        android:id="@+id/user_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/avatar"
-                        android:layout_alignTop="@id/avatar"
-                        android:layout_marginLeft="8dp"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#030303"
-                        android:text="Blazers"
-                        />
+                    android:layout_alignTop="@id/avatar"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/avatar"
+                    android:text="Blazers"
+                    android:textColor="#030303"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    />
+
                 <com.zhy.android.percent.support.PercentRelativeLayout
-                        android:layout_alignLeft="@id/user_name"
-                        android:layout_below="@id/user_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        >
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@id/user_name"
+                    android:layout_below="@id/user_name"
+                    >
                     <!-- Title -->
                     <TextView
-                            style="@style/FavSegmentTitle"
-                            android:id="@+id/fav_news"
-                            android:text="· 新鲜事"
-                            />
+                        android:id="@+id/fav_news"
+                        style="@style/FavSegmentTitle"
+                        android:text="· 新鲜事"
+                        />
+
                     <TextView
-                            style="@style/FavSegmentTitle"
-                            android:id="@+id/fav_images"
-                            android:layout_toRightOf="@id/fav_news"
-                            android:text="· 图片"
-                            />
+                        android:id="@+id/fav_images"
+                        style="@style/FavSegmentTitle"
+                        android:layout_toRightOf="@id/fav_news"
+                        android:text="· 图片"
+                        />
+
                     <TextView
-                            style="@style/FavSegmentTitle"
-                            android:id="@+id/fav_jokes"
-                            android:layout_toRightOf="@id/fav_images"
-                            android:text="· 段子"
-                            />
+                        android:id="@+id/fav_jokes"
+                        style="@style/FavSegmentTitle"
+                        android:layout_toRightOf="@id/fav_images"
+                        android:text="· 段子"
+                        />
                     <!-- Count -->
                     <TextView
-                            style="@style/FavSegmentText"
-                            android:id="@+id/fav_news_count"
-                            android:layout_below="@id/fav_news"
-                            android:textSize="15sp" android:textStyle="bold"/>
+                        android:id="@+id/fav_news_count"
+                        style="@style/FavSegmentText"
+                        android:layout_below="@id/fav_news"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
                     <TextView
-                            style="@style/FavSegmentText"
-                            android:id="@+id/fav_images_count"
-                            android:layout_below="@id/fav_news"
-                            android:layout_toRightOf="@id/fav_news_count"
-                            android:textSize="15sp" android:textStyle="bold"/>
+                        android:id="@+id/fav_images_count"
+                        style="@style/FavSegmentText"
+                        android:layout_below="@id/fav_news"
+                        android:layout_toRightOf="@id/fav_news_count"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
+
                     <TextView
-                            style="@style/FavSegmentText"
-                            android:id="@+id/fav_jokes_count"
-                            android:layout_below="@id/fav_news"
-                            android:layout_toRightOf="@id/fav_images_count"
-                            android:textSize="15sp" android:textStyle="bold"/>
+                        android:id="@+id/fav_jokes_count"
+                        style="@style/FavSegmentText"
+                        android:layout_below="@id/fav_news"
+                        android:layout_toRightOf="@id/fav_images_count"
+                        android:textSize="15sp"
+                        android:textStyle="bold"/>
                 </com.zhy.android.percent.support.PercentRelativeLayout>
             </RelativeLayout>
-            <!--  Toolbar -->
-            <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:minHeight="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"
-                    />
         </android.support.design.widget.CollapsingToolbarLayout>
-        <!-- -->
+        <!-- Tablayout -->
         <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                app:tabIndicatorColor="#434343"
-                app:tabTextColor="#989898"
-                app:tabSelectedTextColor="#343434"
-                app:tabIndicatorHeight="4dp"
-                app:tabTextAppearance="@style/TabTextBlack"
-                />
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabIndicatorColor="#434343"
+            app:tabIndicatorHeight="4dp"
+            app:tabSelectedTextColor="#343434"
+            app:tabTextAppearance="@style/TabTextBlack"
+            app:tabTextColor="#989898"
+            />
     </android.support.design.widget.AppBarLayout>
     <!--  View Pager -->
     <android.support.v4.view.ViewPager
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <!-- FAB -->
-    <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/fab_fav"-->
-            <!--android:scaleX="0"-->
-            <!--android:scaleY="0"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--app:layout_anchor="@id/view_pager"-->
-            <!--app:layout_anchorGravity="bottom|right|end"-->
-            <!--android:src="@drawable/ic_delete_white_24dp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginBottom="16dp"/>-->
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </android.support.design.widget.CoordinatorLayout>

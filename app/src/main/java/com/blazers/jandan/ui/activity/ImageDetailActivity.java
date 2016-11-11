@@ -10,11 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.views.AutoScaleFrescoView;
+import com.blazers.jandan.ui.widgets.AutoScaleFrescoView;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-    <com.blazers.jandan.views.ObservableWebView
+    <com.blazers.jandan.ui.widgets.ObservableWebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

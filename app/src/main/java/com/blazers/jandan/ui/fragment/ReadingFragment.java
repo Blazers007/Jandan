@@ -7,23 +7,19 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.rxbus.Rxbus;
-import com.blazers.jandan.rxbus.event.NightModeEvent;
+import com.blazers.jandan.util.rxbus.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
 import com.blazers.jandan.ui.fragment.readingsub.NewsFragment;
 import com.blazers.jandan.ui.fragment.readingsub.PicFragment;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.views.nightwatch.NightWatcher;
+import com.blazers.jandan.ui.widgets.nightwatch.NightWatcher;
 
 import java.util.ArrayList;
 

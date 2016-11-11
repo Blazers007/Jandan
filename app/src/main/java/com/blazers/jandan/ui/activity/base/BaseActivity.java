@@ -6,51 +6,50 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.blazers.jandan.rxbus.Rxbus;
+import com.annimon.stream.Stream;
+import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.util.Dppx;
-import com.blazers.jandan.util.SPHelper;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
-import io.realm.Realm;
-import rx.Subscription;
 
 /**
  * Created by Blazers on 2015/8/31.
  */
 @SuppressLint("Registered")
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
 
     /* Vars */
-    protected Toolbar toolbar;
-    /* Vars */
-    protected boolean isNowNightModeOn;
-    protected Realm realm;
+    private Toolbar toolbar;
+
     private ViewGroup toolbarWithShadow;
+
+    protected T mPresenter;
+
+    //        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
+
     /**
-     * 注册事件机制
-     * <p>
-     * 通过此方法则采用自动注册方式 否则需要自己 在 Resume与Pause中注册 解注册
+     * 初始化Presenter
      */
-    private boolean isRegisterEventDemand = false;
-    private Subscription subscription;
+    public abstract void initPresenter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
-        /* 读取模式 */
-        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
+        initPresenter();
     }
 
     /**
      * 自动Bind
+     *
      * @param layoutResID 布局资源
      */
     @Override
@@ -59,7 +58,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    /* Init functions */
+    /**
+     * 初始化Toolbar
+     *
+     * @param holder
+     * @param toolbar
+     * @param type
+     */
     protected void initToolbarByTypeWithShadow(@Nullable ViewGroup holder, Toolbar toolbar, ToolbarType type) {
         this.toolbarWithShadow = holder;
         this.toolbar = toolbar;
@@ -78,17 +83,52 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 设置Toolbar文字
+     *
+     * @param titleText
+     */
     public void setToolbarTitle(String titleText) {
-        if (null != toolbar && null != getSupportActionBar() ) {
+        if (null != toolbar && null != getSupportActionBar()) {
             getSupportActionBar().setTitle(titleText);
         }
     }
 
+    /**
+     * 获取Toolbar
+     *
+     * @return
+     */
     public Toolbar getToolbar() {
         return toolbar;
     }
 
-    /* Screen Display APIs */
+
+    /**
+     * 切换 Fragment
+     *
+     * @param wrapperId      容器Id
+     * @param tag            Fragment对应的Tag
+     * @param targetFragment Fragment对象
+     */
+    protected void switchCurrentFragment(int wrapperId, String tag, Fragment targetFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        Stream.of(getSupportFragmentManager().getFragments())
+                .filter(n -> n != null)
+                .forEach(transaction::hide);
+        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
+            transaction.add(wrapperId, targetFragment, tag);
+        } else {
+            transaction.show(targetFragment);
+        }
+        transaction.commit();
+    }
+
+    /**
+     * 设置视图的浮动模式
+     *
+     * @param enabled
+     */
     public void setContentFloatingModeEnabled(boolean enabled) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             /* 首先设置内容浮动在status bar navigation bar 之后 */
@@ -106,6 +146,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * TODO
+     */
     public void setNormalWindow() {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
@@ -116,6 +159,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 
+    /**
+     * TODO
+     */
     public void showSystemUI(Toolbar toolbar) {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
@@ -134,6 +180,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * TODO
+     */
     public void setFullWindow() {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
@@ -146,6 +195,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 
+    /**
+     * TODO
+     */
     public void hideSystemUI(Toolbar toolbar) {
         int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
@@ -199,56 +251,25 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 生命周期相关
+     * ======================================== Life Cycle ======================================
      */
-
     @Override
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
-        if (isRegisterEventDemand)
-            registerEventReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
-        if (isRegisterEventDemand)
-            unregisterEventReceiver();
-    }
-
-    public void setHasRegisterDemand(boolean has) {
-        isRegisterEventDemand = has;
-    }
-
-    /**
-     * 注册事件
-     */
-    public void registerEventReceiver() {
-        subscription = Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
-    }
-
-    /**
-     * 解注事件
-     */
-    public void unregisterEventReceiver() {
-        if (null != subscription)
-            subscription.unsubscribe();
-    }
-
-    /**
-     * 处理时间
-     */
-    public void handleRxEvent(Object event) {
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (null != realm) {
-            realm.close();
+        if (mPresenter != null) {
+            mPresenter.release();
         }
     }
 
