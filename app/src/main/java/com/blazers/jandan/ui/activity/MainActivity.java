@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.ViewPropertyAnimator;
@@ -43,6 +44,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     public static final String FAV_TAG = "fragment_fav";
     public static final String SETTING_TAG = "fragment_setting";
 
+    @BindView(R.id.coord)
+    CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.navigation_view)
     BottomNavigationView mBottomNavigationView;
 
@@ -102,6 +105,12 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                     }
                     break;
                 case R.id.nav_downloading:
+                    Snackbar.make(findViewById(R.id.coord), R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
+                            .setActionTextColor(getResources().getColor(R.color.yellow500))
+                            .setAction("不再提示", v -> {
+                                Once.markDone(Static.HINT_FAV);
+                            })
+                            .show();
                     break;
                 case R.id.nav_mine:
                     switchCurrentFragment(R.id.fragment_wrapper, SETTING_TAG, SettingFragment.getInstance());
@@ -109,6 +118,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             }
             return true;
         });
+
+        // Test CoordinatorLayout
     }
 
     @Override

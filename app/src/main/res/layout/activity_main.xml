@@ -1,24 +1,28 @@
-<FrameLayout
+<android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/coord"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context=".ui.activity.MainActivity"
         >
     <!-- Fragment Stage -->
     <FrameLayout
+        app:layout_behavior="com.blazers.jandan.ui.widgets.behavior.FragmentNestedScrollBehavior"
         android:id="@+id/fragment_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
     <!-- Bottom Navigation View with shadow -->
     <LinearLayout
+        android:id="@+id/bottom_navigation_view_wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        app:layout_behavior="com.blazers.jandan.ui.widgets.behavior.BottomNavigationViewBehavior">
         <View
             android:layout_width="match_parent"
             android:layout_height="4dp"
@@ -32,7 +36,7 @@
             app:itemIconTint="@drawable/selector_bottom_menu_item_text_color"
             app:itemTextColor="@drawable/selector_bottom_menu_item_text_color"
             app:menu="@menu/bottom_navigation"
-            app:layout_scrollFlags="scroll|enterAlways"
             />
     </LinearLayout>
-</FrameLayout>
+
+</android.support.design.widget.CoordinatorLayout>
