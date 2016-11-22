@@ -7,7 +7,7 @@
         android:background="#000"
         >
     <!-- Fresco -->
-    <com.blazers.jandan.ui.widgets.fresco.ZoomableDraweeView
+    <com.blazers.jandan.widgets.fresco.ZoomableDraweeView
             android:id="@+id/viewer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

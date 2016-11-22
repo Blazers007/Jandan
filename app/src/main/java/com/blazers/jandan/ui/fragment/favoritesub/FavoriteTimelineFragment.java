@@ -8,14 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavImages;
-import com.blazers.jandan.models.db.local.LocalFavJokes;
-import com.blazers.jandan.models.db.local.LocalFavNews;
-import com.blazers.jandan.models.pojo.timeline.Timeline;
+import com.blazers.jandan.model.database.local.LocalFavImages;
+import com.blazers.jandan.model.database.local.LocalFavJokes;
+import com.blazers.jandan.model.database.local.LocalFavNews;
+import com.blazers.jandan.model.timeline.Timeline;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.ui.widgets.TimeLineView;
+import com.blazers.jandan.widgets.TimeLineView;
 import io.realm.Sort;
 
 import java.util.ArrayList;
@@ -29,6 +29,11 @@ import java.util.Map;
 public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 
     private List<Timeline> list;
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
 
     @Nullable
     @Override

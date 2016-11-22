@@ -14,7 +14,7 @@
             android:gravity="center"
             />
     <!-- AutoStack -->
-    <com.blazers.jandan.ui.widgets.AutoLayoutLinearLayout
+    <com.blazers.jandan.widgets.AutoLayoutLinearLayout
             android:id="@+id/auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

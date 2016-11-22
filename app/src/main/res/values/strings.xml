@@ -3,9 +3,14 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_news_read">NewsReadActivity</string>
-    <string name="title_activity_image_viewer">NewsReadActivity</string>
+    <string name="title_activity_news_read">新闻阅读</string>
+    <string name="title_activity_image_viewer">图片浏览</string>
     <string name="title_activity_comment">评论列表</string>
+    <string name="title_activity_offline">离线下载</string>
+
+    <!-- 7.0 TileIcon -->
+    <string name="tile_icon_offline">煎蛋离线</string>
+    <string name="tile_icon_offline_ing">下载中</string>
 
     <!-- Drawer State -->
     <string name="drawer_open">open</string>
@@ -14,8 +19,7 @@
     <!-- NAV -->
     <string name="sec_jandan">煎蛋</string>
     <string name="sec_fav">收藏</string>
-    <string name="sec_download">离线</string>
-    <string name="sec_setting">设置</string>
+    <string name="sec_mine">我的</string>
 
     <!-- 煎蛋 -->
     <string name="offline">离线阅读</string>
@@ -72,6 +76,13 @@
     <!-- Shortcuts文字 -->
     <string name="shortcut_view_jandan_label_long">访问煎蛋网页</string>
     <string name="shortcut_view_jandan_label_short">煎蛋Web</string>
+
+    <string name="shortcut_offline_label_long">开始离线资源</string>
+    <string name="shortcut_offline_label_short">离线阅读</string>
+
+
+    <!-- Broadcast action command -->
+    <string name="action_do_offline_default">com.blazers.jandan.start.offline</string>
 
     <!-- TestStrings -->
     <string name="longText">

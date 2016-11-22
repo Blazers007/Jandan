@@ -17,11 +17,11 @@ import com.blazers.jandan.presenter.MainPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.FavoriteFragment;
 import com.blazers.jandan.ui.fragment.ReadingFragment;
-import com.blazers.jandan.ui.fragment.SettingFragment;
+import com.blazers.jandan.ui.fragment.MineFragment;
 import com.blazers.jandan.util.ClipboardHelper;
-import com.blazers.jandan.util.rxbus.event.ViewArticleEvent;
-import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.model.event.ViewArticleEvent;
+import com.blazers.jandan.model.event.ViewCommentEvent;
+import com.blazers.jandan.model.event.ViewImageEvent;
 
 import butterknife.BindView;
 import jonathanfinerty.once.Once;
@@ -104,16 +104,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                                 .show();
                     }
                     break;
-                case R.id.nav_downloading:
-                    Snackbar.make(findViewById(R.id.coord), R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
-                            .setActionTextColor(getResources().getColor(R.color.yellow500))
-                            .setAction("不再提示", v -> {
-                                Once.markDone(Static.HINT_FAV);
-                            })
-                            .show();
-                    break;
                 case R.id.nav_mine:
-                    switchCurrentFragment(R.id.fragment_wrapper, SETTING_TAG, SettingFragment.getInstance());
+                    switchCurrentFragment(R.id.fragment_wrapper, SETTING_TAG, MineFragment.getInstance());
                     break;
             }
             return true;

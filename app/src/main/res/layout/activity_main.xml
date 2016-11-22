@@ -5,9 +5,9 @@
         android:id="@+id/coord"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context=".ui.activity.MainActivity"
         >
+    <!--  android:fitsSystemWindows="true" 设置自动Padding StatusBarHeight -->
     <!-- Fragment Stage -->
     <FrameLayout
         app:layout_behavior="com.blazers.jandan.ui.widgets.behavior.FragmentNestedScrollBehavior"

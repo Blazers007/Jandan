@@ -7,32 +7,33 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 
     <application
-            android:name=".JandanApp"
-            android:allowBackup="true"
-            android:icon="@mipmap/ic_launcher"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
+        android:name=".JandanApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
 
         <!-- Umeng统计 -->
         <meta-data
-                android:name="UMENG_APPKEY"
-                android:value="${UMENG_APPKEY}"/>
+            android:name="UMENG_APPKEY"
+            android:value="${UMENG_APPKEY}"/>
         <meta-data
-                android:name="UMENG_CHANNEL"
-                android:value="${UMENG_CHANNEL}"/>
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL}"/>
 
         <!-- Launcher -->
         <activity
-                android:name=".ui.activity.MainActivity"
-                android:label="@string/app_name"
-                android:screenOrientation="portrait"
-                android:theme="@style/NeedDrawerStyle">
+            android:name=".ui.activity.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/NeedDrawerStyle">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
@@ -42,26 +43,48 @@
         </activity>
         <!-- Reading News -->
         <activity
-                android:name=".ui.activity.ArticleReadActivity"
-                android:label="@string/title_activity_news_read"
-                android:screenOrientation="portrait"
-                android:theme="@style/ReadingModeStyle">
+            android:name=".ui.activity.ArticleReadActivity"
+            android:label="@string/title_activity_news_read"
+            android:screenOrientation="portrait"
+            android:theme="@style/ReadingModeStyle">
         </activity>
         <!-- View Image-->
-        <activity android:name=".ui.activity.ImageInspectActivity"
-                  android:screenOrientation="portrait"
-                  android:theme="@style/ImageViewStyle"
-                />
+        <activity
+            android:name=".ui.activity.ImageInspectActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ImageViewStyle"
+            />
         <!-- View Image Pager -->
-        <activity android:name=".ui.activity.ImageDetailActivity"
-                  android:screenOrientation="portrait"
-        />
-        <!--  Comment -->
-        <activity android:name=".ui.activity.CommentActivity"
-                  android:label="@string/title_activity_comment"
-                  android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.activity.ImageDetailActivity"
+            android:screenOrientation="portrait"
+            />
+        <!-- Comment -->
+        <activity
+            android:name=".ui.activity.CommentActivity"
+            android:label="@string/title_activity_comment"
+            android:screenOrientation="portrait"/>
+        <!-- Offline -->
+        <activity
+            android:name=".ui.activity.OfflineActivity"
+            android:label="@string/title_activity_offline"
+            android:screenOrientation="portrait"
+            />
         <!-- Service -->
-        <service android:name=".services.OfflineDownloadService"/>
+        <service android:name=".service.OfflineDownloadService"/>
+        <!-- Android 7.0 Quick Offline Tile Icon -->
+        <service
+            android:name=".service.TileOfflineDownloadService"
+            android:icon="@drawable/ic_quick_tile_offline"
+            android:label="@string/tile_icon_offline"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+        </service>
+
+        <!-- Receiver -->
+        <!--<receiver android:name=".background.BackgroundReceiver"/>-->
 
     </application>
 

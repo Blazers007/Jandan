@@ -28,7 +28,7 @@
             tools:text="2015年10月13日15:50:07"
             android:layout_alignTop="@+id/user_name" android:layout_alignParentRight="true"/>
     <!--  引用 -->
-    <com.blazers.jandan.ui.widgets.QuoteView
+    <com.blazers.jandan.widgets.QuoteView
             android:id="@+id/quote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

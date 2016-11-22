@@ -16,10 +16,10 @@ import android.view.animation.BounceInterpolator;
 import android.widget.ImageView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavImages;
+import com.blazers.jandan.model.database.local.LocalFavImages;
 import com.blazers.jandan.ui.activity.ImageDetailActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
-import com.blazers.jandan.ui.widgets.PopupActionModeBar;
+import com.blazers.jandan.widgets.PopupActionModeBar;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
@@ -45,6 +45,11 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
     private FavImageAdapter adapter;
     private PopupActionModeBar mPopupActionModeBar;
 
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
 
     @Nullable
     @Override

@@ -12,9 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavJokes;
+import com.blazers.jandan.model.database.local.LocalFavJokes;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
-import com.blazers.jandan.ui.widgets.VerticalDividerItemDecoration;
+import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
 
 import java.util.ArrayList;
@@ -31,6 +31,11 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
 
     private List<LocalFavJokes> list;
     private FavJokeAdapter adapter;
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
 
     @Nullable
     @Override

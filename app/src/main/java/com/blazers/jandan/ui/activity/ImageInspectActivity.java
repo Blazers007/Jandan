@@ -1,7 +1,6 @@
 package com.blazers.jandan.ui.activity;
 
 import android.graphics.drawable.Animatable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,15 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalImage;
-import com.blazers.jandan.network.ImageDownloader;
 import com.blazers.jandan.presenter.ImageInspectPresenter;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.RxHelper;
-import com.blazers.jandan.util.SdcardHelper;
-import com.blazers.jandan.ui.widgets.fresco.ZoomableDraweeView;
+import com.blazers.jandan.widgets.fresco.ZoomableDraweeView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.drawable.ProgressBarDrawable;
@@ -35,7 +28,6 @@ import com.facebook.imagepipeline.image.ImageInfo;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Observable;
 
 public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> implements ImageInspectView {
 

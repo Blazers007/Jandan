@@ -14,12 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavNews;
-import com.blazers.jandan.models.db.sync.NewsPost;
+import com.blazers.jandan.model.database.local.LocalFavNews;
+import com.blazers.jandan.model.database.sync.NewsPost;
 import com.blazers.jandan.ui.activity.ArticleReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
-import com.blazers.jandan.ui.widgets.VerticalDividerItemDecoration;
-import com.blazers.jandan.ui.widgets.nightwatch.WatchTextView;
+import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
+import com.blazers.jandan.widgets.nightwatch.WatchTextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -38,6 +38,11 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
     private List<LocalFavNews> list;
     private FavNewsAdapter adapter;
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
 
     @Nullable
     @Override

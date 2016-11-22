@@ -3,14 +3,15 @@ package com.blazers.jandan.presenter;
 import android.content.Context;
 import android.util.Log;
 
-import com.blazers.jandan.models.db.local.LocalArticleHtml;
-import com.blazers.jandan.models.db.local.LocalFavNews;
-import com.blazers.jandan.models.db.sync.NewsPost;
-import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.model.database.local.LocalArticleHtml;
+import com.blazers.jandan.model.database.local.LocalFavNews;
+import com.blazers.jandan.model.database.local.LocalImage;
+import com.blazers.jandan.model.database.sync.NewsPost;
+import com.blazers.jandan.api.Parser;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ArticleReadView;
 import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.rxbus.event.ViewArticleEvent;
+import com.blazers.jandan.model.event.ViewArticleEvent;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -54,6 +55,14 @@ public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
         }
     }
 
+    public String getLocalCachedResourceByUrl(String url) {
+        LocalImage localImage = LocalImage.getLocalImageByWebUrl(mRealm, url);
+        if (localImage != null) {
+            return localImage.getLocalUrl();
+        }
+        return null;
+    }
+
     public boolean isThisArticleMyFav() {
         return LocalFavNews.isThisFaved(mRealm, mNewsPost.getId());
     }
@@ -61,6 +70,7 @@ public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
     public void toggleThisArticleFavState() {
         LocalFavNews.setThisFavedOrNot(!isThisArticleMyFav(), mRealm, mNewsPost.getId());
     }
+
 
 
 }

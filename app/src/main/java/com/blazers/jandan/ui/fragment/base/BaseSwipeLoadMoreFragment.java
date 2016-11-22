@@ -9,9 +9,9 @@ import android.view.View;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.ui.widgets.VerticalDividerItemDecoration;
-import com.blazers.jandan.ui.widgets.loadmore.LoadMoreRecyclerView;
-import com.blazers.jandan.ui.widgets.loadmore.PullCallback;
+import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
+import com.blazers.jandan.widgets.loadmore.LoadMoreRecyclerView;
+import com.blazers.jandan.widgets.loadmore.PullCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

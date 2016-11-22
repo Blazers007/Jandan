@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.blazers.jandan.util.rxbus.Rxbus;
+import com.blazers.jandan.util.Rxbus;
 
 import java.lang.ref.WeakReference;
 

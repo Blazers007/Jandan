@@ -13,13 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.util.rxbus.event.NightModeEvent;
+import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
 import com.blazers.jandan.ui.fragment.readingsub.NewsFragment;
 import com.blazers.jandan.ui.fragment.readingsub.PicFragment;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.ui.widgets.nightwatch.NightWatcher;
+import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 
 import java.util.ArrayList;
 
@@ -54,6 +54,11 @@ public class ReadingFragment extends BaseFragment {
         return INSTANCE;
     }
 
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -76,8 +81,8 @@ public class ReadingFragment extends BaseFragment {
         if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
             fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
-//        viewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
-//        viewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放
+//        mViewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
+//        mViewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
     }

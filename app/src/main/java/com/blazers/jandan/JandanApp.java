@@ -2,7 +2,7 @@ package com.blazers.jandan;
 
 import android.app.Application;
 
-import com.blazers.jandan.network.Parser;
+import com.blazers.jandan.api.Parser;
 import com.blazers.jandan.util.LoggintInterceptor;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;

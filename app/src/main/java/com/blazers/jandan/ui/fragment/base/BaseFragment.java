@@ -9,14 +9,20 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.blazers.jandan.R;
-import com.blazers.jandan.util.rxbus.Rxbus;
-import com.blazers.jandan.util.rxbus.event.NightModeEvent;
+import com.blazers.jandan.util.Rxbus;
+import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.ui.widgets.nightwatch.NightWatcher;
+import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
+
+import butterknife.ButterKnife;
 import io.realm.Realm;
 import rx.Subscription;
 
@@ -69,7 +75,16 @@ public abstract class BaseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.i(TAG, "OnActivityCreated");
         super.onActivityCreated(savedInstanceState);
+    }
 
+    protected abstract int getLayoutResId();
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View root = inflater.inflate(getLayoutResId(), container, false);
+        ButterKnife.bind(this, root);
+        return root;
     }
 
     @Override

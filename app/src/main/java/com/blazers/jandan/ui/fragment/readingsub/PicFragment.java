@@ -17,16 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalFavImages;
-import com.blazers.jandan.models.db.local.LocalImage;
-import com.blazers.jandan.models.db.local.LocalVote;
-import com.blazers.jandan.models.db.sync.ImagePost;
-import com.blazers.jandan.models.pojo.image.ImageRelateToPost;
-import com.blazers.jandan.network.ImageDownloader;
-import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.util.rxbus.Rxbus;
-import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.model.database.local.LocalFavImages;
+import com.blazers.jandan.model.database.local.LocalImage;
+import com.blazers.jandan.model.database.local.LocalVote;
+import com.blazers.jandan.model.database.sync.ImagePost;
+import com.blazers.jandan.model.image.ImageRelateToPost;
+import com.blazers.jandan.api.ImageDownloader;
+import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.util.Rxbus;
+import com.blazers.jandan.model.event.ViewCommentEvent;
+import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
@@ -35,8 +35,8 @@ import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.util.TimeHelper;
-import com.blazers.jandan.ui.widgets.AutoScaleFrescoView;
-import com.blazers.jandan.ui.widgets.ThumbTextButton;
+import com.blazers.jandan.widgets.AutoScaleFrescoView;
+import com.blazers.jandan.widgets.ThumbTextButton;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.ArrayList;
@@ -76,6 +76,11 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         return picFragment;
     }
 
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.blazers.jandan.ui.widgets.nightwatch.WatchRelativeLayout
+<com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,7 +23,7 @@
         android:layout_marginBottom="8dp"
         style="@style/CommentTextStyle"
         />
-    <com.blazers.jandan.ui.widgets.AutoScaleFrescoView
+    <com.blazers.jandan.widgets.AutoScaleFrescoView
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:layout_marginTop="12dp"
         />
     <!-- Title and time-->
-    <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+    <com.blazers.jandan.widgets.nightwatch.WatchTextView
         android:id="@+id/author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         blz:wtv_day_textColor="#222"
         blz:wtv_night_textColor="#dfdfdf"
         />
-    <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+    <com.blazers.jandan.widgets.nightwatch.WatchTextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
         blz:wtv_day_textColor="#666"
         blz:wtv_night_textColor="#ccc"
         />
-    <com.blazers.jandan.ui.widgets.ThumbTextButton
+    <com.blazers.jandan.widgets.ThumbTextButton
         style="@style/ThumbButtonBase"
         android:id="@+id/btn_oo"
         android:layout_below="@+id/divider_upper"
@@ -63,7 +63,7 @@
         app:ttb_floatTextColor="@color/thumbUp"
         android:layout_marginLeft="8dp"
         />
-    <com.blazers.jandan.ui.widgets.ThumbTextButton
+    <com.blazers.jandan.widgets.ThumbTextButton
         style="@style/ThumbDownSpec"
         android:id="@+id/btn_xx"
         app:ttb_floatTextColor="@color/thumbDown"
@@ -72,7 +72,7 @@
         android:src="@drawable/selector_thumb_down"
         android:layout_marginLeft="8dp"
         />
-    <com.blazers.jandan.ui.widgets.ThumbTextButton
+    <com.blazers.jandan.widgets.ThumbTextButton
         style="@style/ThumbDownSpec"
         android:id="@+id/btn_comment"
         android:layout_toRightOf="@+id/btn_xx"
@@ -112,7 +112,7 @@
         android:layout_marginRight="8dp"
         />
     <!-- Divider -->
-    <com.blazers.jandan.ui.widgets.nightwatch.WachView
+    <com.blazers.jandan.widgets.nightwatch.WachView
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="2px"
@@ -120,7 +120,7 @@
         blz:wtg_day_bg="#e5e7e9"
         blz:wtg_night_bg="#616161"
         />
-    <com.blazers.jandan.ui.widgets.nightwatch.WachView
+    <com.blazers.jandan.widgets.nightwatch.WachView
         android:id="@+id/divider_upper"
         android:layout_width="match_parent"
         android:layout_height="2px"
@@ -128,7 +128,7 @@
         blz:wtg_day_bg="#f3f3f3"
         blz:wtg_night_bg="#4b4b4b"
         />
-    <com.blazers.jandan.ui.widgets.nightwatch.WachView
+    <com.blazers.jandan.widgets.nightwatch.WachView
         android:id="@+id/divider_lower"
         android:layout_width="match_parent"
         android:layout_height="2px"
@@ -136,4 +136,4 @@
         blz:wtg_day_bg="#e5e7e9"
         blz:wtg_night_bg="#616161"
         />
-</com.blazers.jandan.ui.widgets.nightwatch.WatchRelativeLayout>
+</com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout>

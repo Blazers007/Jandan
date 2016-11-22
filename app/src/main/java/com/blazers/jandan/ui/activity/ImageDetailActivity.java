@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.ui.widgets.AutoScaleFrescoView;
+import com.blazers.jandan.widgets.AutoScaleFrescoView;
 
 import java.util.List;
 

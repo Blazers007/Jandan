@@ -12,4 +12,22 @@
             android:data="http://jandan.net"/>
         <categories android:name="android.shortcut.conversation"/>
     </shortcut>
+
+    <shortcut
+        android:shortcutId="do_offline_now"
+        android:enabled="true"
+        android:icon="@mipmap/ic_logo_jandan_24dp"
+        android:shortcutShortLabel="@string/shortcut_offline_label_short"
+        android:shortcutLongLabel="@string/shortcut_offline_label_long">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.blazers.jandan.ui.activity.MainActivity"
+            android:targetPackage="com.blazers.jandan"/>
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.blazers.jandan.ui.activity.OfflineActivity"
+            android:targetPackage="com.blazers.jandan"/>
+    </shortcut>
 </shortcuts>
+
+<!-- <categories android:name="android.shortcut.conversation"/> -->

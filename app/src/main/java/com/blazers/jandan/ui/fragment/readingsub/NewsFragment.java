@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalImage;
-import com.blazers.jandan.models.db.sync.NewsPost;
-import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.util.rxbus.Rxbus;
-import com.blazers.jandan.util.rxbus.event.ViewArticleEvent;
+import com.blazers.jandan.model.database.local.LocalImage;
+import com.blazers.jandan.model.database.sync.NewsPost;
+import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.util.Rxbus;
+import com.blazers.jandan.model.event.ViewArticleEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 import com.blazers.jandan.util.*;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -41,6 +41,11 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment {
     public NewsFragment() {
         super();
         setTAG(TAG);
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
     }
 
     @Nullable

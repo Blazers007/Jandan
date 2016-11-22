@@ -5,9 +5,9 @@ import android.content.Context;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.MainView;
 import com.blazers.jandan.util.DBHelper;
-import com.blazers.jandan.util.rxbus.event.ViewArticleEvent;
-import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.model.event.ViewArticleEvent;
+import com.blazers.jandan.model.event.ViewCommentEvent;
+import com.blazers.jandan.model.event.ViewImageEvent;
 
 /**
  * Created by blazers on 2016/11/11.

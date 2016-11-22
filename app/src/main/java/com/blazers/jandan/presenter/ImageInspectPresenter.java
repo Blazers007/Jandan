@@ -1,19 +1,17 @@
 package com.blazers.jandan.presenter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalImage;
-import com.blazers.jandan.network.ImageDownloader;
+import com.blazers.jandan.model.database.local.LocalImage;
+import com.blazers.jandan.api.ImageDownloader;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ImageInspectView;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.SdcardHelper;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
+import com.blazers.jandan.model.event.ViewImageEvent;
 
 import rx.Observable;
 

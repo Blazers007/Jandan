@@ -1,4 +1,4 @@
-<com.blazers.jandan.ui.widgets.nightwatch.WatchRelativeLayout
+<com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:blz="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
                 android:paddingTop="8dp"
                 >
             <!-- 常规 -->
-            <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+            <com.blazers.jandan.widgets.nightwatch.WatchTextView
                     android:text="阅读设置"
                     blz:wtv_day_textColor="@color/SettingSegmentText.Day"
                     blz:wtv_night_textColor="@color/SettingSegmentText.Night"
@@ -49,7 +49,7 @@
                     android:id="@+id/set_filter_number"
                     layout="@layout/layout_setting_text"/>
             <!--  系统 -->
-            <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+            <com.blazers.jandan.widgets.nightwatch.WatchTextView
                     android:text="系统设置"
                     blz:wtv_day_textColor="@color/SettingSegmentText.Day"
                     blz:wtv_night_textColor="@color/SettingSegmentText.Night"
@@ -61,4 +61,4 @@
                     layout="@layout/layout_setting_text"/>
         </LinearLayout>
     </ScrollView>
-</com.blazers.jandan.ui.widgets.nightwatch.WatchRelativeLayout>
+</com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout>

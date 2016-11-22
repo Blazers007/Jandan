@@ -7,13 +7,13 @@
         android:layout_height="64dp"
         android:background="@drawable/selector_default_setting"
         >
-    <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+    <com.blazers.jandan.widgets.nightwatch.WatchTextView
             android:id="@+id/setting_main"
             blz:wtv_day_textColor="@color/SettingMainText.Day"
             blz:wtv_night_textColor="@color/SettingMainText.Night"
             style="@style/SettingMainText"
             />
-    <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+    <com.blazers.jandan.widgets.nightwatch.WatchTextView
             android:id="@+id/setting_sub"
             android:layout_alignLeft="@+id/setting_main"
             android:layout_below="@+id/setting_main"
@@ -22,7 +22,7 @@
             style="@style/SettingSubText"
             tools:text="手动设定XX量过多的内容不予显示"
             />
-    <com.blazers.jandan.ui.widgets.nightwatch.WatchTextView
+    <com.blazers.jandan.widgets.nightwatch.WatchTextView
             android:id="@+id/setting_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,14 +34,14 @@
             blz:wtv_night_textColor="@color/SettingText.Night"
             tools:text="15"
             />
-    <com.blazers.jandan.ui.widgets.nightwatch.WachView
+    <com.blazers.jandan.widgets.nightwatch.WachView
             android:layout_width="match_parent"
             android:layout_height="1px"
             android:layout_alignParentBottom="true"
             blz:wtg_day_bg="#f0f0f0"
             blz:wtg_night_bg="#616161"
             />
-    <com.blazers.jandan.ui.widgets.nightwatch.WachView
+    <com.blazers.jandan.widgets.nightwatch.WachView
             android:id="@+id/disable_mask"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

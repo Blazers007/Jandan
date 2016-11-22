@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -16,22 +15,14 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.db.local.LocalArticleHtml;
-import com.blazers.jandan.models.db.local.LocalFavNews;
-import com.blazers.jandan.network.Parser;
 import com.blazers.jandan.presenter.ArticleReadPresenter;
-import com.blazers.jandan.util.rxbus.event.ViewImageEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.util.DBHelper;
+import com.blazers.jandan.widgets.ObservableWebView;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.ShareHelper;
-import com.blazers.jandan.ui.widgets.ObservableWebView;
+import com.blazers.jandan.model.event.ViewImageEvent;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import fr.castorflex.android.circularprogressbar.CircularProgressBar;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> implements ArticleReadView {
 
@@ -50,7 +41,6 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
     private int scrolledDistance = 0;
     private boolean controlsVisible = true;
     private float webViewContentHeight, scale = 3.0f;
-
 
 
     @Override
@@ -211,6 +201,12 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
         progressWheel.setAlpha(1);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_left_out_backin, R.anim.activity_slide_right_in_backout);
+    }
+
     class JavaScript {
         @JavascriptInterface
         public void viewImageBySrc(String src, String alt) {
@@ -229,11 +225,5 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
         public String replaceSrcToLocalFile(String src) {
             return "file://aa";
         }
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_left_out_backin, R.anim.activity_slide_right_in_backout);
     }
 }

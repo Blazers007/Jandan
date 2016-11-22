@@ -15,14 +15,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.pojo.comment.CommentPost;
-import com.blazers.jandan.models.pojo.comment.Comments;
-import com.blazers.jandan.network.Parser;
-import com.blazers.jandan.util.rxbus.Rxbus;
-import com.blazers.jandan.util.rxbus.event.ViewCommentEvent;
+import com.blazers.jandan.model.comment.CommentPost;
+import com.blazers.jandan.model.comment.Comments;
+import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.util.Rxbus;
+import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.ui.widgets.QuoteView;
+import com.blazers.jandan.widgets.QuoteView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 
@@ -59,6 +59,11 @@ public class CommentFragment extends BaseFragment {
         fragment.setArguments(data);
         fragment.setTAG(TAG);
         return fragment;
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return 0;
     }
 
     @Nullable

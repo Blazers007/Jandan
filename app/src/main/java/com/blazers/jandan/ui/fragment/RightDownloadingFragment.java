@@ -26,11 +26,11 @@ import permissions.dispatcher.RuntimePermissions;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
-import com.blazers.jandan.models.pojo.count.Count;
+import com.blazers.jandan.model.count.Count;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.ui.widgets.InfiniteSeekBar;
-import com.blazers.jandan.ui.widgets.SelectableTextView;
+import com.blazers.jandan.widgets.InfiniteSeekBar;
+import com.blazers.jandan.widgets.SelectableTextView;
 
 import java.util.List;
 
@@ -89,7 +89,7 @@ public class RightDownloadingFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_right_downloading, container, false);
+        View root = inflater.inflate(R.layout.activity_offline, container, false);
         ButterKnife.bind(this, root);
         init();
         return root;

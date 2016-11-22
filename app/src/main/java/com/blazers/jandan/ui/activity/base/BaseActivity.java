@@ -1,6 +1,7 @@
 package com.blazers.jandan.ui.activity.base;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.annimon.stream.Stream;
 import com.blazers.jandan.presenter.base.BasePresenter;
@@ -37,6 +39,26 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     //        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
 
     /**
+     * 设置StatusBar显示的ICON为深色ICON
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    private void setStatusBarLightTheme() {
+        if (getWindow() != null && getWindow().getDecorView() != null) {
+            getWindow().getDecorView().setSystemUiVisibility(getWindow().getDecorView().getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+        }
+    }
+
+    /**
+     * 取消StatusBar的Tint模式并显示黑色
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void disableStatusBarTheme() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        getWindow().setStatusBarColor(Color.BLACK);
+    }
+
+    /**
      * 初始化Presenter
      */
     public abstract void initPresenter();
@@ -44,6 +66,10 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // M 以上的版本会自动使用style里面的配置设置Tint
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            disableStatusBarTheme();
+        }
         initPresenter();
     }
 
@@ -57,6 +83,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
     }
+
+
 
     /**
      * 初始化Toolbar
@@ -217,6 +245,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
                     .setStartDelay(200).start();
         }
     }
+
 
     /**
      * 获取StatusBar 高度
