@@ -34,7 +34,6 @@ import butterknife.ButterKnife;
 public class ReadingFragment extends BaseFragment {
 
     public static final String TAG = ReadingFragment.class.getSimpleName();
-    private static ReadingFragment INSTANCE;
 
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
@@ -45,28 +44,26 @@ public class ReadingFragment extends BaseFragment {
     private ArrayList<Fragment> fragments;
     private String[] titles = {"新鲜事", "无聊图", "段子", "妹子图"};
 
-    public static ReadingFragment getInstance() {
-        if (null == INSTANCE) {
-            INSTANCE = new ReadingFragment();
-            INSTANCE.setTAG(TAG);
-            INSTANCE.setNeedUmengStatic(false);
-        }
-        return INSTANCE;
+    public ReadingFragment() {
+        super();
+        setTAG(TAG);
+    }
+
+    @Override
+    protected void initPresenter() {
+
     }
 
     @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.fragment_holder_reading;
     }
 
-    @Nullable
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_holder_reading, container, false);
-        ButterKnife.bind(this, root);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         initJandanFragments();
         setupTabLayoutTheme();
-        return root;
     }
 
     /**
@@ -75,11 +72,11 @@ public class ReadingFragment extends BaseFragment {
     void initJandanFragments() {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
-        fragments.add(PicFragment.newInstance("wuliao"));
-        fragments.add(new JokeFragment());
+//        fragments.add(PicFragment.newInstance("wuliao"));
+//        fragments.add(new JokeFragment());
         // 是否需要加载妹纸页面
-        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
-            fragments.add(PicFragment.newInstance("meizi"));
+//        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
+//            fragments.add(PicFragment.newInstance("meizi"));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
 //        mViewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
 //        mViewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放
@@ -107,7 +104,7 @@ public class ReadingFragment extends BaseFragment {
     public void handleRxEvent(Object event) {
         if (event instanceof NightModeEvent) {
             isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
-            applyToolbarIconAndTheme();
+//            applyToolbarIconAndTheme();
             NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
             /* Extra 改变TabLayout */
             setupTabLayoutTheme();

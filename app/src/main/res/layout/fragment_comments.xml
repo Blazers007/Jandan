@@ -21,6 +21,4 @@
                 android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <!-- Loading Progress -->
-    <include layout="@layout/layout_circular_progress"/>
 </RelativeLayout>

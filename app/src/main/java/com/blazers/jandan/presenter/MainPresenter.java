@@ -19,15 +19,20 @@ public class MainPresenter extends BasePresenter<MainView> {
 
     public MainPresenter(MainView view, Context context) {
         super(view, context);
-        // 添加订阅事件
-        addUiSubscription(subScribeRxBusEventOnUiThread(ViewCommentEvent.class).subscribe(mView::gotoCommentActivity));
-        addUiSubscription(subScribeRxBusEventOnUiThread(ViewArticleEvent.class).subscribe(mView::gotoViewArticleActivity));
-        addUiSubscription(subScribeRxBusEventOnUiThread(ViewImageEvent.class).subscribe(mView::gotoViewImageActivity));
     }
 
     @Override
-    public void release() {
-        super.release();
+    public void onResume() {
+        super.onResume();
+        // 添加订阅事件
+        addFUISubscription(subScribeRxBusEventOnUiThread(ViewCommentEvent.class).subscribe(mView::gotoCommentActivity));
+        addFUISubscription(subScribeRxBusEventOnUiThread(ViewArticleEvent.class).subscribe(mView::gotoViewArticleActivity));
+        addFUISubscription(subScribeRxBusEventOnUiThread(ViewImageEvent.class).subscribe(mView::gotoViewImageActivity));
+    }
+
+    @Override
+    public void onDestory() {
+        super.onDestory();
         DBHelper.releaseAllTempRealm();
     }
 }

@@ -65,6 +65,11 @@ public class FavoriteFragment extends BaseFragment {
     }
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return R.layout.fragment_holder_favorite;
     }
@@ -74,7 +79,7 @@ public class FavoriteFragment extends BaseFragment {
         initFavFragments();
         setupTabLayoutTheme();
         loadFavCounts();
-        registerEventReceiver();
+//        registerEventReceiver();
     }
 
     void initFavFragments() {
@@ -93,9 +98,9 @@ public class FavoriteFragment extends BaseFragment {
     }
 
     void loadFavCounts() {
-        mFavNewsCount.setText(String.format("%d", realm.where(LocalFavNews.class).count()));
-        mFavImagesCount.setText(String.format("%d", realm.where(LocalFavImages.class).count()));
-        mFavJokesCount.setText(String.format("%d", realm.where(LocalFavJokes.class).count()));
+//        mFavNewsCount.setText(String.format("%d", realm.where(LocalFavNews.class).count()));
+//        mFavImagesCount.setText(String.format("%d", realm.where(LocalFavImages.class).count()));
+//        mFavJokesCount.setText(String.format("%d", realm.where(LocalFavJokes.class).count()));
     }
 
     /**
@@ -117,7 +122,7 @@ public class FavoriteFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unregisterEventReceiver();
+//        unregisterEventReceiver();
     }
 
     @Override

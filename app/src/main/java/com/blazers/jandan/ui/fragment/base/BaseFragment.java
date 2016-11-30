@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.util.ToolbarHelper;
 import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
 
@@ -29,13 +31,12 @@ import rx.Subscription;
 /**
  * Created by Blazers on 2015/9/11.
  */
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
-    /* Vars */
-    public Realm realm;
     public String TAG = "BaseFragment";
     private Toolbar toolbar;
-    private String title;
+
+    protected T mPresenter;
 
     /* Vars */
     protected boolean isNowNightModeOn;
@@ -58,9 +59,8 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        Log.i(TAG, "Attach");
         super.onAttach(context);
-        realm = Realm.getDefaultInstance();
+        Log.i(TAG, "Attach");
         isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 
@@ -68,7 +68,6 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "OnCreate");
         super.onCreate(savedInstanceState);
-        registerEventReceiver();
     }
 
     @Override
@@ -77,6 +76,11 @@ public abstract class BaseFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * 初始化Presenter
+     */
+    protected abstract void initPresenter();
+
     protected abstract int getLayoutResId();
 
     @Nullable
@@ -84,6 +88,7 @@ public abstract class BaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(getLayoutResId(), container, false);
         ButterKnife.bind(this, root);
+        initPresenter();
         return root;
     }
 
@@ -129,7 +134,6 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        unregisterEventReceiver();
         Log.i(TAG, "OnDestroy");
     }
 
@@ -137,8 +141,6 @@ public abstract class BaseFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         Log.i(TAG, "OnDetach");
-        if (null != realm)
-            realm.close();
     }
 
 
@@ -154,7 +156,6 @@ public abstract class BaseFragment extends Fragment {
      * */
     protected void initToolbarWithLeftDrawerAndMenu(Toolbar toolbar, String title, int menuId, Toolbar.OnMenuItemClickListener listener) {
         this.toolbar = toolbar;
-        this.title = title;
         toolbar.setTitle(title);
         // 初始化颜色以及ICON
         if (menuId != -1) {
@@ -162,71 +163,21 @@ public abstract class BaseFragment extends Fragment {
             toolbar.setOnMenuItemClickListener(listener);
         }
 //        toolbar.setNavigationOnClickListener(v->Rxbus.getInstance().send(new DrawerEvent(GravityCompat.START, DrawerEvent.TOGGLE)));
-        applyToolbarIconAndTheme();
+        ToolbarHelper.applyToolbarIconAndTheme(toolbar, getActivity(), isNowNightModeOn);
     }
 
 
     /**
-     * 注册事件
-     * */
-    private Subscription subscription;
-    public void registerEventReceiver() {
-        Rxbus.getInstance().toObservable().subscribe(this::handleRxEvent);
-    }
-
-    /**
-     * 解注事件
-     * */
-    public void unregisterEventReceiver() {
-        if (null != subscription)
-            subscription.unsubscribe();
-    }
-
-    /**
-     * 处理事件
+     * 处理事件 TODO: 重新处理
      * */
     public void handleRxEvent(Object event){
         if (event instanceof NightModeEvent) {
             isNowNightModeOn = ((NightModeEvent) event).nightModeOn;
-            applyToolbarIconAndTheme();
+            ToolbarHelper.applyToolbarIconAndTheme(toolbar, getActivity(), isNowNightModeOn);
             /* 改变Root */
             NightWatcher.switchToModeNight(getView(), isNowNightModeOn);
         }
     }
 
-    /**
-     * 改变当前Fragment的Toolbar的颜色
-     * */
-    protected void applyToolbarIconAndTheme() {
-        if (null == toolbar)
-            return;
-        // Background and color
-        if (isNowNightModeOn) {
-            toolbar.setBackgroundColor(Color.rgb(44, 44, 44));
-            toolbar.setTitleTextColor(Color.rgb(190, 190, 190));
-            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_menu_grey600_24dp);
-            upArrow.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-            toolbar.setNavigationIcon(upArrow);
-        } else {
-            toolbar.setBackgroundColor(Color.rgb(250, 250, 250));
-            toolbar.setTitleTextColor(Color.rgb(60, 64, 67));
-            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_menu_grey600_24dp);
-            upArrow.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
-            toolbar.setNavigationIcon(upArrow);
-        }
-        // Menu Icon
-        Menu menu = toolbar.getMenu();
-        if (null != menu) {
-            for (int i = 0 ; i < menu.size() ; i ++) {
-                MenuItem item = menu.getItem(i);
-                Drawable icon = item.getIcon();
-                if (isNowNightModeOn) {
-                    icon.setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_ATOP);
-                } else {
-                    icon.setColorFilter(Color.parseColor("#3c4043"), PorterDuff.Mode.SRC_ATOP);
-                }
-                item.setIcon(icon);
-            }
-        }
-    }
+
 }

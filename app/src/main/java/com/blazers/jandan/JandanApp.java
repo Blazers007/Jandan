@@ -2,7 +2,6 @@ package com.blazers.jandan;
 
 import android.app.Application;
 
-import com.blazers.jandan.api.Parser;
 import com.blazers.jandan.util.LoggintInterceptor;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
@@ -34,9 +33,14 @@ public class JandanApp extends Application {
                 .newBuilder(this, okHttpClient)
                 .build();
         Fresco.initialize(this, imagePipelineConfig);
-        // 初始化OkHttp解析
-        Parser.init(this);
         // 初始化Once
         Once.initialise(this);
+        test();
     }
+
+
+    private void test() {
+
+    }
+
 }

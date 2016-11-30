@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.favorite;
+package com.blazers.jandan.model.pojo.favorite;
 
 import android.content.Context;
 import com.blazers.jandan.common.URL;

@@ -13,7 +13,6 @@
     <include
             android:id="@+id/toolbar_with_shadow"
             layout="@layout/layout_toolbar_with_shadow"/>
-    <include layout="@layout/layout_circular_progress"/>
     <!-- Fab Fav -->
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab_fav"
@@ -24,4 +23,9 @@
             android:src="@drawable/ic_favorite_border_white_24dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"/>
+    <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+        android:id="@+id/progress_wheel"
+        android:layout_centerInParent="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"/>
 </RelativeLayout>

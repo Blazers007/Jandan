@@ -26,7 +26,7 @@ import permissions.dispatcher.RuntimePermissions;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.count.Count;
+import com.blazers.jandan.model.pojo.count.Count;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.widgets.InfiniteSeekBar;

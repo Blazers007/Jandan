@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.comment;
+package com.blazers.jandan.model.pojo.comment;
 
 /**
  * Created by Blazers on 2015/10/13.

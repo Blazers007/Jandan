@@ -1,6 +1,6 @@
 package com.blazers.jandan.api;
 
-import com.blazers.jandan.model.favorite.Favorite;
+import com.blazers.jandan.model.pojo.favorite.Favorite;
 
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

@@ -15,14 +15,14 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.presenter.ArticleReadPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.widgets.ObservableWebView;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.model.event.ViewImageEvent;
+import com.blazers.jandan.widgets.ObservableWebView;
 
 import butterknife.BindView;
-import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
 public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> implements ArticleReadView {
 
@@ -35,7 +35,7 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
     @BindView(R.id.webView)
     ObservableWebView webView;
     @BindView(R.id.progress_wheel)
-    CircularProgressBar progressWheel;
+    MaterialProgressBar progressWheel;
     @BindView(R.id.fab_fav)
     FloatingActionButton fabFav;
     private int scrolledDistance = 0;

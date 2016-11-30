@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.image;
+package com.blazers.jandan.model.pojo.image;
 import com.blazers.jandan.model.database.sync.ImagePost;
 
 /**

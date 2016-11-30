@@ -33,6 +33,11 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
     private FavJokeAdapter adapter;
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return 0;
     }
@@ -50,23 +55,23 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
         trySetupSwipeRefreshLayout();
         // init
         list = new ArrayList<>();
-        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
-        if (null != addons)
-            list.addAll(addons);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
-        recyclerView.setAdapter(adapter = new FavJokeAdapter());
+//        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
+//        if (null != addons)
+//            list.addAll(addons);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
+        mRecyclerView.setAdapter(adapter = new FavJokeAdapter());
         refresh();
     }
 
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
-        if (null != addons)
-            list.addAll(addons);
-        refreshComplete();
+//        List<LocalFavJokes> addons = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
+//        if (null != addons)
+//            list.addAll(addons);
+//        refreshComplete();
     }
 
     /**
@@ -103,11 +108,11 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
                     long id = joke.getComment_ID();
                     long time = joke.getFavTime();
                     adapter.notifyItemRemoved(position);
-                    LocalFavJokes.setThisFavedOrNot(false, realm, id);
+//                    LocalFavJokes.setThisFavedOrNot(false, realm, id);
                     // 不需要考虑作用域？会不会导致临时变量无法释放?
-                    Snackbar.make(recyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
-                        LocalFavJokes delete = LocalFavJokes.setThisFavedOrNot(true, realm, id, time);
-                        list.add(position, delete);
+                    Snackbar.make(mRecyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+//                        LocalFavJokes delete = LocalFavJokes.setThisFavedOrNot(true, realm, id, time);
+//                        list.add(position, delete);
                         adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1
                     }).show();
                     return true;

@@ -61,7 +61,8 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     /**
      * 初始化Presenter
      */
-    public abstract void initPresenter();
+    protected abstract void initPresenter();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             disableStatusBarTheme();
         }
+        // 让子类实例化Presenter 实际上为BasePresenter添加onCreate方法更贴切但实际上是冗余方法
         initPresenter();
     }
 
@@ -285,12 +287,18 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     @Override
     protected void onResume() {
         super.onResume();
+        if (mPresenter != null) {
+            mPresenter.onResume();
+        }
         MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        if (mPresenter != null) {
+            mPresenter.onPause();
+        }
         MobclickAgent.onPause(this);
     }
 
@@ -298,7 +306,7 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
     protected void onDestroy() {
         super.onDestroy();
         if (mPresenter != null) {
-            mPresenter.release();
+            mPresenter.onDestory();
         }
     }
 

@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     BottomNavigationView mBottomNavigationView;
 
     /* 缓存变量 */
-    private Fragment mCurrentFragment;
+    private Fragment mCurrentFragment, mReadingFragment, mFavoriteFragment, mMineFragment;
     private ViewPropertyAnimator mHide, mShow;
 
     /**
@@ -84,14 +84,17 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         /* 显示阅读Fragment */
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_wrapper, mCurrentFragment = ReadingFragment.getInstance(), JANDAN_TAG)
+                .add(R.id.fragment_wrapper, mCurrentFragment = new ReadingFragment(), JANDAN_TAG)
                 .commitAllowingStateLoss();
         // 是否记录上此位置？
         // 设置底部导航回调
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.nav_jandan:
-                    switchCurrentFragment(R.id.fragment_wrapper, JANDAN_TAG, ReadingFragment.getInstance());
+                    if (mReadingFragment == null) {
+                        mReadingFragment = new ReadingFragment();
+                    }
+                    switchCurrentFragment(R.id.fragment_wrapper, JANDAN_TAG, mReadingFragment);
                     break;
                 case R.id.nav_fav:
                     switchCurrentFragment(R.id.fragment_wrapper, FAV_TAG, FavoriteFragment.getInstance());

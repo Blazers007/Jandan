@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.count;
+package com.blazers.jandan.model.pojo.count;
 
 import java.io.Serializable;
 

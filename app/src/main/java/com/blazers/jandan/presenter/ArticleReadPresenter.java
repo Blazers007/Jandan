@@ -7,7 +7,7 @@ import com.blazers.jandan.model.database.local.LocalArticleHtml;
 import com.blazers.jandan.model.database.local.LocalFavNews;
 import com.blazers.jandan.model.database.local.LocalImage;
 import com.blazers.jandan.model.database.sync.NewsPost;
-import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.api.DataManager;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ArticleReadView;
 import com.blazers.jandan.util.DBHelper;
@@ -28,25 +28,25 @@ public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
         super(view, context);
         // 获取Model层
         long id = getIntent().getLongExtra(ViewArticleEvent.KEY, -1);
-        mNewsPost = NewsPost.getPostById(mRealm, id);
+        mNewsPost = NewsPost.getPostById(getRealm(), id);
         if (mNewsPost == null || id == -1)
             getActivity().finish();
     }
 
     public void loadHtmlString() {
-        LocalArticleHtml articleHtml = mRealm.where(LocalArticleHtml.class).equalTo("id", mNewsPost.getId()).findFirst();
+        LocalArticleHtml articleHtml = getRealm().where(LocalArticleHtml.class).equalTo("id", mNewsPost.getId()).findFirst();
         if (null != articleHtml && !articleHtml.getHtml().isEmpty()) {
 
             mView.showHtmlPageByString(articleHtml.getHtml());
         } else {
             mView.showLoadingProgress();
-            Parser parser = Parser.getInstance();
+            DataManager parser = DataManager.getInstance();
             parser.getNewsContentData(mNewsPost.getId())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             localArticleHtml -> {
-                                DBHelper.saveToRealm(mRealm, localArticleHtml);
+                                DBHelper.saveToRealm(getRealm(), localArticleHtml);
                                 mView.showHtmlPageByString(localArticleHtml.getHtml());
                                 mView.hideLoadingProgress();
                             },
@@ -56,7 +56,7 @@ public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
     }
 
     public String getLocalCachedResourceByUrl(String url) {
-        LocalImage localImage = LocalImage.getLocalImageByWebUrl(mRealm, url);
+        LocalImage localImage = LocalImage.getLocalImageByWebUrl(getRealm(), url);
         if (localImage != null) {
             return localImage.getLocalUrl();
         }
@@ -64,11 +64,11 @@ public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
     }
 
     public boolean isThisArticleMyFav() {
-        return LocalFavNews.isThisFaved(mRealm, mNewsPost.getId());
+        return LocalFavNews.isThisFaved(getRealm(), mNewsPost.getId());
     }
 
     public void toggleThisArticleFavState() {
-        LocalFavNews.setThisFavedOrNot(!isThisArticleMyFav(), mRealm, mNewsPost.getId());
+        LocalFavNews.setThisFavedOrNot(!isThisArticleMyFav(), getRealm(), mNewsPost.getId());
     }
 
 

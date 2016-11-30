@@ -16,13 +16,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.comment.CommentPost;
-import com.blazers.jandan.model.comment.Comments;
-import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.api.DataManager;
+import com.blazers.jandan.model.event.ViewCommentEvent;
+import com.blazers.jandan.model.pojo.comment.CommentPost;
+import com.blazers.jandan.model.pojo.comment.Comments;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.widgets.QuoteView;
-import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.facebook.common.util.UriUtil;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import fr.castorflex.android.circularprogressbar.CircularProgressBar;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -52,7 +52,7 @@ public class CommentActivity extends BaseActivity {
     @BindView(R.id.comment_recycler_view)
     RecyclerView commentRecyclerView;
     @BindView(R.id.progress_wheel)
-    CircularProgressBar progressWheel;
+    MaterialProgressBar progressWheel;
 
     // 此片评论的ID
     private long commentId;
@@ -74,7 +74,7 @@ public class CommentActivity extends BaseActivity {
     }
 
     void loadCommentById(long id) {
-        Parser.getInstance().getCommentById(id)
+        DataManager.getInstance().getCommentById(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.blazers.jandan.model.database.local.LocalImage;
-import com.blazers.jandan.api.ImageDownloader;
+import com.blazers.jandan.util.ImageDownloader;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ImageInspectView;
 import com.blazers.jandan.util.DBHelper;
@@ -39,7 +39,7 @@ public class ImageInspectPresenter extends BasePresenter<ImageInspectView> {
      * @return 图片Uri
      */
     public Uri getImageUrl() {
-        LocalImage localImage = mRealm.where(LocalImage.class).equalTo("url", mViewImageEvent.originUrl).findFirst();
+        LocalImage localImage = getRealm().where(LocalImage.class).equalTo("url", mViewImageEvent.originUrl).findFirst();
         String uri;
         if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
             return Uri.parse("file://" + localImage.getLocalUrl());
@@ -66,7 +66,7 @@ public class ImageInspectPresenter extends BasePresenter<ImageInspectView> {
                 .compose(RxHelper.applySchedulers())
                 .subscribe(localImage -> {
 
-                    DBHelper.saveToRealm(mRealm, localImage);
+                    DBHelper.saveToRealm(getRealm(), localImage);
                     mView.showToast("图片保存成功");
                 }, throwable -> {
                     mDownloading = false;

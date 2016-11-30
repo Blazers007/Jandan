@@ -17,13 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.database.local.LocalImage;
 import com.blazers.jandan.model.database.local.LocalVote;
 import com.blazers.jandan.model.database.sync.ImagePost;
-import com.blazers.jandan.model.image.ImageRelateToPost;
-import com.blazers.jandan.api.ImageDownloader;
-import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.model.pojo.image.ImageRelateToPost;
+import com.blazers.jandan.util.ImageDownloader;
+import com.blazers.jandan.api.DataManager;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.model.event.ViewImageEvent;
@@ -32,9 +30,7 @@ import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.RxHelper;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.SdcardHelper;
 import com.blazers.jandan.util.ShareHelper;
-import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.widgets.AutoScaleFrescoView;
 import com.blazers.jandan.widgets.ThumbTextButton;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
@@ -78,6 +74,11 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return 0;
     }
@@ -99,16 +100,16 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
     void initRecyclerView() {
         trySetupSwipeRefreshLayout();
         trySetupRecyclerViewWithAdapter(adapter = new JandanImageAdapter());
-        // 首先从数据库读取 在判断是否需要加载
-        List<ImagePost> list = applyFilter(ImagePost.getImagePosts(realm, 1, type));
-        List<ImageRelateToPost> localImageList = ImagePost.getAllImageFromList(list);
-        imageArrayList.addAll(localImageList);
-        adapter.notifyItemRangeInserted(0, localImageList.size());
-        // 如果数据为空 或 时间大于30分钟 则更新
-        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
-            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
-            refresh();
-        }
+//        // 首先从数据库读取 在判断是否需要加载
+//        List<ImagePost> list = applyFilter(ImagePost.getImagePosts(realm, 1, type));
+//        List<ImageRelateToPost> localImageList = ImagePost.getAllImageFromList(list);
+//        imageArrayList.addAll(localImageList);
+//        adapter.notifyItemRangeInserted(0, localImageList.size());
+//        // 如果数据为空 或 时间大于30分钟 则更新
+//        if (localImageList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
+//            mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
+//            refresh();
+//        }
     }
 
     /**
@@ -135,48 +136,48 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
     @Override
     public void refresh() {
         mPage = 1;
-        if (NetworkHelper.netWorkAvailable(getActivity())) {
-            Parser.getInstance().getPictureData(mPage, type) // 是IO线程还是Main县城由该方法确定
-                    .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
-                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
-                    .map(this::applyFilter)
-                    .subscribe(list -> {
-                        refreshComplete();
-                        // 处理数据
-                        imageArrayList.clear();
-                        adapter.notifyDataSetChanged();
-                        // 取出图片
-                        List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
-                        int size = imageRelateToPostList.size();
-                        imageArrayList.addAll(imageRelateToPostList);
-                        adapter.notifyItemRangeInserted(0, size);
-                    }, throwable -> {
-                        refreshError();
-                        Log.e("Refresh", throwable.toString());
-                    });
-        } else {
-            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
-            if (null != list && list.size() > 0) {
-                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
-                int size = imageRelateToPostList.size();
-                imageArrayList.addAll(imageRelateToPostList);
-                adapter.notifyItemRangeInserted(0, size);
-            } else {
-                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
-            }
-            refreshComplete();
-        }
+//        if (NetworkHelper.netWorkAvailable(getActivity())) {
+//            DataManager.getInstance().getPictureData(mPage, type) // 是IO线程还是Main县城由该方法确定
+//                    .observeOn(AndroidSchedulers.mainThread())          // 更新在某县城由自己决定
+//                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+//                    .map(this::applyFilter)
+//                    .subscribe(list -> {
+//                        refreshComplete();
+//                        // 处理数据
+//                        imageArrayList.clear();
+//                        adapter.notifyDataSetChanged();
+//                        // 取出图片
+//                        List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+//                        int size = imageRelateToPostList.size();
+//                        imageArrayList.addAll(imageRelateToPostList);
+//                        adapter.notifyItemRangeInserted(0, size);
+//                    }, throwable -> {
+//                        refreshError();
+//                        Log.e("Refresh", throwable.toString());
+//                    });
+//        } else {
+//            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
+//            if (null != list && list.size() > 0) {
+//                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+//                int size = imageRelateToPostList.size();
+//                imageArrayList.addAll(imageRelateToPostList);
+//                adapter.notifyItemRangeInserted(0, size);
+//            } else {
+//                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+//            }
+//            refreshComplete();
+//        }
     }
 
     @Override
     public void loadMore() {
         mPage++;
         if (NetworkHelper.netWorkAvailable(getActivity())) {
-            Parser.getInstance().getPictureData(mPage, type)
+            DataManager.getInstance().getPictureData(mPage, type)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+//                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
                     .subscribe(list -> {
-                        loadMoreComplete();
+
                         // 取出图片
                         List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
                         int start = imageArrayList.size();
@@ -185,22 +186,20 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
 //                    adapter.notifyItemRangeInserted(start, size);
                         adapter.notifyDataSetChanged();
                     }, throwable -> {
-                        loadMoreError();
                         Log.e("LoadMore", throwable.toString());
                     });
         } else {
-            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
-            if (list.size() > 0) {
-                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
-                int start = imageArrayList.size();
-                int size = imageRelateToPostList.size();
-                imageArrayList.addAll(imageRelateToPostList);
-//                adapter.notifyItemRangeInserted(start, size);
-                adapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
-            }
-            loadMoreComplete();
+//            List<ImagePost> list = ImagePost.getImagePosts(realm, mPage, type);
+//            if (list.size() > 0) {
+//                List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+//                int start = imageArrayList.size();
+//                int size = imageRelateToPostList.size();
+//                imageArrayList.addAll(imageRelateToPostList);
+////                adapter.notifyItemRangeInserted(start, size);
+//                adapter.notifyDataSetChanged();
+//            } else {
+//                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+//            }
         }
     }
 
@@ -267,7 +266,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             holder.comment.setThumbText(String.format("%s", post.getCommentNumber()));
             holder.content.setAspectRatio(1.418f);
             holder.typeHint.setImageDrawable(null);
-            holder.fav.setFavorite(LocalFavImages.isThisFaved(realm, image.url), false);
+//            holder.fav.setFavorite(LocalFavImages.isThisFaved(realm, image.url), false);
             // 填入评论文字
             String comment = post.getText_content();
             if (comment.trim().equals(""))
@@ -277,27 +276,27 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                 holder.text.setText(comment.trim());
             }
             // 加载图片 首先判断本地是否有
-            LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, image.url);
-            String url;
-            if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
-                holder.content.showImage(holder.typeHint, "file://" + localImage.getLocalUrl());
-            } else {
-                holder.content.showImage(holder.typeHint, image.url);
-            }
+//            LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, image.url);
+//            String url;
+//            if (localImage != null && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
+//                holder.content.showImage(holder.typeHint, "file://" + localImage.getLocalUrl());
+//            } else {
+//                holder.content.showImage(holder.typeHint, image.url);
+//            }
             // 显示Vote信息 TODO 优化数据库查询 或者缓存
-            LocalVote vote = LocalVote.getLocalVoteById(realm, post.getComment_ID());
-            if (vote != null) {
-                if (vote.getId() > 0) {
-                    holder.oo.setPressed(true);
-                    holder.xx.setPressed(false);
-                } else if (vote.getId() < 0) {
-                    holder.oo.setPressed(false);
-                    holder.xx.setPressed(true);
-                }
-            } else {
-                holder.oo.setPressed(false);
-                holder.xx.setPressed(false);
-            }
+//            LocalVote vote = LocalVote.getLocalVoteById(realm, post.getComment_ID());
+//            if (vote != null) {
+//                if (vote.getId() > 0) {
+//                    holder.oo.setPressed(true);
+//                    holder.xx.setPressed(false);
+//                } else if (vote.getId() < 0) {
+//                    holder.oo.setPressed(false);
+//                    holder.xx.setPressed(true);
+//                }
+//            } else {
+//                holder.oo.setPressed(false);
+//                holder.xx.setPressed(false);
+//            }
         }
 
         @Override
@@ -334,9 +333,9 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
                 // Fav
-                fav.setOnFavoriteChangeListener(
-                        (view, favorite) -> LocalFavImages.setThisFavedOrNot(favorite, realm, imageArrayList.get(getAdapterPosition()).url)
-                );
+//                fav.setOnFavoriteChangeListener(
+//                        (view, favorite) -> LocalFavImages.setThisFavedOrNot(favorite, realm, imageArrayList.get(getAdapterPosition()).url)
+//                );
             }
 
             @OnClick(R.id.content)
@@ -362,7 +361,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                             .compose(RxHelper.applySchedulers())
                             .subscribe(localImage -> {
                                 DBHelper.saveToRealm(getActivity(), localImage);
-                                Snackbar.make(loadMoreRecyclerView, "图片保存成功", Snackbar.LENGTH_SHORT)
+                                Snackbar.make(mLoadMoreRecyclerView, "图片保存成功", Snackbar.LENGTH_SHORT)
                                         .setActionTextColor(getResources().getColor(R.color.yellow500))
                                         .setAction("撤销", v -> {
                                             // TODO: 添加删除逻辑
@@ -380,33 +379,33 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                 ImageRelateToPost imageRelateToPost = imageArrayList.get(getAdapterPosition());
                 ImagePost post = imageRelateToPost.holder;
                 /* 查看是否已经投票 */
-                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
-                if (vote != null && vote.getId() != 0) {
-                    Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
+//                if (vote != null && vote.getId() != 0) {
+//                    Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 // 播放动画 回馈后停止动画效果
                 switch (view.getId()) {
                     case R.id.btn_oo:
-                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                        DataManager.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
                                 .compose(RxHelper.applySchedulers())
                                 .subscribe(s -> {
                                     oo.addThumbText(1);
                                     LocalVote v = new LocalVote();
                                     v.setId(post.getComment_ID());
                                     v.setVote(1);
-                                    DBHelper.saveToRealm(realm, v);
+//                                    DBHelper.saveToRealm(realm, v);
                                 }, throwable -> Log.e("Vote", throwable.toString()));
                         break;
                     case R.id.btn_xx:
-                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                        DataManager.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
                                 .compose(RxHelper.applySchedulers())
                                 .subscribe(s -> {
                                     xx.addThumbText(1);
                                     LocalVote v = new LocalVote();
                                     v.setId(post.getComment_ID());
                                     v.setVote(-1);
-                                    DBHelper.saveToRealm(realm, v);
+//                                    DBHelper.saveToRealm(realm, v);
                                 }, throwable -> Log.e("Vote", throwable.toString()));
                         break;
                 }

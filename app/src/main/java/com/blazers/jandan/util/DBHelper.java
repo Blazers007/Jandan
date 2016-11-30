@@ -7,13 +7,14 @@ import io.realm.RealmObject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by Blazers on 2015/10/26.
  */
 public class DBHelper {
 
-    private static final List<Realm> realms = new ArrayList<>();
+    private static final ConcurrentLinkedQueue<Realm> realms = new ConcurrentLinkedQueue<>();
 
     /**
      * 存储数组到数据库中

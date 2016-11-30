@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
 import com.blazers.jandan.widgets.loadmore.LoadMoreRecyclerView;
@@ -15,21 +16,21 @@ import com.blazers.jandan.widgets.loadmore.PullCallback;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 //import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 /**
  * Created by Blazers on 2015/10/16.
  */
-public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment {
+public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPresenter> extends BaseSwipeRefreshFragment<T> implements BaseLoadMoreRefreshView {
 
     @BindView(R.id.recycler_list)
-    public LoadMoreRecyclerView loadMoreRecyclerView;
+    public LoadMoreRecyclerView mLoadMoreRecyclerView;
     @BindView(R.id.load_more_progress)
-    public SmoothProgressBar smoothProgressBar;
+    public MaterialProgressBar mSmoothProgressBar;
 
     /* Vars */
-    private boolean isLoading = false;
+    private boolean mIsLoading = false;
     private boolean isLoadAllItems = false;
 
     @Override
@@ -39,24 +40,20 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment
     }
 
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
-        if (null != loadMoreRecyclerView && null != adapter) {
-            loadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-            loadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 24, Color.rgb(241, 242, 241)));
-            loadMoreRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//            loadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
-            loadMoreRecyclerView.setPullCallback(new PullCallback() {
+        if (null != mLoadMoreRecyclerView && null != adapter) {
+            mLoadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+            mLoadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 24, Color.rgb(241, 242, 241)));
+            mLoadMoreRecyclerView.setItemAnimator(new DefaultItemAnimator());
+//            mLoadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
+            mLoadMoreRecyclerView.setPullCallback(new PullCallback() {
                 @Override
                 public void onLoadMore() {
-                    if (isLoading())
-                        return;
-                    Log.i(TAG, "开始刷新");
-                    isLoading = true;
-                    invokeLoadMore();
+                    loadMore();
                 }
 
                 @Override
                 public boolean isLoading() {
-                    return isLoading;
+                    return mIsLoading;
                 }
 
                 @Override
@@ -64,37 +61,36 @@ public abstract class BaseSwipeLoadMoreFragment extends BaseSwipeRefreshFragment
                     return isLoadAllItems;
                 }
             });
-            loadMoreRecyclerView.setAdapter(adapter);
+            mLoadMoreRecyclerView.setAdapter(adapter);
         }
-    }
-
-    /**
-     * 上拉加载更多
-     */
-    private void invokeLoadMore() {
-        smoothProgressBar.setVisibility(View.VISIBLE);
-        loadMore();
     }
 
     /**
      * 将Rx逻辑部分整理至该模块中 便于精简代码
      */
-    public abstract void loadMore();
+    public void loadMore() {
+        if (mIsLoading)
+            return;
+        Log.i(TAG, "==LoadMore==");
+        mIsLoading = true;
+        showLoadMoreView();
+        mPresenter.onLoadMore();
+    }
 
-    public void loadMoreComplete() {
-        if (null != smoothProgressBar && null != loadMoreRecyclerView) {
-            smoothProgressBar.setVisibility(View.GONE);
-            isLoading = false;
-            Log.i(TAG, "加载更多完毕");
+
+    @Override
+    public void showLoadMoreView() {
+        if (null != mSmoothProgressBar && null != mLoadMoreRecyclerView) {
+            mSmoothProgressBar.setVisibility(View.VISIBLE);
         }
     }
 
-    public void loadMoreError() {
-        if (null != smoothProgressBar && null != loadMoreRecyclerView) {
-            smoothProgressBar.setVisibility(View.GONE);
-            isLoading = false;
+    @Override
+    public void hideLoadMoreView(boolean successful) {
+        if (null != mSmoothProgressBar && null != mLoadMoreRecyclerView) {
+            mSmoothProgressBar.setVisibility(View.GONE);
+            mIsLoading = false;
             Log.i(TAG, "加载更多失败");
         }
     }
-
 }

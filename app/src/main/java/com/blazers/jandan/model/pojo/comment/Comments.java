@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.comment;
+package com.blazers.jandan.model.pojo.comment;
 
 import com.google.gson.JsonObject;
 

@@ -11,7 +11,7 @@ import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalFavImages;
 import com.blazers.jandan.model.database.local.LocalFavJokes;
 import com.blazers.jandan.model.database.local.LocalFavNews;
-import com.blazers.jandan.model.timeline.Timeline;
+import com.blazers.jandan.model.pojo.timeline.Timeline;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
@@ -29,6 +29,11 @@ import java.util.Map;
 public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 
     private List<Timeline> list;
+
+    @Override
+    protected void initPresenter() {
+
+    }
 
     @Override
     protected int getLayoutResId() {
@@ -52,8 +57,8 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
     }
 
     void initRecyclerView() {
-        recyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new TimelineAdapter());
+        mRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
+        mRecyclerView.setAdapter(new TimelineAdapter());
     }
 
     @Override
@@ -65,47 +70,47 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
      * 重要方法 查询三个表 并 逐一遍历 筛选 （后期动态加载）
      * */
     void generateTimelineObjects() {
-        list = new ArrayList<>();
-        Map<String, Timeline> timelineHashMap = new HashMap<>();
-        // 遍历Image
-        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
-        for (LocalFavImages image : images) {
-            String time = TimeHelper.getDate(image.getFavTime());
-            if (timelineHashMap.containsKey(time)) {
-                timelineHashMap.get(time).addFavImage(image);
-            }else{
-                Timeline timeline = new Timeline(time);
-                timeline.addFavImage(image);
-                timelineHashMap.put(time, timeline);
-                list.add(timeline);
-            }
-        }
-        // 遍历News
-        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
-        for (LocalFavNews news : newses) {
-            String time = TimeHelper.getDate(news.getFavTime());
-            if (timelineHashMap.containsKey(time)) {
-                timelineHashMap.get(time).addFavNews(news);
-            }else{
-                Timeline timeline = new Timeline(time);
-                timeline.addFavNews(news);
-                timelineHashMap.put(time, timeline);
-                list.add(timeline);
-            }
-        }
-        // 遍历Jokes
-        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
-        for (LocalFavJokes joke : jokes) {
-            String time = TimeHelper.getDate(joke.getFavTime());
-            if (timelineHashMap.containsKey(time)) {
-                timelineHashMap.get(time).addFavJoke(joke);
-            }else{
-                Timeline timeline = new Timeline(time);
-                timeline.addFavJoke(joke);
-                timelineHashMap.put(time, timeline);
-                list.add(timeline);
-            }
-        }
+//        list = new ArrayList<>();
+//        Map<String, Timeline> timelineHashMap = new HashMap<>();
+//        // 遍历Image
+//        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
+//        for (LocalFavImages image : images) {
+//            String time = TimeHelper.getDate(image.getFavTime());
+//            if (timelineHashMap.containsKey(time)) {
+//                timelineHashMap.get(time).addFavImage(image);
+//            }else{
+//                Timeline timeline = new Timeline(time);
+//                timeline.addFavImage(image);
+//                timelineHashMap.put(time, timeline);
+//                list.add(timeline);
+//            }
+//        }
+//        // 遍历News
+//        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
+//        for (LocalFavNews news : newses) {
+//            String time = TimeHelper.getDate(news.getFavTime());
+//            if (timelineHashMap.containsKey(time)) {
+//                timelineHashMap.get(time).addFavNews(news);
+//            }else{
+//                Timeline timeline = new Timeline(time);
+//                timeline.addFavNews(news);
+//                timelineHashMap.put(time, timeline);
+//                list.add(timeline);
+//            }
+//        }
+//        // 遍历Jokes
+//        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
+//        for (LocalFavJokes joke : jokes) {
+//            String time = TimeHelper.getDate(joke.getFavTime());
+//            if (timelineHashMap.containsKey(time)) {
+//                timelineHashMap.get(time).addFavJoke(joke);
+//            }else{
+//                Timeline timeline = new Timeline(time);
+//                timeline.addFavJoke(joke);
+//                timelineHashMap.put(time, timeline);
+//                list.add(timeline);
+//            }
+//        }
     }
 
 

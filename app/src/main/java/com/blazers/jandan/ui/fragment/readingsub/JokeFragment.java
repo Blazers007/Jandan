@@ -8,27 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavJokes;
 import com.blazers.jandan.model.database.local.LocalVote;
 import com.blazers.jandan.model.database.sync.JokePost;
-import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.api.DataManager;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.RxHelper;
-import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.ShareHelper;
-import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.widgets.ThumbTextButton;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,6 +49,11 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
     }
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return 0;
     }
@@ -75,86 +74,86 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
         trySetupSwipeRefreshLayout();
         trySetupRecyclerViewWithAdapter(adapter = new JokeAdapter());
         // 加载数据
-        List<JokePost> localList = JokePost.getAllPost(realm, 1);
-        mList.addAll(localList);
-        adapter.notifyItemRangeInserted(0, localList.size());
+//        List<JokePost> localList = JokePost.getAllPost(realm, 1);
+//        mList.addAll(localList);
+//        adapter.notifyItemRangeInserted(0, localList.size());
         // 如果数据为空 或 时间大于30分钟 则更新
-        if (localList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
-            swipeRefreshLayout.post(() -> swipeRefreshLayout.setRefreshing(true));
-            refresh();
-        }
+//        if (localList.size() == 0 || TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), type))) {
+//            mSwipeRefreshLayout.post(() -> mSwipeRefreshLayout.setRefreshing(true));
+//            refresh();
+//        }
     }
 
     @Override
     public void refresh() {
         mPage = 1;
-        if (NetworkHelper.netWorkAvailable(getActivity())) {
-            Parser parser = Parser.getInstance();
-            parser.getJokeData(mPage)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
-                    .subscribe(list -> {
-                        refreshComplete();
-                        //
-                        mList.clear();
-                        adapter.notifyDataSetChanged();
-                        // 插入数据
-                        mList.addAll(list);
-                        adapter.notifyItemRangeInserted(0, list.size());
-                    }, throwable -> {
-                        refreshError();
-                        Log.e("Joke", throwable.toString());
-                    });
-        } else {
-            List<JokePost> list = JokePost.getAllPost(realm, mPage);
-            if (null != list && list.size() > 0) {
-                // 清空
-                mList.clear();
-                adapter.notifyDataSetChanged();
-                // 添加
-                mList.addAll(list);
-                adapter.notifyItemRangeInserted(0, list.size());
-            } else {
-                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
-            }
-            refreshComplete();
-        }
+//        if (NetworkHelper.netWorkAvailable(getActivity())) {
+//            DataManager parser = DataManager.getInstance();
+//            parser.getJokeData(mPage)
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+//                    .subscribe(list -> {
+//                        refreshComplete();
+//                        //
+//                        mList.clear();
+//                        adapter.notifyDataSetChanged();
+//                        // 插入数据
+//                        mList.addAll(list);
+//                        adapter.notifyItemRangeInserted(0, list.size());
+//                    }, throwable -> {
+//                        refreshError();
+//                        Log.e("Joke", throwable.toString());
+//                    });
+//        } else {
+//            List<JokePost> list = JokePost.getAllPost(realm, mPage);
+//            if (null != list && list.size() > 0) {
+//                // 清空
+//                mList.clear();
+//                adapter.notifyDataSetChanged();
+//                // 添加
+//                mList.addAll(list);
+//                adapter.notifyItemRangeInserted(0, list.size());
+//            } else {
+//                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+//            }
+//            refreshComplete();
+//        }
     }
 
     @Override
     public void loadMore() {
-        if (swipeRefreshLayout.isRefreshing()) {
+        if (mSwipeRefreshLayout.isRefreshing()) {
             Log.i(TAG, "正在刷新中,所以无法加载更多");
             return;
         }
         mPage++;
         /* 判断网络状态 */
         if (NetworkHelper.netWorkAvailable(getActivity())) {
-            smoothProgressBar.setVisibility(View.VISIBLE);
-            Parser parser = Parser.getInstance();
+            mSmoothProgressBar.setVisibility(View.VISIBLE);
+            DataManager parser = DataManager.getInstance();
             parser.getJokeData(mPage)
                     .observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
+//                    .doOnNext(list -> DBHelper.saveToRealm(realm, list))
                     .subscribe(list -> {
-                        loadMoreComplete();
+
                         int start = mList.size();
                         mList.addAll(list);
                         adapter.notifyDataSetChanged();
                     }, throwable -> {
-                        loadMoreError();
+
                         Log.e("Joke", throwable.toString());
                     });
         } else {
             // 尝试从本地数据库读取
-            List<JokePost> list = JokePost.getAllPost(realm, mPage);
-            if (null != list && list.size() > 0) {
-                int start = mList.size();
-                mList.addAll(list);
-                adapter.notifyDataSetChanged();
-            } else {
-                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
-            }
-            loadMoreComplete();
+//            List<JokePost> list = JokePost.getAllPost(realm, mPage);
+//            if (null != list && list.size() > 0) {
+//                int start = mList.size();
+//                mList.addAll(list);
+//                adapter.notifyDataSetChanged();
+//            } else {
+//                Toast.makeText(getActivity(), R.string.there_is_no_more, Toast.LENGTH_SHORT).show();
+//            }
+
         }
     }
 
@@ -174,28 +173,28 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
 
         @Override
         public void onBindViewHolder(JokeHolder holder, int position) {
-            JokePost joke = mList.get(position);
-            holder.content.setText(joke.getComment_content());
-            holder.author.setText(String.format("@%s", joke.getComment_author()));
-            holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));
-            holder.oo.setThumbText(joke.getVote_positive());
-            holder.xx.setThumbText(joke.getVote_negative());
-            holder.comment.setThumbText(String.format("%d", joke.getCommentNumber()));
-            holder.fav.setFavorite(LocalFavJokes.isThisFaved(realm, joke.getComment_ID()), false);
-            //TODO 优化数据库查询 或者缓存
-            LocalVote vote = LocalVote.getLocalVoteById(realm, joke.getComment_ID());
-            if (vote != null) {
-                if (vote.getId() > 0) {
-                    holder.oo.setPressed(true);
-                    holder.xx.setPressed(false);
-                } else if (vote.getId() < 0) {
-                    holder.oo.setPressed(false);
-                    holder.xx.setPressed(true);
-                }
-            } else {
-                holder.oo.setPressed(false);
-                holder.xx.setPressed(false);
-            }
+//            JokePost joke = mList.get(position);
+//            holder.content.setText(joke.getComment_content());
+//            holder.author.setText(String.format("@%s", joke.getComment_author()));
+//            holder.date.setText(TimeHelper.getSocialTime(joke.getComment_date()));
+//            holder.oo.setThumbText(joke.getVote_positive());
+//            holder.xx.setThumbText(joke.getVote_negative());
+//            holder.comment.setThumbText(String.format("%d", joke.getCommentNumber()));
+//            holder.fav.setFavorite(LocalFavJokes.isThisFaved(realm, joke.getComment_ID()), false);
+//            //TODO 优化数据库查询 或者缓存
+//            LocalVote vote = LocalVote.getLocalVoteById(realm, joke.getComment_ID());
+//            if (vote != null) {
+//                if (vote.getId() > 0) {
+//                    holder.oo.setPressed(true);
+//                    holder.xx.setPressed(false);
+//                } else if (vote.getId() < 0) {
+//                    holder.oo.setPressed(false);
+//                    holder.xx.setPressed(true);
+//                }
+//            } else {
+//                holder.oo.setPressed(false);
+//                holder.xx.setPressed(false);
+//            }
         }
 
         @Override
@@ -223,9 +222,9 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
             public JokeHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this, itemView);
-                fav.setOnFavoriteChangeListener(
-                        (view, favorite) -> LocalFavJokes.setThisFavedOrNot(favorite, realm, mList.get(getAdapterPosition()).getComment_ID())
-                );
+//                fav.setOnFavoriteChangeListener(
+//                        (view, favorite) -> LocalFavJokes.setThisFavedOrNot(favorite, realm, mList.get(getAdapterPosition()).getComment_ID())
+//                );
             }
 
             /**
@@ -235,32 +234,32 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
             public void vote(View view) {
                 JokePost post = mList.get(getAdapterPosition());
                 /* 查看是否已经投票 */
-                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
-                if (vote != null && vote.getId() != 0) {
-                    Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
-                    return;
-                }
+//                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
+//                if (vote != null && vote.getId() != 0) {
+//                    Toast.makeText(getActivity(), R.string.warn_already_vote, Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
                 switch (view.getId()) {
                     case R.id.btn_oo:
-                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                        DataManager.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
                                 .compose(RxHelper.applySchedulers())
                                 .subscribe(s -> {
                                     oo.addThumbText(1);
                                     LocalVote v = new LocalVote();
                                     v.setId(post.getComment_ID());
                                     v.setVote(1);
-                                    DBHelper.saveToRealm(realm, v);
+//                                    DBHelper.saveToRealm(realm, v);
                                 }, throwable -> Log.e("Vote", throwable.toString()));
                         break;
                     case R.id.btn_xx:
-                        Parser.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
+                        DataManager.getInstance().voteByCommentIdAndVote(post.getComment_ID(), true)
                                 .compose(RxHelper.applySchedulers())
                                 .subscribe(s -> {
                                     xx.addThumbText(1);
                                     LocalVote v = new LocalVote();
                                     v.setId(post.getComment_ID());
                                     v.setVote(-1);
-                                    DBHelper.saveToRealm(realm, v);
+//                                    DBHelper.saveToRealm(realm, v);
                                 }, throwable -> Log.e("Vote", throwable.toString()));
                         break;
                 }

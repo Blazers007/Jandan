@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.timeline;
+package com.blazers.jandan.model.pojo.timeline;
 
 import com.blazers.jandan.model.database.local.LocalFavImages;
 import com.blazers.jandan.model.database.local.LocalFavJokes;

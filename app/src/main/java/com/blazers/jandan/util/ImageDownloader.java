@@ -1,11 +1,9 @@
-package com.blazers.jandan.api;
+package com.blazers.jandan.util;
 
 import android.util.Log;
 
 import com.blazers.jandan.model.database.local.LocalImage;
-import com.blazers.jandan.model.image.ImageRelateToPost;
-import com.blazers.jandan.util.HtmlImgReplaceUtil;
-import com.blazers.jandan.util.SdcardHelper;
+import com.blazers.jandan.model.pojo.image.ImageRelateToPost;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -47,6 +47,11 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
 
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return 0;
     }
@@ -62,20 +67,19 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
         super.onViewCreated(view, savedInstanceState);
         trySetupSwipeRefreshLayout();
         list = new ArrayList<>();
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter = new FavImageAdapter());
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(adapter = new FavImageAdapter());
         refresh();
     }
 
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
-        if (null != addons)
-            list.addAll(addons);
-        refreshComplete();
-        adapter.notifyDataSetChanged();
+//        List<LocalFavImages> addons = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
+//        if (null != addons)
+//            list.addAll(addons);
+//        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -183,16 +187,16 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
                                 // 真正的移除工作
                                 if (null == mSelectedFavItems)
                                     return;
-                                for (LocalFavImages item : mSelectedFavItems)
-                                    LocalFavImages.setThisFavedOrNot(false, realm, item.getUrl());
+//                                for (LocalFavImages item : mSelectedFavItems)
+//                                    LocalFavImages.setThisFavedOrNot(false, realm, item.getUrl());
                                 mSelectedFavItems = null;
                                 mCache = null;
                             };
-                            Snackbar.make(recyclerView, "已经删除以上收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+                            Snackbar.make(mRecyclerView, "已经删除以上收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
                                 // 缓存变量 并返还原有值
                                 if (null == mCache)
                                     return;
-                                recyclerView.removeCallbacks(runnable);
+                                mRecyclerView.removeCallbacks(runnable);
                                 list.clear();
                                 list.addAll(mCache);
                                 notifyDataSetChanged();
@@ -200,7 +204,7 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
                                 mCache = null;
                             }).show();
                             // 若短时间内再次点击 会出现问题
-                            recyclerView.postDelayed(runnable, 3000);
+                            mRecyclerView.postDelayed(runnable, 3000);
                         }
                     });
                     mSelectedFavItems = new HashSet<>();

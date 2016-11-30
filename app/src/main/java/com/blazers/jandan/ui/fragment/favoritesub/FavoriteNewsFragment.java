@@ -40,6 +40,11 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
     private FavNewsAdapter adapter;
 
     @Override
+    protected void initPresenter() {
+
+    }
+
+    @Override
     protected int getLayoutResId() {
         return 0;
     }
@@ -57,21 +62,21 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
         trySetupSwipeRefreshLayout();
         // Init
         list = new ArrayList<>();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
-        recyclerView.setAdapter(adapter = new FavNewsAdapter());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
+        mRecyclerView.setAdapter(adapter = new FavNewsAdapter());
         refresh();
     }
 
     @Override
     public void refresh() {
         list.clear();
-        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
-        if (null != addons)
-            list.addAll(addons);
-        adapter.notifyDataSetChanged();
-        refreshComplete();
+//        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
+//        if (null != addons)
+//            list.addAll(addons);
+//        adapter.notifyDataSetChanged();
+//        refreshComplete();
     }
 
     /**
@@ -121,11 +126,11 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
                     long id = news.getId();
                     long time = news.getFavTime();
                     adapter.notifyItemRemoved(position);
-                    LocalFavNews.setThisFavedOrNot(false, realm, id);
+//                    LocalFavNews.setThisFavedOrNot(false, realm, id);
                     // 不需要考虑作用域？会不会导致临时变量无法释放?
-                    Snackbar.make(recyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
-                        LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
-                        list.add(position, delete);
+                    Snackbar.make(mRecyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+//                        LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
+//                        list.add(position, delete);
                         adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1
                     }).show();
                     return true;

@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.presenter.base.BasePresenter;
+import com.blazers.jandan.presenter.base.BaseRefreshPresenter;
 import com.blazers.jandan.util.SPHelper;
 
 import butterknife.BindView;
@@ -15,12 +17,13 @@ import butterknife.ButterKnife;
 /**
  * Created by Blazers on 2015/11/13.
  */
-public abstract class BaseSwipeRefreshFragment extends BaseFragment {
+public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> extends BaseFragment<T> implements BaseRefreshView {
 
     @BindView(R.id.recycler_list)
-    public RecyclerView recyclerView;
+    public RecyclerView mRecyclerView;
     @BindView(R.id.swipe_container)
-    public SwipeRefreshLayout swipeRefreshLayout;
+    public SwipeRefreshLayout mSwipeRefreshLayout;
+    public boolean mIsRefreshing;
 
     /* Vars */
 
@@ -43,33 +46,38 @@ public abstract class BaseSwipeRefreshFragment extends BaseFragment {
      * 设置SwipeRefreshLayout 适当分离 不需要刻意整合在一起
      */
     public void trySetupSwipeRefreshLayout() {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.setOnRefreshListener(this::invokeRefresh);
+        if (null != mSwipeRefreshLayout) {
+            mSwipeRefreshLayout.setOnRefreshListener(this::refresh);
         }
     }
 
-    /**
-     * 下拉刷新
-     */
-    private void invokeRefresh() {
-        refresh();
+    public void refresh() {
+        if (mIsRefreshing) {
+            return;
+        }
+        Log.i(TAG, "==Refreshing==");
+        mIsRefreshing = true;
+        mPresenter.onRefresh();
     }
 
-    public abstract void refresh();
 
-    public void refreshComplete() {
-        SPHelper.setLastRefreshTime(getActivity(), type);
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 800);
-            Log.i(TAG, "刷新成功");
+    @Override
+    public void hideRefreshingView(boolean successful) {
+        if (successful) {
+            SPHelper.setLastRefreshTime(getActivity(), type);
+        }
+        if (null != mSwipeRefreshLayout) {
+            mSwipeRefreshLayout.postDelayed(() -> {
+                mSwipeRefreshLayout.setRefreshing(false);
+                mIsRefreshing = false;
+            }, 800);
         }
     }
 
-    public void refreshError() {
-        if (null != swipeRefreshLayout) {
-            swipeRefreshLayout.postDelayed(() -> swipeRefreshLayout.setRefreshing(false), 800);
-            Log.i(TAG, "刷新失败");
+    @Override
+    public void showRefreshingView() {
+        if (null != mSwipeRefreshLayout) {
+            mSwipeRefreshLayout.setRefreshing(true);
         }
     }
-
 }

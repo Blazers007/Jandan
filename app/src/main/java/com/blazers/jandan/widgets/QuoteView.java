@@ -13,8 +13,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.comment.CommentPost;
-import com.blazers.jandan.model.comment.Comments;
+import com.blazers.jandan.model.pojo.comment.CommentPost;
+import com.blazers.jandan.model.pojo.comment.Comments;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.Gson;
 

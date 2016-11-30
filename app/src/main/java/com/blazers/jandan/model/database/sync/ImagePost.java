@@ -1,6 +1,6 @@
 package com.blazers.jandan.model.database.sync;
 
-import com.blazers.jandan.model.image.ImageRelateToPost;
+import com.blazers.jandan.model.pojo.image.ImageRelateToPost;
 
 import java.util.ArrayList;
 import java.util.List;

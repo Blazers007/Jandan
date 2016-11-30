@@ -7,7 +7,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.timeline.Timeline;
+import com.blazers.jandan.model.pojo.timeline.Timeline;
 import com.blazers.jandan.util.Dppx;
 import com.facebook.drawee.view.SimpleDraweeView;
 

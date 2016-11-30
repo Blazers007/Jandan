@@ -3,6 +3,7 @@ package com.blazers.jandan.presenter.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.blazers.jandan.util.Rxbus;
 
@@ -37,19 +38,25 @@ public abstract class BasePresenter<T> {
 
     /**
      * 需要批量解除订阅的Subscription集合 注意使用clear()如果使用unsubscribe()则之后也无法添加新的订阅
+     *
+     * 一个对应生命周期 onCreate -- onDestory
+     * 另外一个对应    onResume -- onPause 只在前台生效
      */
-    private CompositeSubscription mUiSubscriptions;
+    private CompositeSubscription mFullLifeTimeSubscriptions, mFrontUISubscriptions;
 
     /**
      * Realm引用
      */
-    protected Realm mRealm;
+    private Realm mRealm;
+
+    /**
+     * 是否处于前台运行状态 onResume <---- [Here] ----> onPause
+     */
+    private boolean mIsFullyVisible = false;
 
     public BasePresenter(T view, Context context) {
         mView = view;
         mContextWeakReference = new WeakReference<>(context);
-        mUiSubscriptions = new CompositeSubscription();
-        mRealm = Realm.getDefaultInstance();
     }
 
     /**
@@ -78,12 +85,43 @@ public abstract class BasePresenter<T> {
     }
 
     /**
-     * 添加UI订阅
+     * 获取Realm对象
+     * @return Realm对象
+     */
+    protected Realm getRealm() {
+        if (mRealm == null || mRealm.isClosed()) {
+            mRealm = Realm.getDefaultInstance();
+        }
+        return mRealm;
+    }
+
+    /**
+     * 添加全生命周周期的订阅 添加到此处的订阅会在onDestory自动解除订阅
      *
      * @param subscription 订阅
      */
-    protected void addUiSubscription(Subscription subscription) {
-        mUiSubscriptions.add(subscription);
+    protected void addFLTSubscription(Subscription subscription) {
+        if (mFullLifeTimeSubscriptions == null) {
+            mFullLifeTimeSubscriptions = new CompositeSubscription();
+        }
+        mFullLifeTimeSubscriptions.add(subscription);
+    }
+
+
+    /**
+     * 必须在onResume之后 onPause之前 添加 其中的订阅会在onPause之后自动解除订阅
+     *
+     * @param subscription 订阅
+     */
+    protected void addFUISubscription(Subscription subscription) {
+        if (!mIsFullyVisible) {
+            Log.e("[error]", "you can't add Front UI subscription unless the ui is between onResume() and onPause()");
+            return;
+        }
+        if (mFrontUISubscriptions == null) {
+            mFrontUISubscriptions = new CompositeSubscription();
+        }
+        mFrontUISubscriptions.add(subscription);
     }
 
     /**
@@ -106,30 +144,40 @@ public abstract class BasePresenter<T> {
         return Rxbus.getInstance().filterTypeAsObservable(event).observeOn(AndroidSchedulers.mainThread());
     }
 
+
     /**
-     * 清空Rx订阅实践 避免在onPause之后更改UI界面
+     * 进入界面
      */
-    private void clearUiRequests() {
-        if (mUiSubscriptions != null) {
-            mUiSubscriptions.clear();
+    public void onResume() {
+        mIsFullyVisible = true;
+    }
+
+
+    /**
+     * 离开界面
+     */
+    public void onPause() {
+        mIsFullyVisible = false;
+        if (mFullLifeTimeSubscriptions != null) {
+            mFullLifeTimeSubscriptions.clear();
         }
     }
 
+
     /**
-     * 关闭数据库
+     * 相当于析构函数 与 构造函数对应
      */
-    private void closeRealm() {
-        if (mRealm != null) {
+    public void onDestory() {
+        // 清空订阅
+        if (mFullLifeTimeSubscriptions != null) {
+            // clear之后可以重用而unsubscribe之后新添加的也会立即unsubscribe
+            mFullLifeTimeSubscriptions.unsubscribe();
+            mFullLifeTimeSubscriptions = null;
+        }
+        // 关闭数据库
+        if (mRealm != null && !mRealm.isClosed()) {
             mRealm.close();
+            mRealm = null;
         }
     }
-
-    /**
-     * 回收资源
-     */
-    public void release() {
-        clearUiRequests();
-        closeRealm();
-    }
-
 }

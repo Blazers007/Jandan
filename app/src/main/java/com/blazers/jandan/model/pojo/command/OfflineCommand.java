@@ -1,4 +1,4 @@
-package com.blazers.jandan.model.command;
+package com.blazers.jandan.model.pojo.command;
 
 import java.io.Serializable;
 

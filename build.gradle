@@ -13,7 +13,7 @@ buildscript {
         // PermissionDispatcher
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         // Realm
-        classpath "io.realm:realm-gradle-plugin:2.0.2"
+        classpath "io.realm:realm-gradle-plugin:2.2.1"
         //添加fir插件依赖
         classpath 'im.fir:gradle-fir-publisher:1.0.7'
     }

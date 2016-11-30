@@ -9,8 +9,8 @@ import android.widget.Toast;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.sync.ImagePost;
-import com.blazers.jandan.api.ImageDownloader;
-import com.blazers.jandan.api.Parser;
+import com.blazers.jandan.util.ImageDownloader;
+import com.blazers.jandan.api.DataManager;
 import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.util.NetworkHelper;
@@ -53,28 +53,28 @@ public class OfflineDownloadService extends IntentService {
     }
 
     public void startDownloadNews(int fromPage, int pageSize) throws RemoteException {
-        Observable.range(fromPage, pageSize)
-                .flatMap(Parser.getInstance()::getNewsData)
-                .doOnNext(list -> DBHelper.saveToRealm(OfflineDownloadService.this, list))
-                .flatMap(Observable::from)
-                .map(newsPost -> {
-                    DBHelper.saveToRealm(OfflineDownloadService.this, ImageDownloader.getInstance().doSimpleOfflineCaching(newsPost.getThumbUrl()));
-                    return newsPost.getId();
-                })
-                .flatMap(Parser.getInstance()::getNewsContentData)
-                .compose(RxHelper.applySchedulers())
-                .subscribe(
-                        localArticleHtml -> {
-                            DBHelper.saveToRealm(realm, localArticleHtml);
-                            Log.i("离线文章", "下载完毕1");
-                        },
-                        throwable -> {
-                            Log.e("Error", throwable.toString());
-                        },
-                        () -> {
-                            Log.e("离线文章", "全部下载完毕");
-                        }
-                );
+//        Observable.range(fromPage, pageSize)
+//                .flatMap(DataManager.getInstance()::getNewsData)
+//                .doOnNext(list -> DBHelper.saveToRealm(OfflineDownloadService.this, list))
+//                .flatMap(Observable::from)
+//                .map(newsPost -> {
+//                    DBHelper.saveToRealm(OfflineDownloadService.this, ImageDownloader.getInstance().doSimpleOfflineCaching(newsPost.getThumbUrl()));
+//                    return newsPost.getId();
+//                })
+//                .flatMap(DataManager.getInstance()::getNewsContentData)
+//                .compose(RxHelper.applySchedulers())
+//                .subscribe(
+//                        localArticleHtml -> {
+//                            DBHelper.saveToRealm(realm, localArticleHtml);
+//                            Log.i("离线文章", "下载完毕1");
+//                        },
+//                        throwable -> {
+//                            Log.e("Error", throwable.toString());
+//                        },
+//                        () -> {
+//                            Log.e("离线文章", "全部下载完毕");
+//                        }
+//                );
     }
 
     /**
@@ -109,7 +109,7 @@ public class OfflineDownloadService extends IntentService {
         );
         //
         Observable.range(fromPage, pageSize)
-                .flatMap(page -> Parser.getInstance().getPictureData(page, type))           // 1 - 获取该页码的数据
+                .flatMap(page -> DataManager.getInstance().getPictureData(page, type))           // 1 - 获取该页码的数据
                 .doOnNext(list -> DBHelper.saveToRealm(OfflineDownloadService.this, list))    // 2 - IO线程中写入数据库
                 .map(ImagePost::getAllImageFromList)                                        // 3 - 解析出图片信息
                 .doOnNext(list -> imageSize = list.size())                                   // 4 - 记录图片数量
@@ -149,7 +149,7 @@ public class OfflineDownloadService extends IntentService {
      * */
     public void startDownloadJokes(int fromPage, int pageSize) throws RemoteException {
         Observable.range(fromPage, pageSize)
-                .flatMap(Parser.getInstance()::getJokeData)
+                .flatMap(DataManager.getInstance()::getJokeData)
                 .compose(RxHelper.applySchedulers())
                 .subscribe(
                         list -> DBHelper.saveToRealm(OfflineDownloadService.this, list),

@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.favorite.Favorite;
+import com.blazers.jandan.model.pojo.favorite.Favorite;
 import com.blazers.jandan.api.BlazersAPI;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.NightModeEvent;
@@ -65,6 +65,11 @@ public class MineFragment extends BaseFragment {
             INSTANCE.setTAG(TAG);
         }
         return INSTANCE;
+    }
+
+    @Override
+    protected void initPresenter() {
+
     }
 
     @Override
