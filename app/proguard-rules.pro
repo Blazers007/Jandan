@@ -65,9 +65,6 @@
     public static ** test();
 }
 
-# Realm Database - Build in in latest version 1.1.1
-
-
 # =====================================Fresco=======================================================
 # Keep our interfaces so they can be used by other ProGuard rules.
 # See http://sourceforge.net/p/proguard/bugs/466/

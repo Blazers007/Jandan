@@ -38,8 +38,8 @@
     <!--android:visibility="gone"/>-->
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/load_more_progress"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="72dp"
         android:layout_marginEnd="12dp"

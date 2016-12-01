@@ -1,7 +1,7 @@
 package com.blazers.jandan.api;
 
-import com.blazers.jandan.model.ImagePage;
-import com.blazers.jandan.model.JokePage;
+import com.blazers.jandan.model.image.ImagePage;
+import com.blazers.jandan.model.joke.JokePage;
 import com.blazers.jandan.model.news.NewsPage;
 
 import retrofit2.http.GET;
@@ -15,9 +15,9 @@ import rx.Observable;
 
 public interface IJandan {
 
-    String BASE_URL = "http://jandan.net/";
+    String BASE_URL = "http://i.jandan.net/";
 
-    @GET("?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,comment_count,custom_fields&custom_fields=thumb_c,views&dev=1")
+    @GET("?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,content,comment_count,comments,comments_rank,custom_fields&custom_fields=thumb_c,views&dev=1")
     Observable<NewsPage> getNews(@Query("page") int page);
 
     @GET("?oxwlxojflwblxbsapi=jandan.get_pic_comments")
@@ -28,6 +28,5 @@ public interface IJandan {
 
     @GET("?oxwlxojflwblxbsapi=jandan.get_ooxx_comments")
     Observable<ImagePage> getMeizhi(@Query("page") int page);
-
 
 }

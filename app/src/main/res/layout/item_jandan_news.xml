@@ -1,77 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <variable name="presenter" type="com.blazers.jandan.presenter.NewsPresenter"/>
-        <variable name="postBean" type="com.blazers.jandan.model.news.PostsBean"/>
+
+        <variable
+            name="presenter"
+            type="com.blazers.jandan.presenter.NewsPresenter"/>
+
+        <variable
+            name="postBean"
+            type="com.blazers.jandan.model.news.NewsPage.Posts"/>
     </data>
 
-    <com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:blz="http://schemas.android.com/apk/res-auto"
-        xmlns:fresco="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:orientation="vertical"
-        blz:wtg_day_bg="#fff"
-        blz:wtg_night_bg="#4b4b4b"
+        android:background="#fff"
         android:clickable="true"
         android:onClick="@{() -> presenter.onClickPost(postBean)}"
+        android:orientation="vertical"
         >
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/news_image"
             android:layout_width="88dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            fresco:actualImageScaleType="centerCrop"
+            android:layout_height="64dp"
+            android:layout_marginStart="8dp"
+            app:actualImageScaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             />
 
-        <com.blazers.jandan.widgets.nightwatch.WatchTextView
+        <TextView
             android:id="@+id/news_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_toRightOf="@+id/news_image"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="8dp"
+            android:ellipsize="end"
             android:maxLines="2"
-            android:text='@{postBean.title_plain}'
+            android:text='@{postBean.title}'
+            android:textColor="#333333"
             android:textSize="16sp"
-            blz:wtv_day_textColor="#2b2b2b"
-            blz:wtv_night_textColor="#e4e4e4"
-            tools:text="Title"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toRightOf="@+id/news_image"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/news_image"
+            tools:text="ConstraintLayout with DataBinding incorrect width in RecyclerView All right"
             />
 
-        <com.blazers.jandan.widgets.nightwatch.WatchTextView
-            android:id="@+id/news_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/news_title"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_toRightOf="@+id/news_image"
-            android:gravity="bottom"
+        <TextView
+            android:id="@+id/news_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_tag_hollow_14dp"
+            android:gravity="center_vertical"
+            android:text="@{postBean.tags.get(0).title}"
+            android:textColor="#515151"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/news_image"
+            app:layout_constraintLeft_toLeftOf="@+id/news_title"
+            />
+
+        <TextView
+            android:id="@+id/news_author_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:maxLines="1"
             android:text='@{String.format("%s  @  %s", postBean.author.nickname, postBean.date)}'
+            android:textColor="#6c6c6c"
             android:textSize="14sp"
-            blz:wtv_day_textColor="#686868"
-            blz:wtv_night_textColor="#c7c7c7"
-            tools:text="Content"
+            app:layout_constraintBaseline_toBaselineOf="@+id/news_tag"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toRightOf="@+id/news_tag"
+            app:layout_constraintRight_toRightOf="@+id/news_title"
+            tools:text="Blazers  @ 2016-12-01 10:00:25"
             />
 
         <View
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1px"
-            android:background="#e1e1e1"/>
+            android:background="#e1e1e1"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <View
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1px"
-            android:layout_alignParentBottom="true"
-            android:background="#e1e1e1"/>
-    </com.blazers.jandan.widgets.nightwatch.WatchRelativeLayout>
+            android:background="#e1e1e1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+    </android.support.constraint.ConstraintLayout>
 </layout>

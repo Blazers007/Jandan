@@ -1,29 +1,21 @@
-package com.blazers.jandan.api;
+package com.blazers.jandan.model;
 
-import android.content.Context;
 import android.util.Log;
 
+import com.blazers.jandan.api.IJandan;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.model.database.local.LocalArticleHtml;
-import com.blazers.jandan.model.database.sync.ImagePost;
-import com.blazers.jandan.model.database.sync.JokePost;
 import com.blazers.jandan.model.news.NewsPage;
-import com.blazers.jandan.model.pojo.comment.Comments;
+import com.blazers.jandan.presenter.base.BasePresenter;
+import com.blazers.jandan.util.LoggintInterceptor;
 import com.blazers.jandan.util.NetworkHelper;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
+import com.snappydb.DB;
+import com.snappydb.SnappydbException;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import io.realm.Realm;
-import io.realm.RealmObject;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,16 +25,31 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
-import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by Blazers on 2015/9/11.
  * 访问煎蛋API接口与解析返回结果的工具类
+ *
+ *
+ * 2.0.0 版本采用 SnappyDb 数据库 为了增加查找速度 分为如下几个数据库
+ *
+ * [News] [Joke] [Wuliao] [Meizhi]
+ *
+ * [News-Pics] [Wuliao-Pics] [Meizhi-Pics]
+ *
+ * [News-fav] [Wuliao-Fav] [Meizhi-Fav]
+ *
  */
 public class DataManager {
 
     public static final String TAG = "[Parser]";
+    public static final String News = "NEWS:";
+    public static final String Wuliao = "WULIAO:";
+    public static final String Joke = "JOKE:";
+    public static final String Meizhi = "MEIZHI:";
+
+
     private static final Object monitor = new Object();
     private static DataManager INSTANCE;
     private OkHttpClient client;
@@ -53,23 +60,10 @@ public class DataManager {
     private DataManager() {
         client = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
+                .addInterceptor(new LoggintInterceptor())
                 .build();
-
         /* Init Gson  */
-        gson = new GsonBuilder()
-                .setExclusionStrategies(new ExclusionStrategy() {
-                    @Override
-                    public boolean shouldSkipField(FieldAttributes f) {
-                        return f.getDeclaringClass().equals(RealmObject.class);
-                    }
-
-                    @Override
-                    public boolean shouldSkipClass(Class<?> clazz) {
-                        return false;
-                    }
-                })
-                .create();
-
+        gson = new Gson();
         // Init api
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(IJandan.BASE_URL)
@@ -119,39 +113,68 @@ public class DataManager {
     /**
      * @param page 读取新鲜事的页码
      */
-    public Observable<NewsPage> getNewsData(Context context, int page) {
-        return getNewsData(false, page, context);
-    }
-
-    /**
-     * @param page 读取新鲜事的页码
-     */
-    public Observable<NewsPage> getNewsDataFromDB(int page) {
-        return getNewsData(true, page, null);
-    }
-
-    /**
-     * @param page 读取新鲜事的页码
-     */
-    private Observable<NewsPage> getNewsData(boolean forceFromDB, int page, Context context) {
-        if (forceFromDB || !NetworkHelper.netWorkAvailable(context)) {
-            Log.i("Loading", "From DB : " + Realm.getDefaultInstance().where(NewsPage.class).count());
-            return Realm.getDefaultInstance().where(NewsPage.class)
-//                    .equalTo("current_page", page)
-                    .findFirstAsync()
-                    .asObservable();
-        } else {
+    public Observable<List<NewsPage.Posts>> getNewsData(BasePresenter presenter, int page) {
+        Log.d("DataManager", "==GetNewsData==");
+        if (NetworkHelper.netWorkAvailable(presenter.getContext())) {
             Log.i("Loading", "From API");
             return mJandan.getNews(page)
-                    .doOnNext(newsPage -> {
-                        Realm.getDefaultInstance().executeTransaction(realm -> {
-                            newsPage.current_page = page;
-                            NewsPage newsPage1 = realm.createOrUpdateObjectFromJson(NewsPage.class, gson.toJson(newsPage));
-                            realm.copyToRealmOrUpdate(newsPage1);
-                        });
-                    }).subscribeOn(Schedulers.io())
-                    ;
+                    .map(newsPage -> {
+                        try {
+                            presenter.getDB().put("News:" + page, newsPage);
+                        } catch (SnappydbException e) {
+                            e.printStackTrace();
+                        }
+                        return newsPage.posts;
+                    })
+                    .subscribeOn(Schedulers.io());
+        } else {
+            return getNewsDataFromDB(presenter.getDB(), page);
         }
+    }
+
+    /**
+     * @param page 读取新鲜事的页码
+     */
+    public Observable<List<NewsPage.Posts>> getNewsDataFromDB(DB realm, int page) {
+        Log.d("DataManager", "==GetNewsDataFromDB==");
+        return Observable.defer(() -> {
+            try {
+                NewsPage newsPage = realm.getObject("News:" + page, NewsPage.class);
+                return Observable.just(newsPage.posts);
+            } catch (SnappydbException e) {
+                return Observable.error(e);
+            }
+        });
+    }
+
+    /**
+     * @param page 读取新鲜事的页码
+     */
+    public Observable<JokePage> getJokeData(BasePresenter presenter, int page) {
+        Log.d("DataManager", "==GetJokeData==");
+        if (NetworkHelper.netWorkAvailable(presenter.getContext())) {
+            Log.i("Loading", "From API");
+            return mJandan.getJoke(page)
+                    .doOnNext(jokePage -> Realm.getDefaultInstance().executeTransaction(realm -> {
+                                realm.copyToRealmOrUpdate(jokePage);
+                            })
+                    ).subscribeOn(Schedulers.io());
+        } else {
+            return getJokeDataFromDB(presenter.getRealm(), page);
+        }
+    }
+
+    /**
+     * @param page 读取新鲜事的页码
+     */
+    public Observable<JokePage> getJokeDataFromDB(Realm realm, int page) {
+        Log.d("DataManager", "==GetJokeDataFromDB==");
+        Log.i("Loading", "From DB : " + Realm.getDefaultInstance().where(JokePage.class).count());
+        return realm.where(JokePage.class)
+                .equalTo("current_page", page)
+                .findFirstAsync()
+                .<JokePage>asObservable()
+                .first();
     }
 
 
@@ -159,8 +182,8 @@ public class DataManager {
      * @param page 本地与远程同步的page仅仅显示后再放入DB中？重新设计DB 当该页已经不会变化的时候再从本地读取页面JSON信息 否则则全部从网络请求数据
      * @param type 获取的类型 目前仅有 无聊图 妹子图 // 自动跳过重复页面 并发出有新的刷新的提示！
      */
-    public Observable<List<ImagePost>> getPictureData(int page, String type) {
-        return Observable.create((Subscriber<? super List<ImagePost>> subscriber) -> {
+    public Observable<List<OldImagePost>> getPictureData(int page, String type) {
+        return Observable.create((Subscriber<? super List<OldImagePost>> subscriber) -> {
 //            // 否则请求网络
 //            List<ImagePost> postses = new ArrayList<>();
 //            try {
@@ -248,8 +271,8 @@ public class DataManager {
     /**
      * 按照页码读取段子信息
      */
-    public Observable<List<JokePost>> getJokeData(int page) {
-        return Observable.create((Subscriber<? super List<JokePost>> subscriber) -> {
+    public Observable<List<OldJokePost>> getJokeData(int page) {
+        return Observable.create((Subscriber<? super List<OldJokePost>> subscriber) -> {
 //            List<JokePost> jokePostList = new ArrayList<>();
 //            try {
 //                String json = simpleHttpRequest(URL.getJandanJokeAtPage(page));

@@ -6,8 +6,8 @@ import android.util.Log;
 import com.blazers.jandan.model.database.local.LocalArticleHtml;
 import com.blazers.jandan.model.database.local.LocalFavNews;
 import com.blazers.jandan.model.database.local.LocalImage;
-import com.blazers.jandan.model.database.sync.NewsPost;
-import com.blazers.jandan.api.DataManager;
+import com.blazers.jandan.model.database.sync.OldNewsPost;
+import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ArticleReadView;
 import com.blazers.jandan.util.DBHelper;
@@ -22,13 +22,13 @@ import rx.schedulers.Schedulers;
 
 public class ArticleReadPresenter extends BasePresenter<ArticleReadView> {
 
-    private NewsPost mNewsPost;
+    private OldNewsPost mNewsPost;
 
     public ArticleReadPresenter(ArticleReadView view, Context context) {
         super(view, context);
         // 获取Model层
         long id = getIntent().getLongExtra(ViewArticleEvent.KEY, -1);
-        mNewsPost = NewsPost.getPostById(getRealm(), id);
+        mNewsPost = OldNewsPost.getPostById(getRealm(), id);
         if (mNewsPost == null || id == -1)
             getActivity().finish();
     }

@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.api.DataManager;
+import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.model.pojo.comment.CommentPost;
 import com.blazers.jandan.model.pojo.comment.Comments;

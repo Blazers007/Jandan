@@ -6,8 +6,7 @@ import android.view.View;
 
 import com.blazers.jandan.BR;
 import com.blazers.jandan.R;
-import com.blazers.jandan.databinding.ItemJandanNewsBinding;
-import com.blazers.jandan.model.news.PostsBean;
+import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.NewsPresenter;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
@@ -17,7 +16,7 @@ import java.util.List;
 
 /**
  * Created by Blazers on 2015/8/27.
- *
+ * <p>
  * 新鲜事列表
  */
 @SuppressWarnings("unused")
@@ -25,8 +24,8 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
 
     public static final String TAG = NewsFragment.class.getSimpleName();
 
-    private BaseSingleMVVMAdapter<PostsBean, NewsPresenter> mAdapter;
-    private List<PostsBean> mNewsPostArrayList = new ArrayList<>();
+    private BaseSingleMVVMAdapter<NewsPage.Posts, NewsPresenter> mAdapter;
+    private List<NewsPage.Posts> mNewsPostArrayList = new ArrayList<>();
 
 
     public NewsFragment() {
@@ -65,14 +64,14 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
     }
 
     @Override
-    public void refreshDataList(List<PostsBean> postsBeanList) {
+    public void refreshDataList(List<NewsPage.Posts> postsBeanList) {
         mNewsPostArrayList.clear();
         mNewsPostArrayList.addAll(postsBeanList);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void addDataList(List<PostsBean> postsBeanList) {
+    public void addDataList(List<NewsPage.Posts> postsBeanList) {
         // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
         int start = mNewsPostArrayList.size();
         int size = postsBeanList.size();

@@ -42,7 +42,7 @@ public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPre
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
         if (null != mLoadMoreRecyclerView && null != adapter) {
             mLoadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-            mLoadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 24, Color.rgb(241, 242, 241)));
+            mLoadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 18, Color.rgb(241, 242, 241)));
             mLoadMoreRecyclerView.setItemAnimator(new DefaultItemAnimator());
 //            mLoadMoreRecyclerView.setItemAnimator(new SlideInUpAnimator());
             mLoadMoreRecyclerView.setPullCallback(new PullCallback() {

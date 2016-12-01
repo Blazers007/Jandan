@@ -84,7 +84,8 @@ public class ImageDownloader {
      * 根据Url获取文件类型
      */
     private String getTypeByUrl(String url) {
-        String type = HtmlImgReplaceUtil.getNoParameterUrl(url).substring(url.lastIndexOf(".") + 1);
+//        String type = HtmlImgReplaceUtil.getNoParameterUrl(url).substring(url.lastIndexOf(".") + 1);
+        String type = "";
         if (type.isEmpty())
             type = "cache";
         return type;

@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.blazers.jandan.util.Rxbus;
+import com.snappydb.DB;
+import com.snappydb.DBFactory;
+import com.snappydb.SnappydbException;
 
 import java.lang.ref.WeakReference;
 
@@ -50,12 +53,22 @@ public abstract class BasePresenter<T> {
     private Realm mRealm;
 
     /**
+     * SnappyDB
+     */
+    private DB mDB;
+
+    /**
      * 是否处于前台运行状态 onResume <---- [Here] ----> onPause
      */
     private boolean mIsFullyVisible = false;
 
     public BasePresenter(T view, Context context) {
         mView = view;
+        try {
+            mDB = DBFactory.open(context);
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
         mContextWeakReference = new WeakReference<>(context);
     }
 
@@ -64,7 +77,7 @@ public abstract class BasePresenter<T> {
      *
      * @return Context引用
      */
-    protected Context getContext() {
+    public Context getContext() {
         return mContextWeakReference.get();
     }
 
@@ -72,7 +85,7 @@ public abstract class BasePresenter<T> {
      * 获取Activity对象
      * @return Activity对象
      */
-    protected Activity getActivity() {
+    public Activity getActivity() {
         return (Activity) getContext();
     }
 
@@ -80,7 +93,7 @@ public abstract class BasePresenter<T> {
      * 获取Intent对象
      * @return Intent对象
      */
-    protected Intent getIntent() {
+    public Intent getIntent() {
         return getActivity().getIntent();
     }
 
@@ -88,11 +101,15 @@ public abstract class BasePresenter<T> {
      * 获取Realm对象
      * @return Realm对象
      */
-    protected Realm getRealm() {
+    public Realm getRealm() {
         if (mRealm == null || mRealm.isClosed()) {
             mRealm = Realm.getDefaultInstance();
         }
         return mRealm;
+    }
+
+    public DB getDB() {
+        return mDB;
     }
 
     /**
@@ -178,6 +195,13 @@ public abstract class BasePresenter<T> {
         if (mRealm != null && !mRealm.isClosed()) {
             mRealm.close();
             mRealm = null;
+        }
+        try {
+            if (mDB != null && mDB.isOpen()) {
+                mDB.close();
+            }
+        } catch (SnappydbException e) {
+            e.printStackTrace();
         }
     }
 }

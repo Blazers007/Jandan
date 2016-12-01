@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalFavNews;
-import com.blazers.jandan.model.database.sync.NewsPost;
+import com.blazers.jandan.model.database.sync.OldNewsPost;
 import com.blazers.jandan.ui.activity.ArticleReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
@@ -27,7 +27,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Sort;
 
 /**
  * Created by Blazers on 2015/11/13.
@@ -90,7 +89,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
         @Override
         public void onBindViewHolder(NewsHolder holder, int position) {
-            NewsPost post = list.get(position).getNewsPost();
+            OldNewsPost post = list.get(position).getNewsPost();
             holder.simpleDraweeView.setImageURI(Uri.parse(post.getThumbUrl()));
             holder.watchTextView.setText(post.getTitle());
         }
@@ -112,7 +111,7 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
                 ButterKnife.bind(this, itemView);
                 //
                 itemView.setOnClickListener(v -> {
-                    NewsPost post = list.get(getAdapterPosition()).getNewsPost();
+                    OldNewsPost post = list.get(getAdapterPosition()).getNewsPost();
                     startActivity(
                             new Intent(getActivity(), ArticleReadActivity.class)
                                     .putExtra("id", post.getId())

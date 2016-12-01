@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalVote;
-import com.blazers.jandan.model.database.sync.JokePost;
-import com.blazers.jandan.api.DataManager;
+import com.blazers.jandan.model.database.sync.OldJokePost;
+import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
@@ -40,7 +40,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
     public static final String TAG = JokeFragment.class.getSimpleName();
     // private
     private JokeAdapter adapter;
-    private ArrayList<JokePost> mList = new ArrayList<>();
+    private ArrayList<OldJokePost> mList = new ArrayList<>();
     private int mPage = 1;
 
     public JokeFragment() {
@@ -232,7 +232,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment {
              */
             @OnClick({R.id.btn_oo, R.id.btn_xx})
             public void vote(View view) {
-                JokePost post = mList.get(getAdapterPosition());
+                OldJokePost post = mList.get(getAdapterPosition());
                 /* 查看是否已经投票 */
 //                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
 //                if (vote != null && vote.getId() != 0) {

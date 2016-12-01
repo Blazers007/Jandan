@@ -18,10 +18,10 @@ import android.widget.Toast;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.database.local.LocalVote;
-import com.blazers.jandan.model.database.sync.ImagePost;
+import com.blazers.jandan.model.database.sync.OldImagePost;
 import com.blazers.jandan.model.pojo.image.ImageRelateToPost;
 import com.blazers.jandan.util.ImageDownloader;
-import com.blazers.jandan.api.DataManager;
+import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.model.event.ViewImageEvent;
@@ -115,12 +115,12 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
     /**
      * 过滤
      */
-    List<ImagePost> applyFilter(List<ImagePost> posts) {
+    List<OldImagePost> applyFilter(List<OldImagePost> posts) {
         int filter = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, 10000);
         if (filter == 10000)
             return posts;
-        List<ImagePost> newPosts = new ArrayList<>();
-        for (ImagePost post : posts) {
+        List<OldImagePost> newPosts = new ArrayList<>();
+        for (OldImagePost post : posts) {
             long voteNegative = 0;
             try {
                 voteNegative = Long.parseLong(post.getVote_negative());
@@ -179,7 +179,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
                     .subscribe(list -> {
 
                         // 取出图片
-                        List<ImageRelateToPost> imageRelateToPostList = ImagePost.getAllImageFromList(list);
+                        List<ImageRelateToPost> imageRelateToPostList = OldImagePost.getAllImageFromList(list);
                         int start = imageArrayList.size();
                         int size = imageRelateToPostList.size();
                         imageArrayList.addAll(imageRelateToPostList);
@@ -256,7 +256,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
         public void onBindViewHolder(JandanHolder holder, int position) {
             /* Get data */
             ImageRelateToPost image = imageArrayList.get(position);
-            ImagePost post = image.holder;
+            OldImagePost post = image.holder;
             /* Set data */
             holder.author.setText(String.format("@+%s", post.getComment_author()));
             holder.date.setText(post.getComment_date());
@@ -377,7 +377,7 @@ public class PicFragment extends BaseSwipeLoadMoreFragment {
             @OnClick({R.id.btn_oo, R.id.btn_xx})
             public void vote(View view) {
                 ImageRelateToPost imageRelateToPost = imageArrayList.get(getAdapterPosition());
-                ImagePost post = imageRelateToPost.holder;
+                OldImagePost post = imageRelateToPost.holder;
                 /* 查看是否已经投票 */
 //                LocalVote vote = realm.where(LocalVote.class).equalTo("id", post.getComment_ID()).findFirst();
 //                if (vote != null && vote.getId() != 0) {
