@@ -23,7 +23,7 @@ public interface IJandan {
     @GET("?oxwlxojflwblxbsapi=jandan.get_pic_comments")
     Observable<ImagePage> getWuliao(@Query("page") int page);
 
-    @GET("http://i.jandan.net/?oxwlxojflwblxbsapi=jandan.get_duan_comments")
+    @GET("?oxwlxojflwblxbsapi=jandan.get_duan_comments")
     Observable<JokePage> getJoke(@Query("page") int page);
 
     @GET("?oxwlxojflwblxbsapi=jandan.get_ooxx_comments")

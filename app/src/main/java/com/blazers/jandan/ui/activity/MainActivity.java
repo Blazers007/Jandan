@@ -127,21 +127,21 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     }
 
-    @Override
-    public void gotoCommentActivity(ViewCommentEvent commentEvent) {
-        startActivity(new Intent(this, CommentActivity.class).putExtra(ViewCommentEvent.KEY, commentEvent));
-    }
-
-    @Override
-    public void gotoViewArticleActivity(ViewArticleEvent viewArticleEvent) {
-        startActivity(new Intent(this, ArticleReadActivity.class).putExtra(ViewArticleEvent.KEY, viewArticleEvent));
-        overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
-    }
-
-    @Override
-    public void gotoViewImageActivity(ViewImageEvent viewImageEvent) {
-        startActivity(new Intent(this, ImageInspectActivity.class).putExtra(ViewImageEvent.KEY, viewImageEvent));
-    }
+//    @Override
+//    public void gotoCommentActivity(ViewCommentEvent commentEvent) {
+//        startActivity(new Intent(this, CommentActivity.class).putExtra(ViewCommentEvent.KEY, commentEvent));
+//    }
+//
+//    @Override
+//    public void gotoViewArticleActivity(ViewArticleEvent viewArticleEvent) {
+//        startActivity(new Intent(this, NewsReadActivity.class).putExtra(ViewArticleEvent.KEY, viewArticleEvent));
+//        overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
+//    }
+//
+//    @Override
+//    public void gotoViewImageActivity(ViewImageEvent viewImageEvent) {
+//
+//    }
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     void showReadPhoneState() {

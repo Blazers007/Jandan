@@ -1,6 +1,7 @@
 package com.blazers.jandan.ui.activity;
 
 import android.graphics.drawable.Animatable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -66,23 +67,11 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
         extras.setPadding(0, 0, 0, getNavigationBarHeight());
         initScalableImage();
         initExtra();
+        //
+        mPresenter.onLoadingImage();
     }
 
     void initScalableImage() {
-        DraweeController ctrl = Fresco.newDraweeControllerBuilder()
-                .setUri(mPresenter.getImageUrl())
-                .setTapToRetryEnabled(true)
-                .setAutoPlayAnimations(true)
-                .setControllerListener(new FrescoControlListener())
-                .build();
-        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
-                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                .setProgressBarImage(new ProgressBarDrawable())
-                .build();
-        view.setController(ctrl);
-        view.setHierarchy(hierarchy);
-        view.setController(ctrl);
-        view.setHierarchy(hierarchy);
         // 触摸
         view.setOnTouchListener((v, event) -> {
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -104,6 +93,8 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
             return false;
         });
     }
+
+
 
     /**
      * 初始化下方额外内容区域
@@ -155,6 +146,24 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
     public void setDownloadButtonDone() {
         btnSave.setImageResource(R.mipmap.ic_publish_16dp);
         btnSave.setClickable(false);
+    }
+
+    @Override
+    public void showImageByUri(Uri uri) {
+        DraweeController ctrl = Fresco.newDraweeControllerBuilder()
+                .setUri(uri)
+                .setTapToRetryEnabled(true)
+                .setAutoPlayAnimations(true)
+                .setControllerListener(new FrescoControlListener())
+                .build();
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setProgressBarImage(new ProgressBarDrawable())
+                .build();
+        view.setController(ctrl);
+        view.setHierarchy(hierarchy);
+        view.setController(ctrl);
+        view.setHierarchy(hierarchy);
     }
 
     @Override

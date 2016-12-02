@@ -44,15 +44,15 @@ public class AutoScaleFrescoView extends SimpleDraweeView {
     private boolean imageLoaded = false;
     private ImageView tag;
 
-    public void showImage(@Nullable ImageView tag, String url) {
+    public void showImage(@Nullable ImageView tag, String uriString) {
         // 显示Tag
         if (null != tag) {
             this.tag = tag;
-            if (url.substring(url.lastIndexOf(".") + 1).equals("gif"))
+            if (uriString.substring(uriString.lastIndexOf(".") + 1).equals("gif"))
                 tag.setImageResource(R.mipmap.ic_gif_corner_24dp);
         }
         // 显示图片
-        ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(url));
+        ImageRequest imageRequest = ImageRequest.fromUri(Uri.parse(uriString));
         PipelineDraweeControllerBuilder builder = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(imageRequest)
                 .setControllerListener(new FrescoControlListener())
@@ -92,7 +92,7 @@ public class AutoScaleFrescoView extends SimpleDraweeView {
             // 加载完毕
             imageLoaded = true;
             // 是否自动播放
-            if (SPHelper.getBooleanSP(getContext(), SPHelper.AUTO_GIF_MODE_ON, false) && animatable != null)
+            if (SPHelper.getBooleanSP(getContext(), SPHelper.AUTO_GIF_MODE_ON, true) && animatable != null)
                 animatable.start();
         }
 

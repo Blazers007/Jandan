@@ -6,11 +6,11 @@
     <data>
 
         <variable
-            name="presenter"
+            name="nPresenter"
             type="com.blazers.jandan.presenter.NewsPresenter"/>
 
         <variable
-            name="postBean"
+            name="nBean"
             type="com.blazers.jandan.model.news.NewsPage.Posts"/>
     </data>
 
@@ -19,7 +19,7 @@
         android:layout_height="80dp"
         android:background="#fff"
         android:clickable="true"
-        android:onClick="@{() -> presenter.onClickPost(postBean)}"
+        android:onClick="@{() -> nPresenter.onClickPost(nBean)}"
         android:orientation="vertical"
         >
 
@@ -32,6 +32,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:post="@{nBean}"
             />
 
         <TextView
@@ -42,7 +43,7 @@
             android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text='@{postBean.title}'
+            android:text='@{nBean.title}'
             android:textColor="#333333"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -59,7 +60,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_tag_hollow_14dp"
             android:gravity="center_vertical"
-            android:text="@{postBean.tags.get(0).title}"
+            android:text="@{nBean.tags.get(0).title}"
             android:textColor="#515151"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/news_image"
@@ -72,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:maxLines="1"
-            android:text='@{String.format("%s  @  %s", postBean.author.nickname, postBean.date)}'
+            android:text='@{String.format("%s  @  %s", nBean.author.nickname, nBean.date)}'
             android:textColor="#6c6c6c"
             android:textSize="14sp"
             app:layout_constraintBaseline_toBaselineOf="@+id/news_tag"

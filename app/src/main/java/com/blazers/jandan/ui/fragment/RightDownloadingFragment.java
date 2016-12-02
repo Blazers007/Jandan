@@ -26,7 +26,6 @@ import permissions.dispatcher.RuntimePermissions;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.pojo.count.Count;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.widgets.InfiniteSeekBar;
@@ -179,10 +178,10 @@ public class RightDownloadingFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Count count = (Count)intent.getSerializableExtra("data");
-            countLabels.get(count.type).setText(String.format("%d", count.count));
-            // Save
-            SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
+//            Count count = (Count)intent.getSerializableExtra("data");
+//            countLabels.get(count.type).setText(String.format("%d", count.count));
+//            // Save
+//            SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
         }
     }
 

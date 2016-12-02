@@ -12,7 +12,6 @@ import com.snappydb.SnappydbException;
 
 import java.lang.ref.WeakReference;
 
-import io.realm.Realm;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -20,11 +19,10 @@ import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by blazers on 2016/11/11.
- *
+ * <p>
  * 主要包含:
- *  - 数据库操作
- *  - 网络请求
- *
+ * - 数据库操作
+ * - 网络请求
  */
 
 public abstract class BasePresenter<T> {
@@ -41,21 +39,12 @@ public abstract class BasePresenter<T> {
 
     /**
      * 需要批量解除订阅的Subscription集合 注意使用clear()如果使用unsubscribe()则之后也无法添加新的订阅
-     *
+     * <p>
      * 一个对应生命周期 onCreate -- onDestory
      * 另外一个对应    onResume -- onPause 只在前台生效
      */
     private CompositeSubscription mFullLifeTimeSubscriptions, mFrontUISubscriptions;
 
-    /**
-     * Realm引用
-     */
-    private Realm mRealm;
-
-    /**
-     * SnappyDB
-     */
-    private DB mDB;
 
     /**
      * 是否处于前台运行状态 onResume <---- [Here] ----> onPause
@@ -64,11 +53,6 @@ public abstract class BasePresenter<T> {
 
     public BasePresenter(T view, Context context) {
         mView = view;
-        try {
-            mDB = DBFactory.open(context);
-        } catch (SnappydbException e) {
-            e.printStackTrace();
-        }
         mContextWeakReference = new WeakReference<>(context);
     }
 
@@ -82,7 +66,8 @@ public abstract class BasePresenter<T> {
     }
 
     /**
-     * 获取Activity对象
+     * 获取Activity对象 必须保证调用的类继承Activity
+     *
      * @return Activity对象
      */
     public Activity getActivity() {
@@ -91,26 +76,13 @@ public abstract class BasePresenter<T> {
 
     /**
      * 获取Intent对象
+     *
      * @return Intent对象
      */
     public Intent getIntent() {
         return getActivity().getIntent();
     }
 
-    /**
-     * 获取Realm对象
-     * @return Realm对象
-     */
-    public Realm getRealm() {
-        if (mRealm == null || mRealm.isClosed()) {
-            mRealm = Realm.getDefaultInstance();
-        }
-        return mRealm;
-    }
-
-    public DB getDB() {
-        return mDB;
-    }
 
     /**
      * 添加全生命周周期的订阅 添加到此处的订阅会在onDestory自动解除订阅
@@ -143,8 +115,9 @@ public abstract class BasePresenter<T> {
 
     /**
      * 订阅指定类型的事件
+     *
      * @param event 事件类型class
-     * @param <R> 类型
+     * @param <R>   类型
      * @return 订阅
      */
     protected <R> Observable<R> subscribeRxBusEvent(Class<R> event) {
@@ -153,8 +126,9 @@ public abstract class BasePresenter<T> {
 
     /**
      * 订阅指定类型的事件
+     *
      * @param event 事件类型class
-     * @param <R> 类型
+     * @param <R>   类型
      * @return 在主线程上的订阅
      */
     protected <R> Observable<R> subScribeRxBusEventOnUiThread(Class<R> event) {
@@ -190,18 +164,6 @@ public abstract class BasePresenter<T> {
             // clear之后可以重用而unsubscribe之后新添加的也会立即unsubscribe
             mFullLifeTimeSubscriptions.unsubscribe();
             mFullLifeTimeSubscriptions = null;
-        }
-        // 关闭数据库
-        if (mRealm != null && !mRealm.isClosed()) {
-            mRealm.close();
-            mRealm = null;
-        }
-        try {
-            if (mDB != null && mDB.isOpen()) {
-                mDB.close();
-            }
-        } catch (SnappydbException e) {
-            e.printStackTrace();
         }
     }
 }

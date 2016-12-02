@@ -43,7 +43,7 @@
         </activity>
         <!-- Reading News -->
         <activity
-            android:name=".ui.activity.ArticleReadActivity"
+            android:name=".ui.activity.NewsReadActivity"
             android:label="@string/title_activity_news_read"
             android:screenOrientation="portrait"
             android:theme="@style/ReadingModeStyle">

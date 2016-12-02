@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.MainView;
-import com.blazers.jandan.util.DBHelper;
 import com.blazers.jandan.model.event.ViewArticleEvent;
 import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.model.event.ViewImageEvent;
@@ -25,14 +24,8 @@ public class MainPresenter extends BasePresenter<MainView> {
     public void onResume() {
         super.onResume();
         // 添加订阅事件
-        addFUISubscription(subScribeRxBusEventOnUiThread(ViewCommentEvent.class).subscribe(mView::gotoCommentActivity));
-        addFUISubscription(subScribeRxBusEventOnUiThread(ViewArticleEvent.class).subscribe(mView::gotoViewArticleActivity));
-        addFUISubscription(subScribeRxBusEventOnUiThread(ViewImageEvent.class).subscribe(mView::gotoViewImageActivity));
-    }
-
-    @Override
-    public void onDestory() {
-        super.onDestory();
-        DBHelper.releaseAllTempRealm();
+//        addFUISubscription(subScribeRxBusEventOnUiThread(ViewCommentEvent.class).subscribe(mView::gotoCommentActivity));
+//        addFUISubscription(subScribeRxBusEventOnUiThread(ViewArticleEvent.class).subscribe(mView::gotoViewArticleActivity));
+//        addFUISubscription(subScribeRxBusEventOnUiThread(ViewImageEvent.class).subscribe(mView::gotoViewImageActivity));
     }
 }

@@ -1,51 +1,44 @@
 package com.blazers.jandan.presenter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.blazers.jandan.model.DataManager;
-import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
-import com.blazers.jandan.ui.activity.NewsReadActivity;
-import com.blazers.jandan.ui.fragment.readingsub.NewsView;
+import com.blazers.jandan.ui.fragment.readingsub.JokeView;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.TimeHelper;
 
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-
 /**
- * Created by blazers on 2016/11/30.
+ * Created by blazers on 2016/12/2.
  */
 
-public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
+public class JokePresenter extends BaseLoadMoreRefreshPresenter<JokeView> {
 
     private int mPage = 1;
 
-    public NewsPresenter(NewsView view, Context context) {
+    public JokePresenter(JokeView view, Context context) {
         super(view, context);
     }
 
 
-    /**
-     * 尝试读取数据库中的旧数据便与展示
-     */
     @Override
     public void onInitPageData() {
-        Log.i("Presenter", "==OnInitNewsPageData==");
+        Log.i("Presenter", "==OnInitJokePageData==");
         DataManager.getInstance()
-                .getNewsDataFromDB(mPage)
+                .getJokeDataFromDB(mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
-                    Log.e("onInitNewsPageData", "==OnNext==");
+                    Log.e("onInitJokePageData", "==OnNext==");
                     // 有数据则首先显示
                     if (posts!= null && !posts.isEmpty()) {
                         mView.refreshDataList(posts);
                         // 在根据刷新时间判断是否需要刷新
-                        if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), "news"))) {
+                        if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), "jokes"))) {
 //                            onRefresh();
                         }
                     } else {
@@ -53,19 +46,16 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
 //                        onRefresh();
                     }
                 }, error -> {
-                    Log.e("onInitNewsPageData", error.toString());
+                    Log.e("onInitJokePageData", error.toString());
                     onRefresh();
                 }); // 出错直接刷新
     }
 
-
-    /**
-     * 刷新内容
-     */
+    @Override
     public void onRefresh() {
         Log.i("Presenter", "==OnRefresh==");
         mPage = 1;
-        DataManager.getInstance().getNewsData(getContext(), mPage)
+        DataManager.getInstance().getJokeData(getContext(), mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
@@ -81,12 +71,11 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
                 });
     }
 
-    /**
-     * 加载下一页
-     */
+
+    @Override
     public void onLoadMore() {
         mPage++;
-        DataManager.getInstance().getNewsData(getContext(), mPage)
+        DataManager.getInstance().getJokeData(getContext(), mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
@@ -98,18 +87,6 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
                     Log.e("onLoadMore", error.toString());
                     mView.hideLoadMoreView(false);
                 });
-
     }
 
-    /**
-     * 点击PostItem
-     *
-     * @param
-     */
-    public void onClickPost(NewsPage.Posts postsBean) {
-        getActivity().startActivity(
-                new Intent(getContext(), NewsReadActivity.class)
-                        .putExtra(NewsReadPresenter.KEY_NEWS_POST, postsBean)
-        );
-    }
 }

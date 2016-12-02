@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface NewsView extends BaseLoadMoreRefreshView {
 
+    // 添加该界面独有的
     void refreshDataList(List<NewsPage.Posts> postsBeanList);
 
     void addDataList(List<NewsPage.Posts> postsBeanList);
-
 }

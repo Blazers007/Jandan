@@ -25,7 +25,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
     public static final String TAG = NewsFragment.class.getSimpleName();
 
     private BaseSingleMVVMAdapter<NewsPage.Posts, NewsPresenter> mAdapter;
-    private List<NewsPage.Posts> mNewsPostArrayList = new ArrayList<>();
+    private List<NewsPage.Posts> mList = new ArrayList<>();
 
 
     public NewsFragment() {
@@ -54,10 +54,10 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
         trySetupRecyclerViewWithAdapter(mAdapter = new BaseSingleMVVMAdapter<>(
                 LayoutInflater.from(getActivity()),
                 R.layout.item_jandan_news,
-                mNewsPostArrayList,
+                mList,
                 mPresenter,
-                BR.postBean,
-                BR.presenter
+                BR.nBean,
+                BR.nPresenter
         ));
         // Try to load from db
         mPresenter.onInitPageData();
@@ -65,17 +65,18 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
 
     @Override
     public void refreshDataList(List<NewsPage.Posts> postsBeanList) {
-        mNewsPostArrayList.clear();
-        mNewsPostArrayList.addAll(postsBeanList);
+        mList.clear();
+        mList.addAll(postsBeanList);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void addDataList(List<NewsPage.Posts> postsBeanList) {
         // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
-        int start = mNewsPostArrayList.size();
+        int start = mList.size();
         int size = postsBeanList.size();
-        mNewsPostArrayList.addAll(postsBeanList);
+        mList.addAll(postsBeanList);
         mAdapter.notifyItemRangeInserted(start, size);
+        mRecyclerView.smoothScrollBy(0, 96);
     }
 }

@@ -1,7 +1,5 @@
 package com.blazers.jandan.util;
 
-import android.util.Log;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,10 +11,10 @@ import java.util.Locale;
  */
 public class TimeHelper {
 
-    public static long ONE_DAY = 24*60*60*1000;    //24H
-    public static long ONE_HOUR = 60*60*1000;      //1H
-    public static long ONE_WHILE = 60*5*1000;      //5MIN
-    public static long ONE_MIN = 60*1000;      //5MIN
+    public static long ONE_DAY = 24 * 60 * 60 * 1000;    //24H
+    public static long ONE_HOUR = 60 * 60 * 1000;      //1H
+    public static long ONE_WHILE = 60 * 5 * 1000;      //5MIN
+    public static long ONE_MIN = 60 * 1000;      //5MIN
 
     public static Date stringToDate(String dateString) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -31,28 +29,28 @@ public class TimeHelper {
     public static int dayAwayFromNowByString(String dateString) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = sdf.parse(dateString);
-        return (int)((new Date().getTime() - date.getTime()) / ONE_DAY);
+        return (int) ((new Date().getTime() - date.getTime()) / ONE_DAY);
     }
 
     /**
      * @param dateString 日期字符串
      * @return 返回的是换算过后的时间指数
-     * */
+     */
     public static String getSocialTime(String dateString) {
         try {
             Date date = stringToDateTime(dateString);
             long time = date.getTime();
             long before = new Date().getTime() - time;
-            if ( before > 7 * ONE_DAY ) // 7天前不做处理
+            if (before > 7 * ONE_DAY) // 7天前不做处理
                 return dateString;
-            if ( before > ONE_DAY ) {
+            if (before > ONE_DAY) {
                 return before / ONE_DAY + "天前  " + date.getHours() + ":" + date.getMinutes();
             }
-            if ( before <  ONE_WHILE) {
+            if (before < ONE_WHILE) {
                 return "刚刚";
             }
-            if ( before > ONE_HOUR) {
-                return  before / ONE_HOUR + "小时前";
+            if (before > ONE_HOUR) {
+                return before / ONE_HOUR + "小时前";
             }
             return before / ONE_MIN + "分钟前";
         } catch (ParseException e) {
@@ -64,7 +62,7 @@ public class TimeHelper {
     /**
      * @param hours 偏差的小时数量 之前为负数
      * @return 返回的毫秒数
-     * */
+     */
     public static long getTimeByOffsetHour(int hours) {
         long now = new Date().getTime();
         return ONE_HOUR * hours + now;

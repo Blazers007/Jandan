@@ -1,5 +1,12 @@
 package com.blazers.jandan.model.news;
 
+import android.databinding.BindingAdapter;
+import android.net.Uri;
+
+import com.blazers.jandan.model.Time;
+import com.facebook.drawee.view.SimpleDraweeView;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +21,7 @@ public class NewsPage {
     public int pages;
     public List<Posts> posts;
 
-    public static class Posts {
+    public static class Posts extends Time {
         /**
          * id : 84188
          * url : http://i.jandan.net/2016/12/01/fake-news-lincoln.html
@@ -54,7 +61,7 @@ public class NewsPage {
         public List<Comments> comments;
         public List<CommentsRank> comments_rank;
 
-        public static class Author {
+        public static class Author implements Serializable {
             /**
              * id : 623
              * slug : miriam
@@ -76,11 +83,11 @@ public class NewsPage {
             public String description;
         }
 
-        public static class CustomFields {
+        public static class CustomFields implements Serializable {
             public List<String> thumb_c;
         }
 
-        public static class Tags {
+        public static class Tags implements Serializable {
             /**
              * id : 843
              * slug : %e5%8f%b2%e6%b5%b7%e9%92%a9%e6%b2%89
@@ -96,7 +103,7 @@ public class NewsPage {
             public int post_count;
         }
 
-        public static class Comments {
+        public static class Comments implements Serializable {
             /**
              * id : 3337206
              * name : 风大算吊毛
@@ -121,7 +128,7 @@ public class NewsPage {
             public int index;
         }
 
-        public static class CommentsRank {
+        public static class CommentsRank implements Serializable {
             /**
              * id : 3337206
              * name : 风大算吊毛
@@ -145,5 +152,12 @@ public class NewsPage {
             public int vote_negative;
             public int index;
         }
+
+
+        @BindingAdapter({"post"})
+        public static void showImage(SimpleDraweeView simpleDraweeView, Posts posts) {
+            simpleDraweeView.setImageURI(Uri.parse(posts.custom_fields.thumb_c.get(0)));
+        }
+
     }
 }

@@ -9,4 +9,6 @@ public interface BaseLoadMoreRefreshView extends BaseRefreshView {
     void showLoadMoreView();
 
     void hideLoadMoreView(boolean successful);
+
+
 }

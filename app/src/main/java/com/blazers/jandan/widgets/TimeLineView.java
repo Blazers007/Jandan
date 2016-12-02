@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.pojo.timeline.Timeline;
 import com.blazers.jandan.util.Dppx;
 import com.facebook.drawee.view.SimpleDraweeView;
 
@@ -24,20 +22,20 @@ public class TimeLineView extends RelativeLayout {
         inflater.inflate(R.layout.view_timeline, this, true);
     }
 
-    public void setupViewsByTimeline(Timeline timeline) {
-        ((TextView) findViewById(R.id.date)).setText(timeline.date);
-        //auto stack
-        AutoLayoutLinearLayout autoLayoutLinearLayout = (AutoLayoutLinearLayout) findViewById(R.id.auto);
-        autoLayoutLinearLayout.removeAllViews();
-        /* 宽度应该是固定的 */
-        int w = (int)((Dppx.getScreenWidth(getContext()) - Dppx.Dp2Px(getContext(), 88)) / 3) - 30;
-
-        if (null != timeline.favImagesList) {
-            for (LocalFavImages image : timeline.favImagesList) {
-                SimpleDraweeView simpleDraweeView = (SimpleDraweeView)inflater.inflate(R.layout.item_favorite_image, null);
-                simpleDraweeView.setImageURI(Uri.parse(image.getUrl()));
-                autoLayoutLinearLayout.addView(simpleDraweeView,w, w);
-            }
-        }
-    }
+//    public void setupViewsByTimeline(Timeline timeline) {
+//        ((TextView) findViewById(R.id.date)).setText(timeline.date);
+//        //auto stack
+//        AutoLayoutLinearLayout autoLayoutLinearLayout = (AutoLayoutLinearLayout) findViewById(R.id.auto);
+//        autoLayoutLinearLayout.removeAllViews();
+//        /* 宽度应该是固定的 */
+//        int w = (int)((Dppx.getScreenWidth(getContext()) - Dppx.Dp2Px(getContext(), 88)) / 3) - 30;
+//
+//        if (null != timeline.favImagesList) {
+//            for (LocalFavImages image : timeline.favImagesList) {
+//                SimpleDraweeView simpleDraweeView = (SimpleDraweeView)inflater.inflate(R.layout.item_favorite_image, null);
+//                simpleDraweeView.setImageURI(Uri.parse(image.getUrl()));
+//                autoLayoutLinearLayout.addView(simpleDraweeView,w, w);
+//            }
+//        }
+//    }
 }

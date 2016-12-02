@@ -25,7 +25,6 @@ import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
-import io.realm.Realm;
 import rx.Subscription;
 
 /**

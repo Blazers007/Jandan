@@ -1,7 +1,5 @@
 package com.blazers.jandan.api;
 
-import com.blazers.jandan.model.pojo.favorite.Favorite;
-
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -14,11 +12,11 @@ import rx.Observable;
  */
 public interface BlazersAPI {
 
-    /**
-     * 获取指定ID下的Favorite
-     */
-    @GET("api/users/{userId}/favorite")
-    Observable<Favorite> getUserFavorite(@Path("userId") String userId);
+//    /**
+//     * 获取指定ID下的Favorite
+//     */
+//    @GET("api/users/{userId}/favorite")
+//    Observable<Favorite> getUserFavorite(@Path("userId") String userId);
 
     //PUT用于一次更新所有值
 

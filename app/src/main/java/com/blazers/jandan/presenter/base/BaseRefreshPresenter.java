@@ -12,5 +12,7 @@ public abstract class BaseRefreshPresenter<T> extends BasePresenter<T> {
         super(view, context);
     }
 
+    public abstract void onInitPageData();
+
     public abstract void onRefresh();
 }

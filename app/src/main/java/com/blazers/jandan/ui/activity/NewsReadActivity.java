@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.ViewImageEvent;
-import com.blazers.jandan.presenter.ArticleReadPresenter;
+import com.blazers.jandan.presenter.NewsReadPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.widgets.ObservableWebView;
@@ -24,7 +24,7 @@ import com.blazers.jandan.widgets.ObservableWebView;
 import butterknife.BindView;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> implements ArticleReadView {
+public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements NewsReadView {
 
     /* Vars for testing the scroll visible effect */
     private static final int HIDE_THRESHOLD = 256;
@@ -45,7 +45,7 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
 
     @Override
     public void initPresenter() {
-        mPresenter = new ArticleReadPresenter(this, this);
+        mPresenter = new NewsReadPresenter(this, this);
     }
 
     @Override
@@ -61,21 +61,22 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
         /* Init Appbar listener */
         initWebview();
         // 加载
-        mPresenter.loadHtmlString();
+        mPresenter.onInitWebPage();
     }
 
     /**
      * 初始化FAV图标以及状态
      */
     void initFloatingActionButton() {
-        setFavIconFavOrNot(mPresenter.isThisArticleMyFav());
         fabFav.setOnClickListener(v -> {
+            // 点击收藏
             mPresenter.toggleThisArticleFavState();
-            fabFav.animate().rotationX(fabFav.getRotationX() == 0 ? 360 : 0).setDuration(300).start();
-            fabFav.postDelayed(() -> setFavIconFavOrNot(mPresenter.isThisArticleMyFav()), 300);
         });
     }
 
+    /**
+     * 初始化WebView
+     */
     void initWebview() {
         webView.setListener(((left, top, oldLeft, oldTop) -> {
             // 滚动到底部 显示
@@ -102,12 +103,12 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
                     controlsVisible = true;
                     scrolledDistance = 0;
                 }
+                // 累加滚动距离
                 if ((controlsVisible && distance > 0) || (!controlsVisible && distance < 0)) {
                     scrolledDistance += distance;
                 }
             }
         }));
-        // 进度条
         // 加载进度条
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -127,7 +128,7 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if (SPHelper.getBooleanSP(ArticleReadActivity.this, SPHelper.NIGHT_MODE_ON, false)) {
+                if (SPHelper.getBooleanSP(NewsReadActivity.this, SPHelper.NIGHT_MODE_ON, false)) {
                     webView.loadUrl("javascript:initWithCssType('night')");
                 } else {
                     webView.loadUrl("javascript:initWithCssType('day')");
@@ -185,6 +186,12 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
     }
 
     @Override
+    public void animateToFavOrNot(boolean favOrNot) {
+        fabFav.animate().rotationX(fabFav.getRotationX() == 0 ? 360 : 0).setDuration(300).start();
+        fabFav.postDelayed(() -> setFavIconFavOrNot(favOrNot), 300);
+    }
+
+    @Override
     public void showHtmlPageByString(String htmlString) {
         webView.loadDataWithBaseURL("file:///android_asset", htmlString, "text/html; charset=UTF-8", null, null);
     }
@@ -212,7 +219,7 @@ public class ArticleReadActivity extends BaseActivity<ArticleReadPresenter> impl
         public void viewImageBySrc(String src, String alt) {
             Log.e("Src", src);
             src = src.replace("small", "medium"); // 目前仅发现该
-            Intent intent = new Intent(ArticleReadActivity.this, ImageInspectActivity.class);
+            Intent intent = new Intent(NewsReadActivity.this, ImageInspectActivity.class);
             ViewImageEvent event = new ViewImageEvent(src, alt);
             intent.putExtra(ViewImageEvent.KEY, event);
             startActivity(intent);

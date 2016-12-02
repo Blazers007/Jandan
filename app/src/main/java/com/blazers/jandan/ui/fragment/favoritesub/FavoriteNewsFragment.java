@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavNews;
-import com.blazers.jandan.model.database.sync.OldNewsPost;
-import com.blazers.jandan.ui.activity.ArticleReadActivity;
+import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
 import com.blazers.jandan.widgets.nightwatch.WatchTextView;
@@ -35,8 +33,8 @@ import butterknife.ButterKnife;
  */
 public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 
-    private List<LocalFavNews> list;
-    private FavNewsAdapter adapter;
+//    private List<LocalFavNews> list;
+//    private FavNewsAdapter adapter;
 
     @Override
     protected void initPresenter() {
@@ -60,17 +58,17 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
         ButterKnife.bind(this, view);
         trySetupSwipeRefreshLayout();
         // Init
-        list = new ArrayList<>();
+//        list = new ArrayList<>();
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 2, Color.rgb(201, 201, 201)));
-        mRecyclerView.setAdapter(adapter = new FavNewsAdapter());
+//        mRecyclerView.setAdapter(adapter = new FavNewsAdapter());
         refresh();
     }
 
     @Override
     public void refresh() {
-        list.clear();
+//        list.clear();
 //        List<LocalFavNews> addons = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
 //        if (null != addons)
 //            list.addAll(addons);
@@ -78,63 +76,63 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 //        refreshComplete();
     }
 
-    /**
-     * Adapter
-     */
-    class FavNewsAdapter extends RecyclerView.Adapter<FavNewsAdapter.NewsHolder> {
-        @Override
-        public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new NewsHolder(LayoutInflater.from(getActivity()).inflate(R.layout.item_favorite_news, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(NewsHolder holder, int position) {
-            OldNewsPost post = list.get(position).getNewsPost();
-            holder.simpleDraweeView.setImageURI(Uri.parse(post.getThumbUrl()));
-            holder.watchTextView.setText(post.getTitle());
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-
-        class NewsHolder extends RecyclerView.ViewHolder {
-
-            @BindView(R.id.news_image)
-            SimpleDraweeView simpleDraweeView;
-            @BindView(R.id.news_title)
-            WatchTextView watchTextView;
-
-            public NewsHolder(View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-                //
-                itemView.setOnClickListener(v -> {
-                    OldNewsPost post = list.get(getAdapterPosition()).getNewsPost();
-                    startActivity(
-                            new Intent(getActivity(), ArticleReadActivity.class)
-                                    .putExtra("id", post.getId())
-                                    .putExtra("title", post.getTitle())
-                    );
-                });
-                //
-                itemView.setOnLongClickListener(v -> {
-                    int position = getAdapterPosition();
-                    LocalFavNews news = list.remove(position);
-                    long id = news.getId();
-                    long time = news.getFavTime();
-                    adapter.notifyItemRemoved(position);
-//                    LocalFavNews.setThisFavedOrNot(false, realm, id);
-                    // 不需要考虑作用域？会不会导致临时变量无法释放?
-                    Snackbar.make(mRecyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
-//                        LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
-//                        list.add(position, delete);
-                        adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1
-                    }).show();
-                    return true;
-                });
-            }
-        }
-    }
+//    /**
+//     * Adapter
+//     */
+//    class FavNewsAdapter extends RecyclerView.Adapter<FavNewsAdapter.NewsHolder> {
+//        @Override
+//        public NewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            return new NewsHolder(LayoutInflater.from(getActivity()).inflate(R.layout.item_favorite_news, parent, false));
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(NewsHolder holder, int position) {
+//            OldNewsPost post = list.get(position).getNewsPost();
+//            holder.simpleDraweeView.setImageURI(Uri.parse(post.getThumbUrl()));
+//            holder.watchTextView.setText(post.getTitle());
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return list.size();
+//        }
+//
+//        class NewsHolder extends RecyclerView.ViewHolder {
+//
+//            @BindView(R.id.news_image)
+//            SimpleDraweeView simpleDraweeView;
+//            @BindView(R.id.news_title)
+//            WatchTextView watchTextView;
+//
+//            public NewsHolder(View itemView) {
+//                super(itemView);
+//                ButterKnife.bind(this, itemView);
+//                //
+//                itemView.setOnClickListener(v -> {
+//                    OldNewsPost post = list.get(getAdapterPosition()).getNewsPost();
+//                    startActivity(
+//                            new Intent(getActivity(), NewsReadActivity.class)
+//                                    .putExtra("id", post.getId())
+//                                    .putExtra("title", post.getTitle())
+//                    );
+//                });
+//                //
+//                itemView.setOnLongClickListener(v -> {
+//                    int position = getAdapterPosition();
+//                    LocalFavNews news = list.remove(position);
+//                    long id = news.getId();
+//                    long time = news.getFavTime();
+//                    adapter.notifyItemRemoved(position);
+////                    LocalFavNews.setThisFavedOrNot(false, realm, id);
+//                    // 不需要考虑作用域？会不会导致临时变量无法释放?
+//                    Snackbar.make(mRecyclerView, "已经删除该收藏", Snackbar.LENGTH_SHORT).setActionTextColor(Color.rgb(201, 201, 201)).setAction("撤销", vi -> {
+////                        LocalFavNews delete = LocalFavNews.setThisFavedOrNot(true, realm, id, time);
+////                        list.add(position, delete);
+//                        adapter.notifyItemInserted(position); // getAdapterPosition() 因为已经被移除 故返回 -1
+//                    }).show();
+//                    return true;
+//                });
+//            }
+//        }
+//    }
 }

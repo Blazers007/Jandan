@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.pojo.favorite.Favorite;
 import com.blazers.jandan.api.BlazersAPI;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.NightModeEvent;
@@ -173,17 +171,17 @@ public class MineFragment extends BaseFragment {
      * Create Or Update Fav data on server
      */
     void createOrUpdateData() {
-        try {
-            BlazersAPI service = Favorite.getRetrofitServiceInstance();
-            Favorite.getLocalFavorite(getActivity())
-                    .flatMap(json -> service.postUserFavorite("bqvSgbP6G", json))
-                    .compose(RxHelper.applySchedulers())
-                    .subscribe(state -> {
-                        Log.e("State", state);
-                    }, throwable -> Log.e("POST", throwable.toString()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            BlazersAPI service = Favorite.getRetrofitServiceInstance();
+//            Favorite.getLocalFavorite(getActivity())
+//                    .flatMap(json -> service.postUserFavorite("bqvSgbP6G", json))
+//                    .compose(RxHelper.applySchedulers())
+//                    .subscribe(state -> {
+//                        Log.e("State", state);
+//                    }, throwable -> Log.e("POST", throwable.toString()));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -192,19 +190,19 @@ public class MineFragment extends BaseFragment {
      * @param fullCopy true 同样也备份用户UUID
      */
     void syncDataFromServer(boolean fullCopy) {
-        BlazersAPI service = null;
-        try {
-            service = Favorite.getRetrofitServiceInstance();
-            service.getUserFavorite("bqvSgbP6G")
-                    .compose(RxHelper.applySchedulers())
-                    .subscribe(favorite -> {
-                        for (LocalFavImages image : favorite.images) {
-                            Log.i("Url", image.getUrl());
-                        }
-                    }, throwable -> Log.e("Error", throwable.toString()));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        BlazersAPI service = null;
+//        try {
+//            service = Favorite.getRetrofitServiceInstance();
+//            service.getUserFavorite("bqvSgbP6G")
+//                    .compose(RxHelper.applySchedulers())
+//                    .subscribe(favorite -> {
+//                        for (LocalFavImages image : favorite.images) {
+//                            Log.i("Url", image.getUrl());
+//                        }
+//                    }, throwable -> Log.e("Error", throwable.toString()));
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**

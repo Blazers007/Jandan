@@ -8,23 +8,20 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.NightModeEvent;
+import com.blazers.jandan.presenter.ImagePresenter;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
+import com.blazers.jandan.ui.fragment.readingsub.ImageFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
 import com.blazers.jandan.ui.fragment.readingsub.NewsFragment;
-import com.blazers.jandan.ui.fragment.readingsub.PicFragment;
-import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Blazers on 2015/10/12.
@@ -42,7 +39,7 @@ public class ReadingFragment extends BaseFragment {
 
 
     private ArrayList<Fragment> fragments;
-    private String[] titles = {"新鲜事", "无聊图", "段子", "妹子图"};
+    private String[] titles = {"新鲜事", "段子", "无聊图", "妹子图"};
 
     public ReadingFragment() {
         super();
@@ -51,7 +48,7 @@ public class ReadingFragment extends BaseFragment {
 
     @Override
     protected void initPresenter() {
-
+        // No logic
     }
 
     @Override
@@ -72,11 +69,11 @@ public class ReadingFragment extends BaseFragment {
     void initJandanFragments() {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
-//        fragments.add(PicFragment.newInstance("wuliao"));
-//        fragments.add(new JokeFragment());
+        fragments.add(new JokeFragment());
+        fragments.add(ImageFragment.newInstance(ImagePresenter.WULIAO));
         // 是否需要加载妹纸页面
 //        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
-//            fragments.add(PicFragment.newInstance("meizi"));
+            fragments.add(ImageFragment.newInstance(ImagePresenter.MEIZHI));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
 //        mViewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
 //        mViewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放

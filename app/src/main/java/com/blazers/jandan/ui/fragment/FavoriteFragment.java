@@ -12,9 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.database.local.LocalFavJokes;
-import com.blazers.jandan.model.database.local.LocalFavNews;
 import com.blazers.jandan.model.event.EnterSelectModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.favoritesub.FavoriteImageFragment;

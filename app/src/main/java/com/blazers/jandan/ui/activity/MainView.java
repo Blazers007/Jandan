@@ -17,10 +17,10 @@ public interface MainView {
 
     void hideBottomNavigationView();
 
-    void gotoCommentActivity(ViewCommentEvent commentEvent);
-
-    void gotoViewArticleActivity(ViewArticleEvent viewArticleEvent);
-
-    void gotoViewImageActivity(ViewImageEvent viewImageEvent);
+//    void gotoCommentActivity(ViewCommentEvent commentEvent);
+//
+//    void gotoViewArticleActivity(ViewArticleEvent viewArticleEvent);
+//
+//    void gotoViewImageActivity(ViewImageEvent viewImageEvent);
 
 }

@@ -1,10 +1,6 @@
 package com.blazers.jandan.util;
 
 import android.util.Log;
-
-import com.blazers.jandan.model.database.local.LocalImage;
-import com.blazers.jandan.model.pojo.image.ImageRelateToPost;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,46 +35,6 @@ public class ImageDownloader {
         return INSTANCE;
     }
 
-    /**
-     * 根据Url地址直接缓存图像
-     *
-     * @param url 图像地址
-     * @return 返回一个LocalImage对象 映射Url与本地File路径
-     */
-    public LocalImage doSimpleOfflineCaching(String url) {
-        return doSimpleDownload(url, SdcardHelper.createOfflineImageFile(getTypeByUrl(url)));
-    }
-
-    /**
-     * 根据Url地址直接缓存图像
-     *
-     * @param imageRelateToPost RecyclerView中的图像对象
-     * @return 返回一个LocalImage对象 映射Url与本地File路径
-     */
-    public LocalImage doOfflineCachingImage(ImageRelateToPost imageRelateToPost) {
-        String url = imageRelateToPost.url;
-        return doSimpleDownload(url, SdcardHelper.createOfflineImageFile(getTypeByUrl(url)));
-    }
-
-    /**
-     * 同上 目录不同
-     */
-    public LocalImage doSavingImage(String url) {
-        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
-    }
-
-    /**
-     * 同上 目录不同
-     */
-    public LocalImage doSavingImage(ImageRelateToPost imageRelateToPost) {
-        String url = imageRelateToPost.url;
-        return doSimpleDownload(url, SdcardHelper.createSavedImageFile(getTypeByUrl(url)));
-    }
-
-    public LocalImage doCachingImage(ImageRelateToPost imageRelateToPost) {
-        String url = imageRelateToPost.url;
-        return doSimpleDownload(url, SdcardHelper.createCachedImageFile(getTypeByUrl(url)));
-    }
 
     /**
      * 根据Url获取文件类型
@@ -94,7 +50,7 @@ public class ImageDownloader {
     /**
      * 下载并返回LocalImage对象
      */
-    private LocalImage doSimpleDownload(String url, File file) {
+    private void doSimpleDownload(String url, File file) {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -111,14 +67,9 @@ public class ImageDownloader {
             }
             inputStream.close();
             fos.close();
-            LocalImage localImage = new LocalImage();
-            localImage.setUrl(url);
-            localImage.setLocalUrl(file.getAbsolutePath());
-            return localImage;
         } catch (IOException e) {
             e.printStackTrace();
             file.delete();
         }
-        return null;
     }
 }

@@ -8,15 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.database.local.LocalFavImages;
-import com.blazers.jandan.model.database.local.LocalFavJokes;
-import com.blazers.jandan.model.database.local.LocalFavNews;
-import com.blazers.jandan.model.pojo.timeline.Timeline;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.util.RecyclerViewHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.widgets.TimeLineView;
-import io.realm.Sort;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +23,7 @@ import java.util.Map;
  */
 public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 
-    private List<Timeline> list;
+//    private List<Timeline> list;
 
     @Override
     protected void initPresenter() {
@@ -58,7 +53,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 
     void initRecyclerView() {
         mRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new TimelineAdapter());
+//        mRecyclerView.setAdapter(new TimelineAdapter());
     }
 
     @Override
@@ -114,34 +109,34 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
     }
 
 
-    /**
-     * Timeline Adapter
-     * */
-    class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.TimelineHolder> {
-
-        @Override
-        public TimelineHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new TimelineHolder(new TimeLineView(getActivity()));
-        }
-
-        @Override
-        public void onBindViewHolder(TimelineHolder holder, int position) {
-            holder.timeLineView.setupViewsByTimeline(list.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return list.size();
-        }
-
-        class TimelineHolder extends RecyclerView.ViewHolder {
-
-            public TimeLineView timeLineView;
-
-            public TimelineHolder(View itemView) {
-                super(itemView);
-                timeLineView = (TimeLineView) itemView;
-            }
-        }
-    }
+//    /**
+//     * Timeline Adapter
+//     * */
+//    class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.TimelineHolder> {
+//
+//        @Override
+//        public TimelineHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            return new TimelineHolder(new TimeLineView(getActivity()));
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(TimelineHolder holder, int position) {
+//            holder.timeLineView.setupViewsByTimeline(list.get(position));
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return list.size();
+//        }
+//
+//        class TimelineHolder extends RecyclerView.ViewHolder {
+//
+//            public TimeLineView timeLineView;
+//
+//            public TimelineHolder(View itemView) {
+//                super(itemView);
+//                timeLineView = (TimeLineView) itemView;
+//            }
+//        }
+//    }
 }
