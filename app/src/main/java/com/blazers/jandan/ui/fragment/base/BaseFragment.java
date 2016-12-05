@@ -1,23 +1,16 @@
 package com.blazers.jandan.ui.fragment.base;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.blazers.jandan.R;
 import com.blazers.jandan.presenter.base.BasePresenter;
-import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.ToolbarHelper;
@@ -25,14 +18,13 @@ import com.blazers.jandan.widgets.nightwatch.NightWatcher;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
-import rx.Subscription;
 
 /**
  * Created by Blazers on 2015/9/11.
  */
 public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
-    public String TAG = "BaseFragment";
+    public String mTAG = "BaseFragment";
     private Toolbar toolbar;
 
     protected T mPresenter;
@@ -43,35 +35,31 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     /* Umeng */
     private boolean needUmengStatic = true;
 
-    public void setTAG(String TAG) {
-        this.TAG = TAG;
-    }
-
     public void setNeedUmengStatic(boolean need) {
         needUmengStatic = need;
     }
 
     public BaseFragment() {
         super();
-        Log.i(TAG, "Constructor");
+        Log.i(mTAG, "Constructor");
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i(TAG, "Attach");
+        Log.i(mTAG, "Attach");
         isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "OnCreate");
+        Log.i(mTAG, "OnCreate");
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.i(TAG, "OnActivityCreated");
+        Log.i(mTAG, "OnActivityCreated");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -93,7 +81,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
     @Override
     public void onStart() {
-        Log.i(TAG, "OnStart");
+        Log.i(mTAG, "OnStart");
         super.onStart();
     }
 
@@ -103,43 +91,43 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(TAG, "OnResume");
+        Log.i(mTAG, "OnResume");
         if (needUmengStatic) {
-            MobclickAgent.onPageStart(TAG);
+            MobclickAgent.onPageStart(mTAG);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(TAG, "OnPause");
+        Log.i(mTAG, "OnPause");
         if (needUmengStatic) {
-            MobclickAgent.onPageEnd(TAG);
+            MobclickAgent.onPageEnd(mTAG);
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.i(TAG, "OnStop");
+        Log.i(mTAG, "OnStop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i(TAG, "OnDestroyView");
+        Log.i(mTAG, "OnDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "OnDestroy");
+        Log.i(mTAG, "OnDestroy");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.i(TAG, "OnDetach");
+        Log.i(mTAG, "OnDetach");
     }
 
 

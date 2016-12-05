@@ -144,10 +144,10 @@ public class ZoomableDraweeView extends DraweeView<GenericDraweeHierarchy>
             if (mZoomableController.getScaleFactor() > 1.0f) {
                 getParent().requestDisallowInterceptTouchEvent(true);
             }
-            //FLog.v(TAG, "onTouchEvent: view %x, handled by zoomable controller", this.hashCode());
+            //FLog.v(mTAG, "onTouchEvent: view %x, handled by zoomable controller", this.hashCode());
             return true;
         }
-        //FLog.v(TAG, "onTouchEvent: view %x, handled by the super", this.hashCode());
+        //FLog.v(mTAG, "onTouchEvent: view %x, handled by the super", this.hashCode());
         return super.onTouchEvent(event);
     }
 

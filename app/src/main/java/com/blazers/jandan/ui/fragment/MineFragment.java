@@ -60,7 +60,6 @@ public class MineFragment extends BaseFragment {
     public static MineFragment getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new MineFragment();
-            INSTANCE.setTAG(TAG);
         }
         return INSTANCE;
     }

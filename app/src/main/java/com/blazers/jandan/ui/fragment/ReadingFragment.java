@@ -41,10 +41,6 @@ public class ReadingFragment extends BaseFragment {
     private ArrayList<Fragment> fragments;
     private String[] titles = {"新鲜事", "段子", "无聊图", "妹子图"};
 
-    public ReadingFragment() {
-        super();
-        setTAG(TAG);
-    }
 
     @Override
     protected void initPresenter() {
@@ -70,10 +66,10 @@ public class ReadingFragment extends BaseFragment {
         fragments = new ArrayList<>();
         fragments.add(new NewsFragment());
         fragments.add(new JokeFragment());
-        fragments.add(ImageFragment.newInstance(ImagePresenter.WULIAO));
+        fragments.add(ImageFragment.newInstance(ImagePresenter.TAG_WULIAO));
         // 是否需要加载妹纸页面
 //        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
-            fragments.add(ImageFragment.newInstance(ImagePresenter.MEIZHI));
+            fragments.add(ImageFragment.newInstance(ImagePresenter.TAG_MEIZHI));
         viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
 //        mViewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
 //        mViewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放

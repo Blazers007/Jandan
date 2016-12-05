@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.presenter.ImageInspectPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.widgets.fresco.ZoomableDraweeView;
@@ -53,7 +54,10 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
 
     @Override
     public void initPresenter() {
-        mPresenter = new ImageInspectPresenter(this, this);
+        Object event =  getIntent().getSerializableExtra(ViewImageEvent.KEY);
+        if (event == null)
+            finish();
+        mPresenter = new ImageInspectPresenter(this, (ViewImageEvent) event);
     }
 
     @Override

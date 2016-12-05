@@ -16,13 +16,17 @@ import android.widget.LinearLayout;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.ViewImageEvent;
+import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.NewsReadPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.SPHelper;
+import com.blazers.jandan.util.ShareHelper;
 import com.blazers.jandan.widgets.ObservableWebView;
 
 import butterknife.BindView;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+
+import static com.blazers.jandan.presenter.NewsReadPresenter.KEY_NEWS_POST;
 
 public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements NewsReadView {
 
@@ -45,7 +49,12 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
 
     @Override
     public void initPresenter() {
-        mPresenter = new NewsReadPresenter(this, this);
+        // 获取Model层
+        Object obj = getIntent().getSerializableExtra(KEY_NEWS_POST);
+        if (obj == null) {
+            finish();
+        }
+        mPresenter = new NewsReadPresenter(this, (NewsPage.Posts) obj);
     }
 
     @Override
@@ -70,7 +79,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
     void initFloatingActionButton() {
         fabFav.setOnClickListener(v -> {
             // 点击收藏
-            mPresenter.toggleThisArticleFavState();
+            mPresenter.onClickFavoriteButton();
         });
     }
 
@@ -160,21 +169,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
                 // 跳转到评论页面
                 break;
             case R.id.action_share:
-//                ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl());
-//                LocalImage localImage = LocalImage.getLocalImageByWebUrl(realm, post.getThumbUrl());
-//                if (null != localImage && SdcardHelper.isThisFileExist(localImage.getLocalUrl())) {
-//                    ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl(), localImage.getLocalUrl());
-//                } else {
-//                    Observable.just(post.getThumbUrl())
-//                        .map(ImageDownloader.getInstance()::doSavingImage)
-//                        .compose(RxHelper.applySchedulers())
-//                        .subscribe(local -> {
-//                            ShareHelper.shareWebPage(this, post.getTitle(), post.getUrl(), local.getLocalUrl());
-//                            DBHelper.saveToRealm(this, local);
-//                        }, throwable -> {
-//                            Log.e("Error", throwable.toString());
-//                        });
-//                }
+//                ShareHelper.shareWebPage(getContext(), mPost.title, mPost.url);
                 return true;
         }
         return super.onOptionsItemSelected(item);

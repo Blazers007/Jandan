@@ -5,6 +5,6 @@ package com.blazers.jandan;
 
 interface IOfflineDownloadInterface {
 	void startDownloadNews(int fromPage, int pageSize);
-	void startDownloadPicture(String type, int fromPage, int pageSize);
+	void startDownloadPicture(String currentTag, int fromPage, int pageSize);
 	void startDownloadJokes(int fromPage, int pageSize);
 }

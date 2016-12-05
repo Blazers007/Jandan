@@ -1,5 +1,6 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import com.blazers.jandan.BR;
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.NewsPresenter;
+import com.blazers.jandan.presenter.NewsReadPresenter;
+import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 
@@ -22,20 +25,12 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> implements NewsView {
 
-    public static final String TAG = NewsFragment.class.getSimpleName();
-
     private BaseSingleMVVMAdapter<NewsPage.Posts, NewsPresenter> mAdapter;
     private List<NewsPage.Posts> mList = new ArrayList<>();
 
-
-    public NewsFragment() {
-        super();
-        setTAG(TAG);
-    }
-
     @Override
     protected void initPresenter() {
-        mPresenter = new NewsPresenter(this, getActivity());
+        mPresenter = new NewsPresenter(this);
     }
 
     @Override
@@ -78,5 +73,14 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
         mList.addAll(postsBeanList);
         mAdapter.notifyItemRangeInserted(start, size);
         mRecyclerView.smoothScrollBy(0, 96);
+    }
+
+    @Override
+    public void onGoToNewsRead(NewsPage.Posts post) {
+        getActivity().startActivity(
+                new Intent(getContext(), NewsReadActivity.class)
+                        .putExtra(NewsReadPresenter.KEY_NEWS_POST, post)
+        );
+        getActivity().overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
     }
 }

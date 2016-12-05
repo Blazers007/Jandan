@@ -1,6 +1,7 @@
 package com.blazers.jandan.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.HashMap;
  * Created by Blazers on 2015/10/28.
  */
 public class SPHelper {
+
     public static final String SP_NAME = "blazers";
     /* Default Keys */
     public static final String NAME = "name";

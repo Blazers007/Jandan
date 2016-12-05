@@ -1,14 +1,12 @@
 package com.blazers.jandan.presenter;
 
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
-import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.fragment.readingsub.NewsView;
+import com.blazers.jandan.util.ListHelper;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.TimeHelper;
 
@@ -22,10 +20,13 @@ import rx.schedulers.Schedulers;
 
 public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
 
+    public static final String TAG_NEWS = "news";
+
     private int mPage = 1;
 
-    public NewsPresenter(NewsView view, Context context) {
-        super(view, context);
+    public NewsPresenter(NewsView view) {
+        super(view);
+        view.setTag(TAG_NEWS);
     }
 
 
@@ -35,27 +36,25 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
     @Override
     public void onInitPageData() {
         Log.i("Presenter", "==OnInitNewsPageData==");
-        DataManager.getInstance()
+        addFUISubscription(DataManager.getInstance()
                 .getNewsDataFromDB(mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
-                    Log.e("onInitNewsPageData", "==OnNext==");
                     // 有数据则首先显示
-                    if (posts!= null && !posts.isEmpty()) {
+                    if (ListHelper.isNotEmptySafe(posts)) {
                         mView.refreshDataList(posts);
                         // 在根据刷新时间判断是否需要刷新
-                        if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(getActivity(), "news"))) {
+//                        if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(TAG_NEWS))) {
 //                            onRefresh();
-                        }
+//                        }
                     } else {
-                        // 无数据则直接刷新
-//                        onRefresh();
+                        onRefresh();
                     }
                 }, error -> {
-                    Log.e("onInitNewsPageData", error.toString());
+                    System.out.println("onInitNewsPageData" + error.toString());
                     onRefresh();
-                }); // 出错直接刷新
+                })); // 出错直接刷新
     }
 
 
@@ -65,20 +64,21 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
     public void onRefresh() {
         Log.i("Presenter", "==OnRefresh==");
         mPage = 1;
-        DataManager.getInstance().getNewsData(getContext(), mPage)
+        addFUISubscription(DataManager.getInstance().getNewsData(mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
                     // 刷新成功 更新UI
-                    if (posts!= null && !posts.isEmpty()) {
+                    if (ListHelper.isNotEmptySafe(posts)) {
                         mView.refreshDataList(posts);
                         mView.hideRefreshingView(true);
+                    } else {
+                        mView.hideRefreshingView(false);
                     }
-                    // 刷新失败 不更新UI弹出提示
                 }, error -> {
-                    Log.e("onRefresh", error.toString());
+                    System.out.println("onInitNewsPageData" +  error.toString());
                     mView.hideRefreshingView(false);
-                });
+                }));
     }
 
     /**
@@ -86,18 +86,22 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
      */
     public void onLoadMore() {
         mPage++;
-        DataManager.getInstance().getNewsData(getContext(), mPage)
+        addFUISubscription(DataManager.getInstance().getNewsData(mPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(posts -> {
-                    // 刷新成功 更新UI
-                    mView.addDataList(posts);
-                    mView.hideLoadMoreView(true);
-                    // 刷新失败 不更新UI弹出提示
+                    if (ListHelper.isNotEmptySafe(posts)) {
+                        // 刷新成功 更新UI
+                        mView.addDataList(posts);
+                        mView.hideLoadMoreView(true);
+                    } else {
+                        // 刷新失败 不更新UI弹出提示
+                        mView.hideLoadMoreView(false);
+                    }
                 }, error -> {
-                    Log.e("onLoadMore", error.toString());
+                    System.out.println("onInitNewsPageData" +  error.toString());
                     mView.hideLoadMoreView(false);
-                });
+                }));
 
     }
 
@@ -107,9 +111,6 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
      * @param
      */
     public void onClickPost(NewsPage.Posts postsBean) {
-        getActivity().startActivity(
-                new Intent(getContext(), NewsReadActivity.class)
-                        .putExtra(NewsReadPresenter.KEY_NEWS_POST, postsBean)
-        );
+        mView.onGoToNewsRead(postsBean);
     }
 }

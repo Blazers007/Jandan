@@ -1,6 +1,6 @@
 package com.blazers.jandan.model.joke;
 
-import com.blazers.jandan.model.Time;
+import com.blazers.jandan.model.extension.Time;
 
 import java.util.List;
 

@@ -41,20 +41,13 @@ import rx.android.schedulers.AndroidSchedulers;
 @SuppressWarnings("unused")
 public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> implements JokeView {
 
-    public static final String TAG = JokeFragment.class.getSimpleName();
     // private
     private BaseSingleMVVMAdapter mAdapter;
     private List<JokePage.Comments> mList = new ArrayList<>();
-    private int mPage = 1;
-
-    public JokeFragment() {
-        super();
-        setTAG(TAG);
-    }
 
     @Override
     protected void initPresenter() {
-        mPresenter = new JokePresenter(this, getActivity());
+        mPresenter = new JokePresenter(this);
     }
 
     @Override

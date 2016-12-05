@@ -1,4 +1,4 @@
-package com.blazers.jandan.model;
+package com.blazers.jandan.model.extension;
 
 import java.io.Serializable;
 

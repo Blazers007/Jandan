@@ -26,22 +26,6 @@
         blz:wtg_day_bg="#fff"
         blz:wtg_night_bg="#4b4b4b"
         >
-
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/author"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="12dp"
-            android:lineSpacingExtra="4dp"
-            android:textColor="#222"
-            android:textIsSelectable="true"
-            tools:text="@string/longText"
-            android:text="@{jBean.comment_content}"
-            />
         <!-- Title and time-->
         <TextView
             android:id="@+id/author"
@@ -49,7 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="12dp"
-            android:gravity="center"
             android:textColor="#030303"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -65,11 +48,34 @@
             android:layout_marginBottom="1dp"
             android:layout_marginLeft="12dp"
             android:layout_toRightOf="@+id/author"
-            android:gravity="center"
             android:textColor="#666"
             android:textSize="12sp"
             tools:text="3小时前"
             android:text='@{TimeHelper.getSocialTime(jBean.comment_date)}'
+            />
+
+        <ImageButton
+            android:id="@+id/btn_share"
+            style="@style/ImageButton40Base"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/selector_share"
+            />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/author"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="12dp"
+            android:lineSpacingExtra="4dp"
+            android:textColor="#222"
+            android:textIsSelectable="true"
+            tools:text="@string/longText"
+            android:text="@{jBean.comment_content}"
             />
 
         <com.blazers.jandan.widgets.ThumbTextButton
@@ -113,14 +119,6 @@
             app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
             app:mfb_not_favorite_image="@mipmap/ic_favorite_grey600_16dp"
             app:mfb_padding="16"
-            />
-
-        <ImageButton
-            android:id="@+id/btn_share"
-            style="@style/ImageButton40Base"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/selector_share"
             />
 
         <com.blazers.jandan.widgets.nightwatch.WachView

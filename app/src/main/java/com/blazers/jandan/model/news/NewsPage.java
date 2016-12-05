@@ -3,7 +3,7 @@ package com.blazers.jandan.model.news;
 import android.databinding.BindingAdapter;
 import android.net.Uri;
 
-import com.blazers.jandan.model.Time;
+import com.blazers.jandan.model.extension.Time;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.Serializable;

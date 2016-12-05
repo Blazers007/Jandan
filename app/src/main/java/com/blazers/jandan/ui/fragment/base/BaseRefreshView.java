@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface BaseRefreshView {
 
+    void setTag(String tag);
+
     void showRefreshingView();
 
     void hideRefreshingView(boolean successful);

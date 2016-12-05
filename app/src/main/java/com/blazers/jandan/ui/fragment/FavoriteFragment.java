@@ -56,7 +56,6 @@ public class FavoriteFragment extends BaseFragment {
     public static FavoriteFragment getInstance() {
         if (null == INSTANCE) {
             INSTANCE = new FavoriteFragment();
-            INSTANCE.setTAG(TAG);
         }
         return INSTANCE;
     }

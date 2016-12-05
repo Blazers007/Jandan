@@ -15,4 +15,6 @@ public interface NewsView extends BaseLoadMoreRefreshView {
     void refreshDataList(List<NewsPage.Posts> postsBeanList);
 
     void addDataList(List<NewsPage.Posts> postsBeanList);
+
+    void onGoToNewsRead(NewsPage.Posts post);
 }

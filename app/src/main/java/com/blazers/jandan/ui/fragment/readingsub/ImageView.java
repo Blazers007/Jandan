@@ -1,6 +1,4 @@
 package com.blazers.jandan.ui.fragment.readingsub;
-
-import com.blazers.jandan.model.image.ImagePage;
 import com.blazers.jandan.model.image.SingleImage;
 import com.blazers.jandan.ui.fragment.base.BaseLoadMoreRefreshView;
 
@@ -16,4 +14,6 @@ public interface ImageView extends BaseLoadMoreRefreshView {
     void refreshDataList(List<SingleImage> postsBeanList);
 
     void addDataList(List<SingleImage> postsBeanList);
+
+    void onInspectImage(SingleImage singleImage);
 }

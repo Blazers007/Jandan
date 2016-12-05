@@ -1,27 +1,21 @@
 package com.blazers.jandan.ui.activity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.ViewPropertyAnimator;
 import android.widget.Toast;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.common.Static;
-import com.blazers.jandan.presenter.MainPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.ui.fragment.FavoriteFragment;
-import com.blazers.jandan.ui.fragment.ReadingFragment;
 import com.blazers.jandan.ui.fragment.MineFragment;
+import com.blazers.jandan.ui.fragment.ReadingFragment;
 import com.blazers.jandan.util.ClipboardHelper;
-import com.blazers.jandan.model.event.ViewArticleEvent;
-import com.blazers.jandan.model.event.ViewCommentEvent;
-import com.blazers.jandan.model.event.ViewImageEvent;
 
 import butterknife.BindView;
 import jonathanfinerty.once.Once;
@@ -38,7 +32,7 @@ import permissions.dispatcher.RuntimePermissions;
  * 1: Activity不在持有Toolbar 以及 Menu 全部交付 Fragment管理
  */
 @RuntimePermissions
-public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
+public class MainActivity extends BaseActivity {
 
     public static final String JANDAN_TAG = "fragment_jandan";
     public static final String FAV_TAG = "fragment_fav";
@@ -51,8 +45,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     /* 缓存变量 */
     private Fragment mCurrentFragment, mReadingFragment, mFavoriteFragment, mMineFragment;
-    private ViewPropertyAnimator mHide, mShow;
-
     /**
      * 处理回退键
      */
@@ -60,7 +52,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void initPresenter() {
-        mPresenter = new MainPresenter(this, this);
+
     }
 
     @Override
@@ -117,31 +109,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         // Test CoordinatorLayout
     }
 
-    @Override
-    public void showBottomNavigationView() {
-
-    }
-
-    @Override
-    public void hideBottomNavigationView() {
-
-    }
-
-//    @Override
-//    public void gotoCommentActivity(ViewCommentEvent commentEvent) {
-//        startActivity(new Intent(this, CommentActivity.class).putExtra(ViewCommentEvent.KEY, commentEvent));
-//    }
-//
-//    @Override
-//    public void gotoViewArticleActivity(ViewArticleEvent viewArticleEvent) {
-//        startActivity(new Intent(this, NewsReadActivity.class).putExtra(ViewArticleEvent.KEY, viewArticleEvent));
-//        overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
-//    }
-//
-//    @Override
-//    public void gotoViewImageActivity(ViewImageEvent viewImageEvent) {
-//
-//    }
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     void showReadPhoneState() {

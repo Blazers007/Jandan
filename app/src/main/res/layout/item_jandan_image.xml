@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
+
     <data>
+
         <variable
             name="iPresenter"
             type="com.blazers.jandan.presenter.ImagePresenter"/>
@@ -13,16 +15,50 @@
 
         <import type="com.blazers.jandan.util.TimeHelper"/>
     </data>
+
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:blz="http://schemas.android.com/apk/res-auto"
         xmlns:fresco="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         >
+
+        <!-- Title and time-->
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="12dp"
+            android:text='@{String.format("@%s", iBean.comment.comment_author)}'
+            android:textColor="#030303"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/author"
+            android:layout_marginLeft="12dp"
+            android:layout_toRightOf="@+id/author"
+            android:text='@{TimeHelper.getSocialTime(iBean.comment.comment_date)}'
+            android:textColor="#666"
+            android:textSize="12sp"
+            tools:text="3小时前"
+            />
+
+        <ImageButton
+            android:id="@+id/btn_share"
+            style="@style/ImageButton40Base"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:src="@drawable/selector_share"
+            />
 
         <TextView
             android:id="@+id/text"
@@ -34,9 +70,9 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="12dp"
             android:layout_marginTop="8dp"
-            tools:text="@string/longText"
             android:text="@{iBean.comment.text_content}"
             android:visibility='@{iBean.comment.text_content == null || iBean.comment.text_content.trim().length() == 0 ? View.GONE : View.VISIBLE}'
+            tools:text="@string/longText"
             />
 
         <com.blazers.jandan.widgets.AutoScaleFrescoView
@@ -45,36 +81,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
-            fresco:actualImageScaleType="fitCenter"
-            fresco:viewAspectRatio="1.418"
-            app:image_url="@{iBean.url}"
             android:clickable="true"
             android:onClick="@{() -> iPresenter.onClickImage(iBean)}"
-            />
-        <!-- Title and time-->
-        <TextView
-            android:id="@+id/author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="12dp"
-            android:textColor="#222"
-            tools:text="@Blazers"
-            android:text='@{String.format("@%s", iBean.comment.comment_author)}'
+            app:image_url="@{iBean.url}"
+            fresco:actualImageScaleType="fitCenter"
+            fresco:viewAspectRatio="1.418"
             />
 
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/author"
-            android:layout_marginLeft="12dp"
-            android:layout_toRightOf="@+id/author"
-            android:gravity="center"
-            android:textColor="#666"
-            tools:text="3小时前"
-            android:text='@{TimeHelper.getSocialTime(iBean.comment.comment_date)}'
-            />
 
         <com.blazers.jandan.widgets.ThumbTextButton
             android:id="@+id/btn_oo"
@@ -118,13 +131,6 @@
             app:mfb_padding="16"
             />
 
-        <ImageButton
-            android:id="@+id/btn_share"
-            style="@style/ImageButton40Base"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/selector_share"
-            />
         <!-- Type Hint -->
         <ImageView
             android:id="@+id/type_hint"

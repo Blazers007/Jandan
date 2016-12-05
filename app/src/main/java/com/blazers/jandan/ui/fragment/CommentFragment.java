@@ -55,7 +55,6 @@ public class CommentFragment extends BaseFragment {
         Bundle data = new Bundle();
         data.putLong("commentId", commentId);
         fragment.setArguments(data);
-        fragment.setTAG(TAG);
         return fragment;
     }
 

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.blazers.jandan.api.IJandan;
 import com.blazers.jandan.common.URL;
+import com.blazers.jandan.model.extension.Time;
 import com.blazers.jandan.model.image.ImagePage;
 import com.blazers.jandan.model.image.SingleImage;
 import com.blazers.jandan.model.joke.JokePage;
@@ -14,13 +15,19 @@ import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.TimeHelper;
 import com.google.gson.Gson;
 import com.snappydb.DB;
+import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -60,10 +67,17 @@ public class DataManager {
     // Instance
     private static DataManager INSTANCE;
     // Vars
+    private WeakReference<Context> mApplicationContext;
     private OkHttpClient client;
     private Gson gson;
     private IJandan mJandan;
-    // Database
+    //==============================================================================================
+    //=
+    //=
+    //=                                 数据库管理
+    //=
+    //=
+    //==============================================================================================
     private ExecutorService mDatabaseExecutor;
     private DB mDB;
 
@@ -82,6 +96,8 @@ public class DataManager {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         mJandan = retrofit.create(IJandan.class);
+        // 单一容量线程池
+        mDatabaseExecutor = Executors.newSingleThreadExecutor();
 
     }
 
@@ -98,12 +114,14 @@ public class DataManager {
     /**
      * 设置数据库
      *
-     * @param db
+     * @param context
      */
-    public void setDB(DB db) {
-        mDB = db;
+    public void init(Context context) throws SnappydbException {
+        mDB = DBFactory.open(context);
         // Init executor
         mDatabaseExecutor = Executors.newSingleThreadExecutor();
+        // Cache context
+        mApplicationContext = new WeakReference<Context>(context);
     }
 
     /**
@@ -135,23 +153,13 @@ public class DataManager {
     /**
      * @param page 读取新鲜事的页码
      */
-    public Observable<List<NewsPage.Posts>> getNewsData(Context context, int page) {
+    public Observable<List<NewsPage.Posts>> getNewsData(int page) {
         Log.d("DataManager", "==GetNewsData==");
-        if (NetworkHelper.netWorkAvailable(context)) {
+        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
             Log.i("Loading", "From API");
             return mJandan.getNews(page)
-                    .map(newsPage -> {
-                        synchronized (monitor) {
-                            try {
-                                Log.i("Saving News", System.currentTimeMillis() + "");
-                                mDB.put(NEWS + page, newsPage);
-                                Log.i("Saving News", System.currentTimeMillis() + "");
-                            } catch (SnappydbException e) {
-                                e.printStackTrace();
-                            }
-                            return newsPage.posts;
-                        }
-                    });
+                    .doOnNext(newsPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<NewsPage>(NEWS + page, newsPage)))
+                    .map(newsPage ->  newsPage.posts);
         } else {
             return getNewsDataFromDB(page);
         }
@@ -163,41 +171,32 @@ public class DataManager {
     public Observable<List<NewsPage.Posts>> getNewsDataFromDB(int page) {
         Log.d("DataManager", "==GetNewsDataFromDB==");
         return Observable.defer(() -> {
-            synchronized (monitor) {
-                try {
-                    if (mDB.exists(NEWS + page)) {
-                        NewsPage newsPage = mDB.getObject(NEWS + page, NewsPage.class);
-                        return Observable.just(newsPage.posts);
-                    } else {
-                        // 如何编写效率最高
-                        return Observable.just(null);
-                    }
-                } catch (SnappydbException e) {
-                    return Observable.error(e);
-                }
+            try {
+                Future<NewsPage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(NEWS + page, NewsPage.class));
+                NewsPage newsPage = ret.get(5, TimeUnit.SECONDS);
+                return Observable.just(newsPage.posts);
+            } catch (InterruptedException e) {
+                return Observable.error(e);
+            } catch (ExecutionException e) {
+                return Observable.error(e);
+            } catch (TimeoutException e) {
+                return Observable.just(null);
+            } catch (Exception e) {
+                return Observable.error(e);
             }
-
         });
     }
 
     /**
      * @param page 读取无聊图的页码
      */
-    public Observable<List<SingleImage>> getWuliaoData(Context context, int page) {
+    public Observable<List<SingleImage>> getWuliaoData(int page) {
         Log.d("DataManager", "==GetJokeData==");
-        if (NetworkHelper.netWorkAvailable(context)) {
+        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
             Log.i("Loading", "From API");
             return mJandan.getWuliao(page)
-                    .map(wuliaoPage -> {
-                        synchronized (monitor) {
-                            try {
-                                mDB.put(WULIAO + page, wuliaoPage);
-                            } catch (SnappydbException e) {
-                                e.printStackTrace();
-                            }
-                            return SingleImage.splitToSingle(wuliaoPage.comments);
-                        }
-                    });
+                    .doOnNext(wuliaoPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<ImagePage>(WULIAO + page, wuliaoPage)))
+                    .map(wuliaoPage -> SingleImage.splitToSingle(wuliaoPage.comments));
         } else {
             return getWuliaoDataFromDB(page);
         }
@@ -209,17 +208,18 @@ public class DataManager {
     public Observable<List<SingleImage>> getWuliaoDataFromDB(int page) {
         Log.d("DataManager", "==GetJokeDataFromDB==");
         return Observable.defer(() -> {
-            synchronized (monitor) {
-                try {
-                    if (mDB.exists(JOKE + page)) {
-                        ImagePage wuliaoPage = mDB.getObject(WULIAO + page, ImagePage.class);
-                        return Observable.just(wuliaoPage.comments).map(SingleImage::splitToSingle);
-                    } else {
-                        return Observable.just(null);
-                    }
-                } catch (SnappydbException e) {
-                    return Observable.error(e);
-                }
+            try {
+                Future<ImagePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(WULIAO + page, ImagePage.class));
+                ImagePage imagePage = ret.get(5, TimeUnit.SECONDS);
+                return Observable.just(SingleImage.splitToSingle(imagePage.comments));
+            } catch (InterruptedException e) {
+                return Observable.error(e);
+            } catch (ExecutionException e) {
+                return Observable.error(e);
+            } catch (TimeoutException e) {
+                return Observable.just(null);
+            } catch (Exception e) {
+                return Observable.error(e);
             }
         });
     }
@@ -228,21 +228,13 @@ public class DataManager {
     /**
      * @param page 读取段子的页码
      */
-    public Observable<List<JokePage.Comments>> getJokeData(Context context, int page) {
+    public Observable<List<JokePage.Comments>> getJokeData(int page) {
         Log.d("DataManager", "==GetJokeData==");
-        if (NetworkHelper.netWorkAvailable(context)) {
+        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
             Log.i("Loading", "From API");
             return mJandan.getJoke(page)
-                    .map(jokePage -> {
-                        synchronized (monitor) {
-                            try {
-                                mDB.put(JOKE + page, jokePage);
-                            } catch (SnappydbException e) {
-                                e.printStackTrace();
-                            }
-                            return jokePage.comments;
-                        }
-                    });
+                    .doOnNext(jokePage -> mDatabaseExecutor.execute(new DatabaseSavingTask<JokePage>(JOKE + page, jokePage)))
+                    .map(jokePage -> jokePage.comments);
         } else {
             return getJokeDataFromDB(page);
         }
@@ -254,37 +246,31 @@ public class DataManager {
     public Observable<List<JokePage.Comments>> getJokeDataFromDB(int page) {
         Log.d("DataManager", "==GetJokeDataFromDB==");
         return Observable.defer(() -> {
-            synchronized (monitor) {
-                try {
-                    if (mDB.exists(JOKE + page)) {
-                        JokePage jokePage = mDB.getObject(JOKE + page, JokePage.class);
-                        return Observable.just(jokePage.comments);
-                    } else {
-                        return Observable.just(null);
-                    }
-                } catch (SnappydbException e) {
-                    return Observable.error(e);
-                }
+            try {
+                Future<JokePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(JOKE + page, JokePage.class));
+                JokePage jokePage = ret.get(5, TimeUnit.SECONDS);
+                return Observable.just(jokePage.comments);
+            } catch (InterruptedException e) {
+                return Observable.error(e);
+            } catch (ExecutionException e) {
+                return Observable.error(e);
+            } catch (TimeoutException e) {
+                return Observable.just(null);
+            } catch (Exception e) {
+                return Observable.error(e);
             }
-
         });
     }
 
     /**
      * @param page 读取妹纸图的页码
      */
-    public Observable<List<SingleImage>> getMeizhiData(Context context, int page) {
+    public Observable<List<SingleImage>> getMeizhiData(int page) {
         Log.d("DataManager", "==GetMeizhi==");
-        if (NetworkHelper.netWorkAvailable(context)) {
+        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
             return mJandan.getMeizhi(page)
-                    .map(meizhiPage -> {
-                        try {
-                            mDB.put(MEIZHI + page, meizhiPage);
-                        } catch (SnappydbException e) {
-                            e.printStackTrace();
-                        }
-                        return SingleImage.splitToSingle(meizhiPage.comments);
-                    });
+                    .doOnNext(meizhiPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<ImagePage>(MEIZHI + page, meizhiPage)))
+                    .map(meizhiPage ->  SingleImage.splitToSingle(meizhiPage.comments));
         } else {
             return getMeizhiDataFromDB(page);
         }
@@ -298,13 +284,16 @@ public class DataManager {
         Log.d("DataManager", "==GetJokeDataFromDB==");
         return Observable.defer(() -> {
             try {
-                if (mDB.exists(JOKE + page)) {
-                    ImagePage meizhiPage = mDB.getObject(JOKE + page, ImagePage.class);
-                    return Observable.just(meizhiPage.comments).map(SingleImage::splitToSingle);
-                } else {
-                    return Observable.just(null);
-                }
-            } catch (SnappydbException e) {
+                Future<ImagePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(MEIZHI + page, ImagePage.class));
+                ImagePage imagePage = ret.get(5, TimeUnit.SECONDS);
+                return Observable.just(SingleImage.splitToSingle(imagePage.comments));
+            } catch (InterruptedException e) {
+                return Observable.error(e);
+            } catch (ExecutionException e) {
+                return Observable.error(e);
+            } catch (TimeoutException e) {
+                return Observable.just(null);
+            } catch (Exception e) {
                 return Observable.error(e);
             }
         });
@@ -346,6 +335,55 @@ public class DataManager {
             }
             subscriber.onCompleted();
         });
+    }
+
+
+    /**
+     * 存储数据
+     * @param <T>
+     */
+    private class DatabaseSavingTask<T> implements Runnable {
+
+        private String mKey;
+        private T mData;
+
+        DatabaseSavingTask(String key, T data) {
+            this.mKey = key;
+            mData = data;
+        }
+
+        @Override
+        public void run() {
+            try {
+                mDB.put(mKey, mData);
+            } catch (SnappydbException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    /**
+     * 获取数据
+     * @param <T>
+     */
+    private class DatabaseQueryTask<T> implements Callable<T> {
+
+        private String mKey;
+        private Class<T> mTClass;
+
+        DatabaseQueryTask(String key, Class<T> TClass) {
+            mKey = key;
+            mTClass = TClass;
+        }
+
+        @Override
+        public T call() throws Exception {
+            if (mDB.exists(mKey)) {
+                return mDB.getObject(mKey, mTClass);
+            }
+            return null;
+        }
     }
 
 
@@ -443,5 +481,7 @@ public class DataManager {
         } catch (SnappydbException e) {
             e.printStackTrace();
         }
+        // 关闭线程池
+        mDatabaseExecutor.shutdown();
     }
 }

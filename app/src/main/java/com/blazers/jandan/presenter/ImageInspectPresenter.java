@@ -24,12 +24,9 @@ public class ImageInspectPresenter extends BasePresenter<ImageInspectView> {
     private boolean mDownloading;
 
 
-    public ImageInspectPresenter(ImageInspectView view, Context context) {
-        super(view, context);
-        mViewImageEvent = (ViewImageEvent) getIntent().getSerializableExtra(ViewImageEvent.KEY);
-        if (mViewImageEvent == null) {
-            getActivity().finish();
-        }
+    public ImageInspectPresenter(ImageInspectView view, ViewImageEvent viewImageEvent) {
+        super(view);
+        mViewImageEvent = viewImageEvent;
     }
 
     public void onLoadingImage() {

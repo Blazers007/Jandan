@@ -71,7 +71,7 @@ public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPre
     public void loadMore() {
         if (mIsLoading)
             return;
-        Log.i(TAG, "==LoadMore==");
+        Log.i(mTAG, "==LoadMore==");
         mIsLoading = true;
         showLoadMoreView();
         mPresenter.onLoadMore();
@@ -90,7 +90,7 @@ public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPre
         if (null != mSmoothProgressBar && null != mLoadMoreRecyclerView) {
             mSmoothProgressBar.setVisibility(View.GONE);
             mIsLoading = false;
-            Log.i(TAG, "加载更多失败");
+            Log.i(mTAG, "加载更多失败");
         }
     }
 }

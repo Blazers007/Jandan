@@ -1,16 +1,8 @@
 package com.blazers.jandan.presenter.base;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.blazers.jandan.util.Rxbus;
-import com.snappydb.DB;
-import com.snappydb.DBFactory;
-import com.snappydb.SnappydbException;
-
-import java.lang.ref.WeakReference;
 
 import rx.Observable;
 import rx.Subscription;
@@ -33,11 +25,6 @@ public abstract class BasePresenter<T> {
     protected T mView;
 
     /**
-     * 持有的Context若引用 避免内存泄漏
-     */
-    private WeakReference<Context> mContextWeakReference;
-
-    /**
      * 需要批量解除订阅的Subscription集合 注意使用clear()如果使用unsubscribe()则之后也无法添加新的订阅
      * <p>
      * 一个对应生命周期 onCreate -- onDestory
@@ -51,36 +38,8 @@ public abstract class BasePresenter<T> {
      */
     private boolean mIsFullyVisible = false;
 
-    public BasePresenter(T view, Context context) {
+    public BasePresenter(T view) {
         mView = view;
-        mContextWeakReference = new WeakReference<>(context);
-    }
-
-    /**
-     * 获取Context引用
-     *
-     * @return Context引用
-     */
-    public Context getContext() {
-        return mContextWeakReference.get();
-    }
-
-    /**
-     * 获取Activity对象 必须保证调用的类继承Activity
-     *
-     * @return Activity对象
-     */
-    public Activity getActivity() {
-        return (Activity) getContext();
-    }
-
-    /**
-     * 获取Intent对象
-     *
-     * @return Intent对象
-     */
-    public Intent getIntent() {
-        return getActivity().getIntent();
     }
 
 

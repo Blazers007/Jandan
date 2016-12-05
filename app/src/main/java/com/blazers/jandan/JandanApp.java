@@ -34,8 +34,7 @@ public class JandanApp extends Application {
         Once.initialise(this);
         // 初始化数据库
         try {
-            DB mDB = DBFactory.open(this);
-            DataManager.getInstance().setDB(mDB);
+            DataManager.getInstance().init(this);
         } catch (SnappydbException e) {
             e.printStackTrace();
         }

@@ -1,7 +1,5 @@
 package com.blazers.jandan.presenter;
 
-import android.content.Context;
-
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.OfflineView;
 
@@ -11,7 +9,7 @@ import com.blazers.jandan.ui.activity.OfflineView;
 
 public class OfflinePresenter extends BasePresenter<OfflineView> {
 
-    public OfflinePresenter(OfflineView view, Context context) {
-        super(view, context);
+    public OfflinePresenter(OfflineView view) {
+        super(view);
     }
 }

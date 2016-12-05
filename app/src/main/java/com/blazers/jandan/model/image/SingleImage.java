@@ -1,10 +1,8 @@
 package com.blazers.jandan.model.image;
 
 import android.databinding.BindingAdapter;
-import android.net.Uri;
 
-import com.blazers.jandan.model.Time;
-import com.blazers.jandan.model.news.NewsPage;
+import com.blazers.jandan.model.extension.Time;
 import com.blazers.jandan.widgets.AutoScaleFrescoView;
 
 import java.util.ArrayList;

@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.presenter.base.BaseRefreshPresenter;
 import com.blazers.jandan.util.SPHelper;
 
@@ -25,21 +24,15 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public boolean mIsRefreshing;
 
-    /* Vars */
-
-    protected String type;
-
-    @Override
-    public void setTAG(String TAG) {
-        super.setTAG(TAG);
-        type = TAG; // 没有指定的默认为TAG的值
-    }
-
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+    }
+
+    @Override
+    public void setTag(String tag) {
+        mTAG = tag;
     }
 
     /**
@@ -55,7 +48,7 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
         if (mIsRefreshing) {
             return;
         }
-        Log.i(TAG, "==Refreshing==");
+        Log.i(mTAG, "==Refreshing==");
         mIsRefreshing = true;
         mPresenter.onRefresh();
     }
@@ -64,7 +57,7 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
     @Override
     public void hideRefreshingView(boolean successful) {
         if (successful) {
-            SPHelper.setLastRefreshTime(getActivity(), type);
+            SPHelper.setLastRefreshTime(getActivity(), mTAG);
         }
         if (null != mSwipeRefreshLayout) {
             mSwipeRefreshLayout.postDelayed(() -> {

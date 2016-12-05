@@ -2,6 +2,9 @@ package com.blazers.jandan.ui.activity.base;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.annimon.stream.Stream;
 import com.blazers.jandan.presenter.base.BasePresenter;

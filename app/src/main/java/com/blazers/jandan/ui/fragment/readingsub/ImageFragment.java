@@ -1,13 +1,16 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.blazers.jandan.BR;
 import com.blazers.jandan.R;
+import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.model.image.SingleImage;
 import com.blazers.jandan.presenter.ImagePresenter;
+import com.blazers.jandan.ui.activity.ImageInspectActivity;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
 
@@ -23,22 +26,20 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> implements ImageView {
 
-    private String mType;
-
     private BaseSingleMVVMAdapter mAdapter;
     private List<SingleImage> mList = new ArrayList<>();
 
-    public static ImageFragment newInstance(String type) {
+    public static ImageFragment newInstance(String tag) {
         Bundle args = new Bundle();
         ImageFragment fragment = new ImageFragment();
-        args.putString("type", type);
+        args.putString("tag", tag);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     protected void initPresenter() {
-        mPresenter = new ImagePresenter(getArguments().getString("type"), this, getActivity());
+        mPresenter = new ImagePresenter(getArguments().getString("tag"), this);
     }
 
     @Override
@@ -81,6 +82,14 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
         mList.addAll(postsBeanList);
         mAdapter.notifyItemRangeInserted(start, size);
         mRecyclerView.smoothScrollBy(0, 96);
+    }
+
+    @Override
+    public void onInspectImage(SingleImage singleImage) {
+        getActivity().startActivity(
+                new Intent(getActivity(), ImageInspectActivity.class)
+                        .putExtra(ViewImageEvent.KEY, new ViewImageEvent(singleImage.url, singleImage.comment.text_content))
+        );
     }
 
     /**

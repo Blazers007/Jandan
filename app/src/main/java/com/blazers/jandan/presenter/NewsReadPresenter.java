@@ -1,11 +1,10 @@
 package com.blazers.jandan.presenter;
 
-import android.content.Context;
-
 import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.NewsReadView;
+import com.blazers.jandan.util.ShareHelper;
 
 /**
  * Created by blazers on 2016/11/11.
@@ -19,14 +18,10 @@ public class NewsReadPresenter extends BasePresenter<NewsReadView> {
 
     private boolean mIsFavorite;
 
-    public NewsReadPresenter(NewsReadView view, Context context) {
-        super(view, context);
-        // 获取Model层
-        Object obj = getIntent().getSerializableExtra(KEY_NEWS_POST);
-        if (obj == null) {
-            getActivity().finish();
-        }
-        mPost = (NewsPage.Posts) obj;
+    public NewsReadPresenter(NewsReadView view, NewsPage.Posts post) {
+        super(view);
+        // Prepare data
+        mPost = post;
         mIsFavorite = DataManager.getInstance().isNewsFavorite(mPost);
     }
 
@@ -47,8 +42,10 @@ public class NewsReadPresenter extends BasePresenter<NewsReadView> {
         mView.setFavIconFavOrNot(mIsFavorite);
     }
 
-    public void toggleThisArticleFavState() {
-        // 更改状态 发送广播
+    /**
+     * 点击收藏
+     */
+    public void onClickFavoriteButton() {
         mIsFavorite = !mIsFavorite;
         DataManager.getInstance().manageNewsFavorite(mPost, mIsFavorite);
         mView.animateToFavOrNot(mIsFavorite);

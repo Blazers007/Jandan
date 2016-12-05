@@ -14,7 +14,7 @@ public class OfflineActivity extends BaseActivity<OfflinePresenter> implements O
 
     @Override
     public void initPresenter() {
-        mPresenter = new OfflinePresenter(this, this);
+        mPresenter = new OfflinePresenter(this);
     }
 
     @Override
