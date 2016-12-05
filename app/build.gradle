@@ -11,8 +11,8 @@ android {
         applicationId "com.blazers.jandan"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 2_00_00_00
+        versionName "2.0.0"
         dataBinding {
             enabled true
         }
