@@ -1,31 +1,33 @@
 <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <com.blazers.jandan.widgets.ObservableWebView
+        android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
-    <com.blazers.jandan.widgets.ObservableWebView
-            android:id="@+id/webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="?android:actionBarSize"
-            />
+        android:paddingTop="?android:actionBarSize"
+        />
+
     <include
-            android:id="@+id/toolbar_with_shadow"
-            layout="@layout/layout_toolbar_with_shadow"/>
+        android:id="@+id/toolbar_with_shadow"
+        layout="@layout/layout_toolbar_with_shadow"/>
     <!-- Fab Fav -->
     <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab_fav"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/ic_favorite_border_white_24dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"/>
+        android:id="@+id/fab_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_favorite_border_white_24dp"/>
+
     <me.zhanghai.android.materialprogressbar.MaterialProgressBar
         android:id="@+id/progress_wheel"
-        android:layout_centerInParent="true"
         android:layout_width="48dp"
-        android:layout_height="48dp"/>
+        android:layout_height="48dp"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>

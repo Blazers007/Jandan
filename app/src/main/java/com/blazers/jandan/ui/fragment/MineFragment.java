@@ -4,10 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.SwitchCompat;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,13 +12,13 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
-import com.blazers.jandan.api.BlazersAPI;
-import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.util.RxHelper;
+import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.SdcardHelper;
+import com.blazers.jandan.util.log.Log;
 import com.blazers.jandan.widgets.nightwatch.WatchTextView;
 
 import butterknife.BindView;
@@ -57,30 +54,16 @@ public class MineFragment extends BaseFragment {
     private SwitchHolder nightModeHolder, autoGifHolder, meiziHolder, filterHolder;
     private TextHolder filterNumberHolder, cleanCacheHolder;
 
-    public static MineFragment getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new MineFragment();
-        }
-        return INSTANCE;
-    }
-
-    @Override
-    protected void initPresenter() {
-
-    }
 
     @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.fragment_setting;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_setting, container, false);
-        ButterKnife.bind(this, root);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initSettingSegments();
-        return root;
     }
 
     /**

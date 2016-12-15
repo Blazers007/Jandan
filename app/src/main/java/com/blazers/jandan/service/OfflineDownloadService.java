@@ -126,7 +126,7 @@ public class OfflineDownloadService extends IntentService {
 //                            DBHelper.saveToRealm(realm, localImage);
 //                        }, throwable -> Log.e("Error", throwable.toString()),
 //                        () -> {
-//                            Log.i(">>>>>下载全部完毕<<<<<", TimeHelper.getTime());
+//                            Log.i(">>>>>下载全部完毕<<<<<", TimeHelper.getHourMinute());
 //                            NotificationHelper.showOfflineNotification(
 //                                    OfflineDownloadService.this,
 //                                    NOTI_MEIZI,

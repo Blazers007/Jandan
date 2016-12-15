@@ -7,6 +7,7 @@
         <item name="colorPrimary">#fafafa</item>
         <item name="colorPrimaryDark">#363636</item>
         <item name="colorAccent">#3c4043</item>
+        <item name="android:windowBackground">@color/white</item>
         <!--<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>-->
         <item name="windowActionModeOverlay">true</item> <!-- 确保ActionMode 浮动在Toolbar上方 -->
         <!--<item name="android:windowContentTransitions">true</item>-->
@@ -18,10 +19,8 @@
         <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
     </style>
 
-    <!-- Reading mode style -->
-    <style name="ReadingModeStyle" parent="AppTheme">
-        <!-- TODO: Take case for the implements in differ versions  -->
-        <!--<item name="colorPrimaryDark">#000000</item>-->
+    <style name="ImmersiveReadingStyle" parent="AppTheme">  <!--http://stackoverflow.com/questions/26440879/how-do-i-use-drawerlayout-to-display-over-the-actionbar-toolbar-and-under-the-st/26440880  -->
+
     </style>
 
     <style name="ImageViewStyle" parent="Theme.AppCompat.NoActionBar">

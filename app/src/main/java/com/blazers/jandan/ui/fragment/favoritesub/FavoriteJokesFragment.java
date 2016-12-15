@@ -2,25 +2,13 @@ package com.blazers.jandan.ui.fragment.favoritesub;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeRefreshFragment;
 import com.blazers.jandan.widgets.VerticalDividerItemDecoration;
-import com.ms.square.android.expandabletextview.ExpandableTextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by Blazers on 2015/11/13.
@@ -30,26 +18,15 @@ public class FavoriteJokesFragment extends BaseSwipeRefreshFragment {
 //    private List<LocalFavJokes> list;
 //    private FavJokeAdapter adapter;
 
-    @Override
-    protected void initPresenter() {
-
-    }
 
     @Override
     protected int getLayoutResId() {
-        return 0;
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_common_fav_refresh_recyclerview, container, false);
+        return R.layout.fragment_common_fav_refresh_recyclerview;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         trySetupSwipeRefreshLayout();
         // init
 //        list = new ArrayList<>();

@@ -3,9 +3,9 @@ package com.blazers.jandan.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.util.log.Log;
 
 /**
  * Created by blazers on 2016/11/17.

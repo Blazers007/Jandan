@@ -6,7 +6,7 @@ import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.blazers.jandan.util.log.Log;
 import android.view.View;
 
 /**

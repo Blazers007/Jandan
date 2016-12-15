@@ -37,10 +37,6 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
         return fragment;
     }
 
-    @Override
-    protected void initPresenter() {
-        mPresenter = new ImagePresenter(getArguments().getString("tag"), this);
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -50,6 +46,7 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mPresenter = new ImagePresenter(getArguments().getString("tag"), this);
         initRecyclerView();
     }
 
@@ -64,18 +61,18 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
                 BR.iPresenter
         ));
         // Try to load from db
-        mPresenter.onInitPageData();
+        mPresenter.initPageData();
     }
 
     @Override
-    public void refreshDataList(List<SingleImage> postsBeanList) {
+    public void onRefreshDataList(List<SingleImage> postsBeanList) {
         mList.clear();
         mList.addAll(postsBeanList);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void addDataList(List<SingleImage> postsBeanList) {
+    public void onAddDataList(List<SingleImage> postsBeanList) {
 // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
         int start = mList.size();
         int size = postsBeanList.size();
@@ -86,10 +83,12 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
 
     @Override
     public void onInspectImage(SingleImage singleImage) {
-        getActivity().startActivity(
-                new Intent(getActivity(), ImageInspectActivity.class)
-                        .putExtra(ViewImageEvent.KEY, new ViewImageEvent(singleImage.url, singleImage.comment.text_content))
-        );
+        // checkIfDownloader
+        if (singleImage == null || singleImage.url == null) {
+            return;
+        }
+        ViewImageEvent event = new ViewImageEvent(singleImage.url, singleImage.comment.text_content, null);
+        startActivity(new Intent(getActivity(), ImageInspectActivity.class).putExtra(ViewImageEvent.KEY, event));
     }
 
     /**

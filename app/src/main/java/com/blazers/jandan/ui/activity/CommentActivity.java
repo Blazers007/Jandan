@@ -55,10 +55,6 @@ public class CommentActivity extends BaseActivity {
     // 此片评论的ID
     private long commentId;
 
-    @Override
-    public void initPresenter() {
-
-    }
 
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {

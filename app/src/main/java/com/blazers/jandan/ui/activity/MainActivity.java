@@ -34,9 +34,11 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends BaseActivity {
 
-    public static final String JANDAN_TAG = "fragment_jandan";
-    public static final String FAV_TAG = "fragment_fav";
-    public static final String SETTING_TAG = "fragment_setting";
+    private static final String KEY_CURRENT_FRAGMENT_TAG = "current_fragment";
+    private static final String TAG_READING = "fragment_reading";
+    private static final String TAG_FAVORITE = "fragment_favorite";
+    private static final String TAG_MINE = "fragment_mine";
+    private String mCurrentFragmentTag;
 
     @BindView(R.id.coord)
     CoordinatorLayout mCoordinatorLayout;
@@ -50,16 +52,21 @@ public class MainActivity extends BaseActivity {
      */
     private long lastClickTime;
 
-    @Override
-    public void initPresenter() {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initFragmentsAndBottomNavigationView();
+        initBottomNavigationView();
+        if (savedInstanceState != null) {
+            mCurrentFragmentTag = savedInstanceState.getString(KEY_CURRENT_FRAGMENT_TAG, null);
+        }
+        if (mCurrentFragmentTag != null) {
+            switchToFragmentByTag(mCurrentFragmentTag);
+        } else {
+            /* 显示阅读Fragment */
+            switchToFragmentByTag(TAG_READING);
+        }
     }
 
     @Override
@@ -72,24 +79,15 @@ public class MainActivity extends BaseActivity {
     /**
      * 初始化各个Fragment 并采用懒加载的方式
      */
-    void initFragmentsAndBottomNavigationView() {
-        /* 显示阅读Fragment */
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_wrapper, mCurrentFragment = new ReadingFragment(), JANDAN_TAG)
-                .commitAllowingStateLoss();
-        // 是否记录上此位置？
+    void initBottomNavigationView() {
         // 设置底部导航回调
         mBottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.nav_jandan:
-                    if (mReadingFragment == null) {
-                        mReadingFragment = new ReadingFragment();
-                    }
-                    switchCurrentFragment(R.id.fragment_wrapper, JANDAN_TAG, mReadingFragment);
+                    switchToFragmentByTag(TAG_READING);
                     break;
                 case R.id.nav_fav:
-                    switchCurrentFragment(R.id.fragment_wrapper, FAV_TAG, FavoriteFragment.getInstance());
+                    switchToFragmentByTag(TAG_FAVORITE);
                     if (!Once.beenDone(Once.THIS_APP_INSTALL, Static.HINT_FAV)) {
                         Snackbar.make(findViewById(R.id.coord), R.string.remove_fav_hint, Snackbar.LENGTH_SHORT)
                                 .setActionTextColor(getResources().getColor(R.color.yellow500))
@@ -100,7 +98,7 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
                 case R.id.nav_mine:
-                    switchCurrentFragment(R.id.fragment_wrapper, SETTING_TAG, MineFragment.getInstance());
+                    switchToFragmentByTag(TAG_MINE);
                     break;
             }
             return true;
@@ -109,6 +107,43 @@ public class MainActivity extends BaseActivity {
         // Test CoordinatorLayout
     }
 
+
+    /**
+     * 根据TAG切换至指定Fragment
+     * @param tag
+     */
+    private void switchToFragmentByTag(String tag) {
+        switch (tag) {
+            case TAG_READING:
+                if (mReadingFragment == null
+                        && (mReadingFragment = findFragmentByTag(TAG_READING)) == null) {
+                    mReadingFragment = new ReadingFragment();
+                }
+                mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_READING, mCurrentFragment, mReadingFragment);
+                break;
+            case TAG_FAVORITE:
+                if (mFavoriteFragment == null
+                        && (mFavoriteFragment = findFragmentByTag(TAG_FAVORITE)) == null) {
+                    mFavoriteFragment = new FavoriteFragment();
+                }
+                mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_FAVORITE, mCurrentFragment, mFavoriteFragment);
+                break;
+            case TAG_MINE:
+                if (mMineFragment == null
+                        && (mMineFragment = findFragmentByTag(TAG_MINE)) == null) {
+                    mMineFragment = new MineFragment();
+                }
+                mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_MINE, mCurrentFragment, mMineFragment);
+                break;
+        }
+        mCurrentFragmentTag = tag;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(KEY_CURRENT_FRAGMENT_TAG, mCurrentFragmentTag);
+        super.onSaveInstanceState(outState);
+    }
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     void showReadPhoneState() {

@@ -1,5 +1,7 @@
 package com.blazers.jandan.util;
 
+import android.text.TextUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,6 +39,9 @@ public class TimeHelper {
      * @return 返回的是换算过后的时间指数
      */
     public static String getSocialTime(String dateString) {
+        if (TextUtils.isEmpty(dateString)) {
+            return "";
+        }
         try {
             Date date = stringToDateTime(dateString);
             long time = date.getTime();
@@ -68,34 +73,43 @@ public class TimeHelper {
         return ONE_HOUR * hours + now;
     }
 
-    public static String getDate() {
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        return String.format("%02d-%02d", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH));
+    public static String getMonthDay() {
+        return getMonthDay(-1);
     }
 
-    public static String getDate(long time) {
+    public static String getMonthDay(long time) {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        calendar.setTime(new Date(time));
-        return String.format("%02d-%02d", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH));
+        if (time >= 0) {
+            calendar.setTime(new Date(time));
+        }
+        return String.format(Locale.CHINA, "%02d-%02d", (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    public static String getTime() {
-        Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        return String.format("%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+    public static String getHourMinute() {
+        return getHourMinute(-1);
     }
 
-    public static String getTime(long time) {
+    public static String getHourMinute(long time) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date(time));
-        return String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", calendar.get(Calendar.MINUTE));
+        if (time >= 0) {
+            calendar.setTime(new Date(time));
+        }
+        return String.format(Locale.CHINA, "%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
     }
 
-    public static String getTimeWithSecond() {
+    public static String getHourMinuteSecond() {
+        return getHourMinuteSecond(-1);
+    }
+
+    public static String getHourMinuteSecond(long time) {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
-        return String.format("%02d:%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
+        if (time >= 0) {
+            calendar.setTimeInMillis(time);
+        }
+        return String.format(Locale.CHINA, "%02d:%02d:%02d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
     }
 
-    public static long currentTime() {
+    public static long getCurrentMillSeconds() {
         Calendar calendar = Calendar.getInstance(Locale.CHINA);
         return calendar.getTime().getTime();
     }
@@ -103,8 +117,8 @@ public class TimeHelper {
     public static boolean isTimeEnoughForRefreshing(String dateTime) {
         try {
             long time = stringToDateTime(dateTime).getTime();
-//            Log.e("TIME", ">>>>>" + (currentTime() - time)/1000/60);
-            return currentTime() - time > 10 * ONE_MIN;
+//            Log.e("TIME", ">>>>>" + (getCurrentMillSeconds() - time)/1000/60);
+            return getCurrentMillSeconds() - time > 10 * ONE_MIN;
         } catch (ParseException e) {
             e.printStackTrace();
             return true;
@@ -114,6 +128,6 @@ public class TimeHelper {
     public static boolean isTimeEnoughForRefreshing(long time) {
         if (time == 0)
             return false;
-        return currentTime() - time > 10 * ONE_MIN;
+        return getCurrentMillSeconds() - time > 10 * ONE_MIN;
     }
 }

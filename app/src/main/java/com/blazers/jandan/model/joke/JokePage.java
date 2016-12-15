@@ -79,6 +79,6 @@ public class JokePage {
         public String vote_negative;
         public String vote_ip_pool;
         public String text_content;
-        public List<?> videos;
+//        public List<?> videos;
     }
 }

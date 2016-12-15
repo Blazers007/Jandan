@@ -1,7 +1,9 @@
-# Jandan [![Build Status](https://travis-ci.org/Blazers007/Jandan.svg?branch=master)](https://travis-ci.org/Blazers007/Jandan)
+# Jandan [![Build Status](https://travis-ci.org/Blazers007/Jandan.svg?branch=master)](https://travis-ci.org/Blazers007/Jandan) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/e6da63cf514748e0a389b21f81ae8682)](https://www.codacy.com/app/308802880/Jandan?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Blazers007/Jandan&amp;utm_campaign=Badge_Grade)
 煎蛋网(http://jandan.net) 的个人仿制安卓客户端  React-Native版本 https://github.com/Blazers007/Jandan-React-Native
 
 主要是在闲暇之余一边学习Material-Design和Rx响应式编程一边练手做了这个App, 由于使用的相关的API并未与煎蛋网沟通，如果有任何侵权的地方我会及时删除相关代码，感谢~
+努力发布2.0版本中.
+
 
 ####主要功能
 - 新鲜事、段子、无聊图、<del>妹子图</del> 的阅读。

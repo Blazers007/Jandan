@@ -7,20 +7,24 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.*;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
+import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.BounceInterpolator;
 import android.widget.OverScroller;
+
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.Dppx;
+import com.blazers.jandan.util.log.Log;
 
 /**
  * Created by Blazers on 2015/10/27.
- *
+ * <p>
  * 自定义的无限横向滚动SeekBar 实现数值的选取 而不需要输入
- *
+ * <p>
  * 如果需要支持小数 则添加一个转化器即可
- *
  */
 public class InfiniteSeekBar extends View implements GestureDetector.OnGestureListener {
 
@@ -61,6 +65,10 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
     /* 2015 11-16 Update 采用OverScroller */
     private OverScroller mScroller;
     private GestureDetector mGestureDetector;
+    private float lastTouchX;
+    private float velocityX;
+    private boolean mScrolling;
+    private Runnable mScrollingRunnable;
 
 
     public InfiniteSeekBar(Context context) {
@@ -68,20 +76,19 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         init(context, null);
     }
 
+
     public InfiniteSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
-
     public InfiniteSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
-
     /**
      * 初始化方法的入口
-     * */
+     */
     void init(Context context, AttributeSet attrs) {
         // Paint
         initPaint();
@@ -94,10 +101,9 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         mXOffset = (mDefaultSelectedValue - mDefaultRangeStart) * mDefaultSegmentWidth;
     }
 
-
     /**
      * 初始化各部分画笔
-     * */
+     */
     void initPaint() {
         mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mTextPaint.setTextSize(mDefaultTextSize);
@@ -105,21 +111,17 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         mFontMetrics = mTextPaint.getFontMetricsInt();
     }
 
-
-    private float lastTouchX;
-    private float velocityX;
     /**
      * 记录滑动  计算滑动速度 更改参数 更新UI  TODO:采用GestureDetector来实现点击操作
-     * */
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mGestureDetector.onTouchEvent(event);
     }
 
-
     /**
      * 记录当前状态
-     * */
+     */
     @Override
     protected Parcelable onSaveInstanceState() {
         return super.onSaveInstanceState();
@@ -140,7 +142,7 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         float middleY = getMeasuredHeight() / 2;
         // 位置都是文字所处Rect的中轴线?
         int index = 0;
-        for (int value = mDefaultRangeStart ; value <= mDefaultRangeEnd; value ++, index++) {
+        for (int value = mDefaultRangeStart; value <= mDefaultRangeEnd; value++, index++) {
             // 计算每个Seg的中轴线的偏移量 - 0的偏移量 得出实际偏移量
             float offset = index * mDefaultSegmentWidth + mXOffset;
             // 判断是否需要绘制
@@ -154,9 +156,9 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
                 }
                 mTextPaint.setAlpha(getTextAlphaByOffset(offset, middleLine));
                 float textWidth = mTextPaint.measureText(text);
-                float x = middleLine + offset - textWidth/2;
+                float x = middleLine + offset - textWidth / 2;
                 float baseline = (getMeasuredHeight() - mFontMetrics.bottom + mFontMetrics.top) / 2 - mFontMetrics.top;
-                if (Math.abs(offset) < mDefaultSegmentWidth/2) {
+                if (Math.abs(offset) < mDefaultSegmentWidth / 2) {
                     mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
                     mTextPaint.setColor(mDefaultSelectedTextColor);
                     canvas.drawText(text, x, baseline, mTextPaint);
@@ -173,26 +175,22 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         }
     }
 
-
     /**
      * 计算文字的透明度  10~255
-     * */
+     */
     int getTextAlphaByOffset(float offset, float halfWidth) {
         float x = halfWidth - Math.abs(offset);
-        return (int)(20 + Math.pow((15*(x/halfWidth)), 2));
+        return (int) (20 + Math.pow((15 * (x / halfWidth)), 2));
     }
 
-
-    private boolean mScrolling;
-    private Runnable mScrollingRunnable;
     /**
      * 继续滑动
-     * */
+     */
     void computeSeekBarScroll() {
         mScrolling = true;
         if (null == mScrollingRunnable) {
-            mScrollingRunnable = ()->{
-                if (Math.abs(velocityX) < 5 && mScrolling){ // 速度大于0或者处于某个值之内
+            mScrollingRunnable = () -> {
+                if (Math.abs(velocityX) < 5 && mScrolling) { // 速度大于0或者处于某个值之内
                     mXOffset += velocityX;
                     velocityX *= 0.9f;
                     Log.e("Speed", "" + velocityX);
@@ -207,13 +205,6 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         post(mScrollingRunnable);
     }
 
-    /**
-     * 接口
-     * */
-    public interface ValueFormatter {
-        String setXValue(int index);
-    }
-
     public void setValueFormatter(ValueFormatter formatter) {
         this.mValueFormatter = formatter;
     }
@@ -221,7 +212,6 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
     public int getSelectedValue() {
         return mDefaultSelectedValue;
     }
-
 
     /* OnGesture Detector */
     @Override
@@ -261,8 +251,6 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
         return false;
     }
 
-    /* Compute Scroll */
-
     @Override
     public void computeScroll() {
         super.computeScroll();
@@ -270,5 +258,14 @@ public class InfiniteSeekBar extends View implements GestureDetector.OnGestureLi
             mXOffset = mScroller.getCurrX();
             invalidate();
         }
+    }
+
+    /* Compute Scroll */
+
+    /**
+     * 接口
+     */
+    public interface ValueFormatter {
+        String setXValue(int index);
     }
 }

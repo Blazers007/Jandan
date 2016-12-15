@@ -25,26 +25,16 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 
 //    private List<Timeline> list;
 
-    @Override
-    protected void initPresenter() {
-
-    }
 
     @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.fragment_common_fav_refresh_recyclerview;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_common_fav_refresh_recyclerview, container, false);
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         trySetupSwipeRefreshLayout();
         // 开启线程加载 避免延迟太高
         generateTimelineObjects();
@@ -70,7 +60,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 //        // 遍历Image
 //        List<LocalFavImages> images = realm.where(LocalFavImages.class).findAllSorted("favTime", Sort.DESCENDING);
 //        for (LocalFavImages image : images) {
-//            String time = TimeHelper.getDate(image.getFavTime());
+//            String time = TimeHelper.getMonthDay(image.getFavTime());
 //            if (timelineHashMap.containsKey(time)) {
 //                timelineHashMap.get(time).addFavImage(image);
 //            }else{
@@ -83,7 +73,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 //        // 遍历News
 //        List<LocalFavNews> newses = realm.where(LocalFavNews.class).findAllSorted("favTime", Sort.DESCENDING);
 //        for (LocalFavNews news : newses) {
-//            String time = TimeHelper.getDate(news.getFavTime());
+//            String time = TimeHelper.getMonthDay(news.getFavTime());
 //            if (timelineHashMap.containsKey(time)) {
 //                timelineHashMap.get(time).addFavNews(news);
 //            }else{
@@ -96,7 +86,7 @@ public class FavoriteTimelineFragment extends BaseSwipeRefreshFragment {
 //        // 遍历Jokes
 //        List<LocalFavJokes> jokes = realm.where(LocalFavJokes.class).findAllSorted("favTime", Sort.DESCENDING);
 //        for (LocalFavJokes joke : jokes) {
-//            String time = TimeHelper.getDate(joke.getFavTime());
+//            String time = TimeHelper.getMonthDay(joke.getFavTime());
 //            if (timelineHashMap.containsKey(time)) {
 //                timelineHashMap.get(time).addFavJoke(joke);
 //            }else{

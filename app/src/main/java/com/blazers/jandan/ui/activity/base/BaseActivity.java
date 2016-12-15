@@ -2,9 +2,6 @@ package com.blazers.jandan.ui.activity.base;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,15 +11,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.annimon.stream.Stream;
 import com.blazers.jandan.presenter.base.BasePresenter;
-import com.blazers.jandan.util.Dppx;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
@@ -33,12 +26,10 @@ import butterknife.ButterKnife;
 @SuppressLint("Registered")
 public abstract class BaseActivity<T extends BasePresenter> extends AppCompatActivity {
 
+    protected T mPresenter;
     /* Vars */
     private Toolbar toolbar;
-
     private ViewGroup toolbarWithShadow;
-
-    protected T mPresenter;
 
     //        isNowNightModeOn = SPHelper.getBooleanSP(this, SPHelper.NIGHT_MODE_ON, false);
 
@@ -62,12 +53,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         getWindow().setStatusBarColor(Color.BLACK);
     }
 
-    /**
-     * 初始化Presenter
-     */
-    protected abstract void initPresenter();
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +60,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             disableStatusBarTheme();
         }
-        // 让子类实例化Presenter 实际上为BasePresenter添加onCreate方法更贴切但实际上是冗余方法
-        initPresenter();
     }
 
     /**
@@ -89,7 +72,6 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
     }
-
 
 
     /**
@@ -144,39 +126,47 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * @param wrapperId      容器Id
      * @param tag            Fragment对应的Tag
      * @param targetFragment Fragment对象
+     * @return 当前Fragment
      */
-    protected void switchCurrentFragment(int wrapperId, String tag, Fragment targetFragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Stream.of(getSupportFragmentManager().getFragments())
-                .filter(n -> n != null)
-                .forEach(transaction::hide);
-        if (getSupportFragmentManager().findFragmentByTag(tag) == null) {
-            transaction.add(wrapperId, targetFragment, tag);
-        } else {
-            transaction.show(targetFragment);
+    protected Fragment switchCurrentFragment(int wrapperId, String tag, Fragment currentFragment, Fragment targetFragment) {
+        if (targetFragment == null || targetFragment == currentFragment) {
+            return null;
         }
-        transaction.commit();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if (currentFragment != null) {
+            fragmentTransaction.hide(currentFragment);
+        }
+        if (targetFragment.isAdded()) {
+            fragmentTransaction.show(targetFragment);
+        } else {
+            fragmentTransaction.add(wrapperId, targetFragment, tag);
+        }
+        fragmentTransaction.commitNow();
+        return targetFragment;
+    }
+
+
+    /**
+     * 根据TAG返回当前的FragmentManager中的指定Fragment
+     *
+     * @param tag
+     * @return
+     */
+    protected Fragment findFragmentByTag(String tag) {
+        return getSupportFragmentManager().findFragmentByTag(tag);
     }
 
     /**
-     * 设置视图的浮动模式
-     *
-     * @param enabled
+     * 设置视图的浮动模式 设置内容能够显示在status bar navigation bar 之后
      */
-    public void setContentFloatingModeEnabled(boolean enabled) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            /* 首先设置内容浮动在status bar navigation bar 之后 */
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            );
-            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
-            Log.i("SET", "Color set 16");
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(Color.BLACK);
-            getWindow().setNavigationBarColor(Color.BLACK);
-            toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
-            Log.i("SET", "Color set 21");
+    public void setReadyForImmersiveMode() {
+        getWindow().getDecorView().setSystemUiVisibility(getUiOptionFlagForReadyImmersiveMode());
+        // 设置toolbar 的 padding
+        if (toolbar != null) {
+            toolbar.setPadding(toolbar.getPaddingLeft(),
+                    getStatusBarHeight() + toolbar.getPaddingTop(),
+                    toolbar.getPaddingRight(),
+                    toolbar.getPaddingBottom());
         }
     }
 
@@ -197,58 +187,30 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
      * TODO
      */
     public void showSystemUI(Toolbar toolbar) {
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
-        }
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        getWindow().getDecorView().setSystemUiVisibility(getUiOptionFlagForReadyImmersiveMode());
         // handle layout_toolbar
         View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
         if (null != animate) {
             animate.animate()
                     .translationY(0)
-                    .setDuration(400)
-                    .setStartDelay(200).start();
+                    .setDuration(150)
+                    .start();
         }
-    }
-
-    /**
-     * TODO
-     */
-    public void setFullWindow() {
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏 Navigation bar
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
-        }
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
     }
 
     /**
      * TODO
      */
     public void hideSystemUI(Toolbar toolbar) {
-        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 内容浮动在Status bar 之后
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 隐藏 Navigation bar
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
-        }
-        getWindow().getDecorView().setSystemUiVisibility(uiOptions);
+        getWindow().getDecorView().setSystemUiVisibility(getUiOptionFlagForGoingToImmersiveMode());
         // handle layout_toolbar
         View animate = toolbarWithShadow == null ? toolbar : toolbarWithShadow;
         if (null != animate) {
             animate.animate() //TODO: 如果Toolbar比较高 如何动态获取toolbar高度
-                    .translationY(-getStatusBarHeight() - Dppx.Dp2Px(this, 56))
+                    .translationY(-toolbar.getHeight())
                     .setDuration(400)
-                    .setStartDelay(200).start();
+                    .setStartDelay(200)
+                    .start();
         }
     }
 
@@ -283,6 +245,34 @@ public abstract class BaseActivity<T extends BasePresenter> extends AppCompatAct
             }
         }
         return 0;
+    }
+
+    private int getUiOptionFlagForReadyImmersiveMode() {
+        int uiOptions = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 使内容能够显示在在 Status bar 之后
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE     // 同上
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;   // 让内容能够显示在 Navigation bar 之后
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            uiOptions |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        return uiOptions;
+    }
+
+    private int getUiOptionFlagForGoingToImmersiveMode() {
+        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN // 隐藏Status bar 与 Navigation bar
+
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN // 使内容能够显示在在 Status bar 之后
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE     // 同上
+
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION           // 隐藏 Navigation bar
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;   // 让内容能够显示在 Navigation bar 之后
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            uiOptions = uiOptions | View.SYSTEM_UI_FLAG_IMMERSIVE; // 真 沉浸模式
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            uiOptions |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+        }
+        return uiOptions;
     }
 
     /**

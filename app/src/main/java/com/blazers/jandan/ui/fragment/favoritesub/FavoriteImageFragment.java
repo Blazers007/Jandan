@@ -45,20 +45,10 @@ public class FavoriteImageFragment extends BaseSwipeRefreshFragment {
 
 
     @Override
-    protected void initPresenter() {
-
-    }
-
-    @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.fragment_common_fav_refresh_recyclerview;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_common_fav_refresh_recyclerview, container, false);
-    }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

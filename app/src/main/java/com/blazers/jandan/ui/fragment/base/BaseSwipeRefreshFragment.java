@@ -3,7 +3,7 @@ package com.blazers.jandan.ui.fragment.base;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import com.blazers.jandan.util.log.Log;
 import android.view.View;
 
 import com.blazers.jandan.R;
@@ -50,12 +50,12 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
         }
         Log.i(mTAG, "==Refreshing==");
         mIsRefreshing = true;
-        mPresenter.onRefresh();
+        mPresenter.refresh();
     }
 
 
     @Override
-    public void hideRefreshingView(boolean successful) {
+    public void onHideRefreshing(boolean successful) {
         if (successful) {
             SPHelper.setLastRefreshTime(getActivity(), mTAG);
         }
@@ -68,7 +68,7 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
     }
 
     @Override
-    public void showRefreshingView() {
+    public void onShowRefreshing() {
         if (null != mSwipeRefreshLayout) {
             mSwipeRefreshLayout.setRefreshing(true);
         }

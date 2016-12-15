@@ -1,8 +1,6 @@
 package com.blazers.jandan.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.util.HashMap;
 
@@ -78,7 +76,7 @@ public class SPHelper {
      * 设置更新时间
      * */
     public static void setLastRefreshTime(Context context, String key) {
-        long time = TimeHelper.currentTime();
+        long time = TimeHelper.getCurrentMillSeconds();
         tempLong.put(key, time);
         context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putLong(key, time).apply();
     }

@@ -153,11 +153,5 @@ public class NewsPage {
             public int index;
         }
 
-
-        @BindingAdapter({"post"})
-        public static void showImage(SimpleDraweeView simpleDraweeView, Posts posts) {
-            simpleDraweeView.setImageURI(Uri.parse(posts.custom_fields.thumb_c.get(0)));
-        }
-
     }
 }

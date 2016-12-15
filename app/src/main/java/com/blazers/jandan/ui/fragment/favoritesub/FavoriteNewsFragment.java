@@ -37,25 +37,14 @@ public class FavoriteNewsFragment extends BaseSwipeRefreshFragment {
 //    private FavNewsAdapter adapter;
 
     @Override
-    protected void initPresenter() {
-
-    }
-
-    @Override
     protected int getLayoutResId() {
-        return 0;
+        return R.layout.fragment_common_fav_refresh_recyclerview;
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_common_fav_refresh_recyclerview, container, false);
-    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         trySetupSwipeRefreshLayout();
         // Init
 //        list = new ArrayList<>();

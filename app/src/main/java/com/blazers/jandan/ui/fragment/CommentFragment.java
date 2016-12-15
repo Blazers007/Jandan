@@ -58,10 +58,6 @@ public class CommentFragment extends BaseFragment {
         return fragment;
     }
 
-    @Override
-    protected void initPresenter() {
-
-    }
 
     @Override
     protected int getLayoutResId() {

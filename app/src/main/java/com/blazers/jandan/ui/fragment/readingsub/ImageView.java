@@ -11,9 +11,9 @@ import java.util.List;
 public interface ImageView extends BaseLoadMoreRefreshView {
 
     // 添加该界面独有的
-    void refreshDataList(List<SingleImage> postsBeanList);
+    void onRefreshDataList(List<SingleImage> postsBeanList);
 
-    void addDataList(List<SingleImage> postsBeanList);
+    void onAddDataList(List<SingleImage> postsBeanList);
 
     void onInspectImage(SingleImage singleImage);
 }

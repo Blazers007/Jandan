@@ -1,6 +1,6 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
-import com.blazers.jandan.model.news.NewsPage;
+import com.blazers.jandan.model.news.NewsPost;
 import com.blazers.jandan.ui.fragment.base.BaseLoadMoreRefreshView;
 
 import java.util.List;
@@ -12,9 +12,9 @@ import java.util.List;
 public interface NewsView extends BaseLoadMoreRefreshView {
 
     // 添加该界面独有的
-    void refreshDataList(List<NewsPage.Posts> postsBeanList);
+    void onRefreshDataList(List<NewsPost> postsBeanList);
 
-    void addDataList(List<NewsPage.Posts> postsBeanList);
+    void onAddDataList(List<NewsPost> postsBeanList);
 
-    void onGoToNewsRead(NewsPage.Posts post);
+    void onNavigateToNewsRead(int postId);
 }

@@ -4,7 +4,6 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -12,12 +11,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.presenter.ImageInspectPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
+import com.blazers.jandan.util.ShareHelper;
+import com.blazers.jandan.util.log.Log;
 import com.blazers.jandan.widgets.fresco.ZoomableDraweeView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
@@ -29,7 +29,6 @@ import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.imagepipeline.image.ImageInfo;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> implements ImageInspectView {
 
@@ -47,32 +46,47 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
 
     /* Vars */
     private boolean uiIsShowing = true;
+    private ViewImageEvent mViewImageEvent;
 
 
     private long touchStartTime;
     private float touchStartX, touchStartY;
 
-    @Override
-    public void initPresenter() {
-        Object event =  getIntent().getSerializableExtra(ViewImageEvent.KEY);
-        if (event == null)
-            finish();
-        mPresenter = new ImageInspectPresenter(this, (ViewImageEvent) event);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Object event =  getIntent().getSerializableExtra(ViewImageEvent.KEY);
+        if (event == null) {
+            // 提示
+            finish();
+        }
         setContentView(R.layout.activity_image_viewer);
-        ButterKnife.bind(this);
         initToolbarByTypeWithShadow(null, toolbar, ToolbarType.FINISH);
-        setContentFloatingModeEnabled(true);
+        setReadyForImmersiveMode();
         setToolbarTitle("");
+        // 设置Extra
         extras.setPadding(0, 0, 0, getNavigationBarHeight());
         initScalableImage();
-        initExtra();
-        //
-        mPresenter.onLoadingImage();
+        mPresenter = new ImageInspectPresenter(this);
+        // SaveButton
+        btnSave.setImageResource(R.mipmap.ic_publish_16dp);
+        btnSave.setOnClickListener(v -> mPresenter.downloadImage(mViewImageEvent.mOriginUrl));
+        // ShowImage
+        DraweeController ctrl = Fresco.newDraweeControllerBuilder()
+                .setUri(Uri.parse(mViewImageEvent.mOriginUrl))
+                .setTapToRetryEnabled(true)
+                .setAutoPlayAnimations(true)
+                .setControllerListener(new FrescoControlListener())
+                .build();
+        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
+                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
+                .setProgressBarImage(new ProgressBarDrawable())
+                .build();
+        view.setController(ctrl);
+        view.setHierarchy(hierarchy);
+        view.setController(ctrl);
+        view.setHierarchy(hierarchy);
     }
 
     void initScalableImage() {
@@ -98,21 +112,6 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
         });
     }
 
-
-
-    /**
-     * 初始化下方额外内容区域
-     */
-    void initExtra() {
-        // 内容
-        content.setText(mPresenter.getImageContent());
-        /* 判断是否已经下载 */
-        if (mPresenter.isDownloaded()) {
-            setDownloadButtonDone();
-        } else {
-            btnSave.setOnClickListener(v -> mPresenter.downloadImage());
-        }
-    }
 
     /**
      * 隐藏 / 全屏
@@ -146,33 +145,19 @@ public class ImageInspectActivity extends BaseActivity<ImageInspectPresenter> im
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void setDownloadButtonDone() {
-        btnSave.setImageResource(R.mipmap.ic_publish_16dp);
-        btnSave.setClickable(false);
+    public void aa() {
+//        content.setText(mPresenter.getImageContent());
+//        /* 判断是否已经下载 */
+//        if (mPresenter.isDownloaded()) {
+//            setDownloadButtonDone();
+//        } else {
+//            btnSave.setOnClickListener(v -> mPresenter.downloadImage());
+//        }
     }
 
     @Override
-    public void showImageByUri(Uri uri) {
-        DraweeController ctrl = Fresco.newDraweeControllerBuilder()
-                .setUri(uri)
-                .setTapToRetryEnabled(true)
-                .setAutoPlayAnimations(true)
-                .setControllerListener(new FrescoControlListener())
-                .build();
-        GenericDraweeHierarchy hierarchy = new GenericDraweeHierarchyBuilder(getResources())
-                .setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER)
-                .setProgressBarImage(new ProgressBarDrawable())
-                .build();
-        view.setController(ctrl);
-        view.setHierarchy(hierarchy);
-        view.setController(ctrl);
-        view.setHierarchy(hierarchy);
-    }
-
-    @Override
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    public void onShareImage() {
+        ShareHelper.shareImage(this, mViewImageEvent.mContentStr, mViewImageEvent.mOriginUrl);
     }
 
     /**

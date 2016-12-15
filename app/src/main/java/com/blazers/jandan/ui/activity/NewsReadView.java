@@ -1,19 +1,23 @@
 package com.blazers.jandan.ui.activity;
 
+import com.blazers.jandan.model.event.ViewImageEvent;
+
 /**
  * Created by blazers on 2016/11/11.
  */
 
 public interface NewsReadView {
 
-    void setFavIconFavOrNot(boolean favOrNot);
+    void onSetFavoriteIconState(boolean favOrNot);
 
-    void animateToFavOrNot(boolean favOrNot);
+    void onAnimateToFavoriteOrNot(boolean favOrNot);
 
-    void showHtmlPageByString(String htmlString);
+    void onLoadHtmlString(String htmlString);
 
-    void showLoadingProgress();
+    void onNavigateToInspectImage(ViewImageEvent viewImageEvent);
 
-    void hideLoadingProgress();
+    void onShowLoadingProgress();
+
+    void onHideLoadingProgress();
 
 }

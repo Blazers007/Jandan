@@ -1,17 +1,13 @@
 package com.blazers.jandan.presenter;
 
-import android.util.Log;
-
 import com.blazers.jandan.model.DataManager;
-import com.blazers.jandan.model.news.NewsPage;
+import com.blazers.jandan.model.news.NewsPost;
 import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
 import com.blazers.jandan.ui.fragment.readingsub.NewsView;
 import com.blazers.jandan.util.ListHelper;
-import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.util.log.Log;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import java.util.List;
 
 
 /**
@@ -34,74 +30,67 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
      * 尝试读取数据库中的旧数据便与展示
      */
     @Override
-    public void onInitPageData() {
+    public void initPageData() {
         Log.i("Presenter", "==OnInitNewsPageData==");
-        addFUISubscription(DataManager.getInstance()
-                .getNewsDataFromDB(mPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(posts -> {
-                    // 有数据则首先显示
-                    if (ListHelper.isNotEmptySafe(posts)) {
-                        mView.refreshDataList(posts);
-                        // 在根据刷新时间判断是否需要刷新
-//                        if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(TAG_NEWS))) {
-//                            onRefresh();
-//                        }
-                    } else {
-                        onRefresh();
-                    }
-                }, error -> {
-                    System.out.println("onInitNewsPageData" + error.toString());
-                    onRefresh();
-                })); // 出错直接刷新
+        List<NewsPost> ret = DataManager.getInstance().getNewsDataFromDB(mPage);
+        if (ListHelper.isNotEmptySafe(ret)) {
+            mView.onRefreshDataList(ret);
+            // 在根据刷新时间判断是否需要刷新
+//            if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(TAG_NEWS))) {
+//                refresh();
+//            }
+        } else {
+            mView.onShowRefreshing();
+            refresh();
+        }
     }
 
 
     /**
      * 刷新内容
      */
-    public void onRefresh() {
+    public void refresh() {
+        if (mIsRefreshing) {
+            return;
+        }
+        mIsRefreshing = true;
         Log.i("Presenter", "==OnRefresh==");
         mPage = 1;
-        addFUISubscription(DataManager.getInstance().getNewsData(mPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(posts -> {
-                    // 刷新成功 更新UI
-                    if (ListHelper.isNotEmptySafe(posts)) {
-                        mView.refreshDataList(posts);
-                        mView.hideRefreshingView(true);
-                    } else {
-                        mView.hideRefreshingView(false);
-                    }
-                }, error -> {
-                    System.out.println("onInitNewsPageData" +  error.toString());
-                    mView.hideRefreshingView(false);
-                }));
+        addFUISubscription(DataManager.getInstance().getNewsData(mPage).subscribe(posts -> {
+            // 刷新成功 更新UI
+            mIsRefreshing = true;
+            mView.onRefreshDataList(posts);
+            mView.onHideRefreshing(true);
+        }, error -> {
+            mIsRefreshing = true;
+            Log.e("onInitNewsPageData", error.toString());
+            mView.onHideRefreshing(false);
+        }));
     }
 
     /**
      * 加载下一页
      */
-    public void onLoadMore() {
+    public void loadMore() {
+        if (mToTheEnd || mIsLoading) {
+            return;
+        }
+        mIsLoading = true;
         mPage++;
-        addFUISubscription(DataManager.getInstance().getNewsData(mPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(posts -> {
-                    if (ListHelper.isNotEmptySafe(posts)) {
-                        // 刷新成功 更新UI
-                        mView.addDataList(posts);
-                        mView.hideLoadMoreView(true);
-                    } else {
-                        // 刷新失败 不更新UI弹出提示
-                        mView.hideLoadMoreView(false);
-                    }
-                }, error -> {
-                    System.out.println("onInitNewsPageData" +  error.toString());
-                    mView.hideLoadMoreView(false);
-                }));
+        addFUISubscription(DataManager.getInstance().getNewsData(mPage).subscribe(posts -> {
+            // 读取更多成功 更新UI
+            mIsLoading = false;
+            if (posts.size() == 0) {
+                mToTheEnd = true;
+                return;
+            }
+            mView.onAddDataList(posts);
+            mView.hideLoadMoreView(true);
+        }, error -> {
+            mIsLoading = false;
+            Log.e("onInitNewsPageData", error.toString());
+            mView.hideLoadMoreView(false);
+        }));
 
     }
 
@@ -110,7 +99,7 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
      *
      * @param
      */
-    public void onClickPost(NewsPage.Posts postsBean) {
-        mView.onGoToNewsRead(postsBean);
+    public void onClickPost(NewsPost postsBean) {
+        mView.onNavigateToNewsRead(postsBean.id);
     }
 }

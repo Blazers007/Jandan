@@ -3,7 +3,7 @@ package com.blazers.jandan.util;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.util.Log;
+import com.blazers.jandan.util.log.Log;
 import android.widget.Toast;
 
 /**

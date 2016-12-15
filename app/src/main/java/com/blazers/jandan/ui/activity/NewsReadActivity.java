@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
@@ -20,15 +19,15 @@ import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.NewsReadPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.SPHelper;
-import com.blazers.jandan.util.ShareHelper;
+import com.blazers.jandan.util.log.Log;
 import com.blazers.jandan.widgets.ObservableWebView;
 
 import butterknife.BindView;
 import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
 
-import static com.blazers.jandan.presenter.NewsReadPresenter.KEY_NEWS_POST;
-
 public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements NewsReadView {
+
+    public static final String KEY_POST_ID = "key_pi";
 
     /* Vars for testing the scroll visible effect */
     private static final int HIDE_THRESHOLD = 256;
@@ -48,29 +47,23 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
 
 
     @Override
-    public void initPresenter() {
-        // 获取Model层
-        Object obj = getIntent().getSerializableExtra(KEY_NEWS_POST);
-        if (obj == null) {
-            finish();
-        }
-        mPresenter = new NewsReadPresenter(this, (NewsPage.Posts) obj);
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        int postId = getIntent().getIntExtra(KEY_POST_ID, -1);
+        if (postId == -1) {
+            finish();
+        }
         setContentView(R.layout.activity_news_read);
         /* Init Toolbar */
         initToolbarByTypeWithShadow(toolbarWrapper, toolbar, ToolbarType.FINISH);
         setToolbarTitle(getIntent().getStringExtra("title"));
-        setContentFloatingModeEnabled(true);
+        setReadyForImmersiveMode();
         /* Fav */
         initFloatingActionButton();
         /* Init Appbar listener */
         initWebview();
-        // 加载
-        mPresenter.onInitWebPage();
+        // Go
+        mPresenter = new NewsReadPresenter(this, postId);
     }
 
     /**
@@ -79,8 +72,9 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
     void initFloatingActionButton() {
         fabFav.setOnClickListener(v -> {
             // 点击收藏
-            mPresenter.onClickFavoriteButton();
+            mPresenter.clickFavoriteButton();
         });
+        fabFav.setTranslationY(-getNavigationBarHeight());
     }
 
     /**
@@ -176,29 +170,36 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
     }
 
     @Override
-    public void setFavIconFavOrNot(boolean favOrNot) {
+    public void onSetFavoriteIconState(boolean favOrNot) {
         fabFav.setImageResource(favOrNot ? R.drawable.ic_favorite_white_24dp : R.drawable.ic_favorite_border_white_24dp);
     }
 
     @Override
-    public void animateToFavOrNot(boolean favOrNot) {
+    public void onAnimateToFavoriteOrNot(boolean favOrNot) {
         fabFav.animate().rotationX(fabFav.getRotationX() == 0 ? 360 : 0).setDuration(300).start();
-        fabFav.postDelayed(() -> setFavIconFavOrNot(favOrNot), 300);
+        fabFav.postDelayed(() -> onSetFavoriteIconState(favOrNot), 300);
     }
 
     @Override
-    public void showHtmlPageByString(String htmlString) {
-        webView.loadDataWithBaseURL("file:///android_asset", htmlString, "text/html; charset=UTF-8", null, null);
+    public void onLoadHtmlString(String htmlString) {
+        webView.loadDataWithBaseURL("file:///android_asset/", htmlString, "text/html", "utf-8", null);
     }
 
     @Override
-    public void showLoadingProgress() {
+    public void onNavigateToInspectImage(ViewImageEvent viewImageEvent) {
+        Intent intent = new Intent(NewsReadActivity.this, ImageInspectActivity.class);
+        intent.putExtra(ViewImageEvent.KEY, viewImageEvent);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onShowLoadingProgress() {
         progressWheel.animate().alpha(0).translationY(-96).setStartDelay(200).setDuration(300).start();
 
     }
 
     @Override
-    public void hideLoadingProgress() {
+    public void onHideLoadingProgress() {
         progressWheel.setTranslationY(0);
         progressWheel.setAlpha(1);
     }
@@ -213,11 +214,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
         @JavascriptInterface
         public void viewImageBySrc(String src, String alt) {
             Log.e("Src", src);
-            src = src.replace("small", "medium"); // 目前仅发现该
-            Intent intent = new Intent(NewsReadActivity.this, ImageInspectActivity.class);
-            ViewImageEvent event = new ViewImageEvent(src, alt);
-            intent.putExtra(ViewImageEvent.KEY, event);
-            startActivity(intent);
+            mPresenter.clickWebImage(src, alt);
         }
 
         /**

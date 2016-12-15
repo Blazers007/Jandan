@@ -1,7 +1,10 @@
 package com.blazers.jandan.api;
 
+import com.blazers.jandan.model.image.Image;
 import com.blazers.jandan.model.image.ImagePage;
+import com.blazers.jandan.model.joke.Joke;
 import com.blazers.jandan.model.joke.JokePage;
+import com.blazers.jandan.model.news.News;
 import com.blazers.jandan.model.news.NewsPage;
 
 import retrofit2.http.GET;
@@ -16,17 +19,18 @@ import rx.Observable;
 public interface IJandan {
 
     String BASE_URL = "http://i.jandan.net/";
+    String TYPE_WULIAO = "jandan.get_pic_comments";
+    String TYPE_MEIZHI = "jandan.get_ooxx_comments";
 
-    @GET("?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,content,comment_count,comments,comments_rank,custom_fields&custom_fields=thumb_c,views&dev=1")
-    Observable<NewsPage> getNews(@Query("page") int page);
-
-    @GET("?oxwlxojflwblxbsapi=jandan.get_pic_comments")
-    Observable<ImagePage> getWuliao(@Query("page") int page);
 
     @GET("?oxwlxojflwblxbsapi=jandan.get_duan_comments")
-    Observable<JokePage> getJoke(@Query("page") int page);
+    Observable<Joke> getJoke(@Query("page") int page);
 
-    @GET("?oxwlxojflwblxbsapi=jandan.get_ooxx_comments")
-    Observable<ImagePage> getMeizhi(@Query("page") int page);
+    @GET("/")
+    Observable<Image> getImage(@Query("page") int page, @Query("oxwlxojflwblxbsapi") String type);
+
+    @GET("?oxwlxojflwblxbsapi=get_recent_posts&include=url,date,tags,author,title,content,comment_count,comments,comments_rank,custom_fields&custom_fields=thumb_c,views&dev=1")
+    Observable<News> getNews(@Query("page") int page);
+
 
 }

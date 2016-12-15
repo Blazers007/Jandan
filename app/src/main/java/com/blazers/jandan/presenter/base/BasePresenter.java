@@ -1,8 +1,7 @@
 package com.blazers.jandan.presenter.base;
 
-import android.util.Log;
-
 import com.blazers.jandan.util.Rxbus;
+import com.blazers.jandan.util.log.Log;
 
 import rx.Observable;
 import rx.Subscription;
@@ -36,7 +35,7 @@ public abstract class BasePresenter<T> {
     /**
      * 是否处于前台运行状态 onResume <---- [Here] ----> onPause
      */
-    private boolean mIsFullyVisible = false;
+    private boolean mIsFullyVisible = true;
 
     public BasePresenter(T view) {
         mView = view;
@@ -61,15 +60,17 @@ public abstract class BasePresenter<T> {
      *
      * @param subscription 订阅
      */
-    protected void addFUISubscription(Subscription subscription) {
+    protected boolean addFUISubscription(Subscription subscription) {
         if (!mIsFullyVisible) {
             Log.e("[error]", "you can't add Front UI subscription unless the ui is between onResume() and onPause()");
-            return;
+            subscription.unsubscribe();
+            return false;
         }
         if (mFrontUISubscriptions == null) {
             mFrontUISubscriptions = new CompositeSubscription();
         }
         mFrontUISubscriptions.add(subscription);
+        return true;
     }
 
     /**

@@ -6,10 +6,10 @@ import android.os.IBinder;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.ui.activity.MainActivity;
+import com.blazers.jandan.util.log.Log;
 
 /**
  * Created by blazers on 2016/11/17.

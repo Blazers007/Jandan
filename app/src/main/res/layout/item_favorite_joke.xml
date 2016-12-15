@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ms.square.android.expandabletextview.ExpandableTextView
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:expandableTextView="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fav_joke_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        expandableTextView:maxCollapsedLines="1"
-        expandableTextView:animDuration="200"
+        android:orientation="vertical"
         >
     <TextView
-            android:id="@id/expandable_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -19,11 +16,10 @@
             android:textSize="16sp"
             android:textColor="#222" />
     <ImageButton
-            android:id="@id/expand_collapse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:layout_gravity="right|bottom"
             android:background="@android:color/transparent"
             />
-</com.ms.square.android.expandabletextview.ExpandableTextView>
+</LinearLayout>

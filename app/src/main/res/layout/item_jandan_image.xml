@@ -82,7 +82,7 @@
             android:layout_below="@+id/author"
             android:layout_marginTop="12dp"
             android:clickable="true"
-            android:onClick="@{() -> iPresenter.onClickImage(iBean)}"
+            android:onClick="@{() -> iPresenter.clickImage(iBean)}"
             app:image_url="@{iBean.url}"
             fresco:actualImageScaleType="fitCenter"
             fresco:viewAspectRatio="1.418"
@@ -124,6 +124,8 @@
             android:layout_alignBottom="@id/btn_oo"
             android:layout_alignParentRight="true"
             android:layout_marginRight="8dp"
+            app:init_fav_image="@{iBean}"
+            app:init_fav_presenter="@{iPresenter}"
             app:mfb_animate_favorite="true"
             app:mfb_animate_unfavorite="false"
             app:mfb_favorite_image="@mipmap/ic_favorite_16dp"
@@ -146,7 +148,7 @@
         <View
             android:id="@+id/top"
             android:layout_width="match_parent"
-            android:layout_height="2px"
+            android:layout_height="1px"
             android:layout_alignParentTop="true"
             android:background="#e5e7e9"
             />
@@ -154,14 +156,14 @@
         <View
             android:id="@+id/divider_upper"
             android:layout_width="match_parent"
-            android:layout_height="2px"
+            android:layout_height="1px"
             android:layout_below="@+id/text"
             android:background="#f3f3f3"/>
 
         <View
             android:id="@+id/divider_lower"
             android:layout_width="match_parent"
-            android:layout_height="2px"
+            android:layout_height="1px"
             android:layout_below="@+id/btn_oo"
             android:background="#e5e7e9"
 

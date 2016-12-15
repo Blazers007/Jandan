@@ -1,5 +1,9 @@
 package com.blazers.jandan.model.event;
 
+import com.android.annotations.Nullable;
+
+
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -9,11 +13,17 @@ public class ViewImageEvent implements Serializable {
 
     public static final String KEY = "ViewImageEvent";
 
-    public String originUrl;
-    public String contentStr;
+    public String mOriginUrl;
+    public String mContentStr;
+    public @Nullable String mLocalPath;
 
-    public ViewImageEvent(String originUrl, String contentStr) {
-        this.originUrl = originUrl;
-        this.contentStr = contentStr;
+    public ViewImageEvent(String originUrl, String contentStr, String localPath) {
+        mOriginUrl = originUrl;
+        mContentStr = contentStr;
+        mLocalPath = localPath;
+    }
+
+    public boolean isDownloaded() {
+        return null != mLocalPath && new File(mLocalPath).exists();
     }
 }

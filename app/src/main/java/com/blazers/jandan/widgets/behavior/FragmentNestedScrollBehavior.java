@@ -5,17 +5,16 @@ import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.util.log.Log;
 
 /**
  * Created by blazers on 2016/11/15.
- *
+ * <p>
  * 处理内部的滑动操作与外部其他View的互动
- *
  */
 
 public class FragmentNestedScrollBehavior extends CoordinatorLayout.Behavior<FrameLayout> {
@@ -55,6 +54,7 @@ public class FragmentNestedScrollBehavior extends CoordinatorLayout.Behavior<Fra
 
     /**
      * 是否开始滑动？
+     *
      * @param coordinatorLayout
      * @param child
      * @param directTargetChild
@@ -71,6 +71,7 @@ public class FragmentNestedScrollBehavior extends CoordinatorLayout.Behavior<Fra
 
     /**
      * 滑动
+     *
      * @param coordinatorLayout
      * @param child
      * @param target
@@ -110,9 +111,6 @@ public class FragmentNestedScrollBehavior extends CoordinatorLayout.Behavior<Fra
 //        Log.i("====", "NestedPreScroll  ---> " + target.getClass().getSimpleName() + " dy -> " + dy + "   consumed -> " + consumed[1]);
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed);
     }
-
-
-
 
 
     @Override

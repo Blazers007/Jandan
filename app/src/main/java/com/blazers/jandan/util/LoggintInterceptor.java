@@ -1,6 +1,6 @@
 package com.blazers.jandan.util;
 
-import android.util.Log;
+import com.blazers.jandan.util.log.Log;
 
 import java.io.IOException;
 

@@ -6,10 +6,12 @@ package com.blazers.jandan.presenter.base;
 
 public abstract class BaseLoadMoreRefreshPresenter<T> extends BaseRefreshPresenter<T> {
 
+    protected boolean mIsLoading = false;
+    protected boolean mToTheEnd = false;
 
     public BaseLoadMoreRefreshPresenter(T view) {
         super(view);
     }
 
-    public abstract void onLoadMore();
+    public abstract void loadMore();
 }

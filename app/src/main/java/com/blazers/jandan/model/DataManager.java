@@ -1,34 +1,40 @@
 package com.blazers.jandan.model;
 
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.MainThread;
 
 import com.blazers.jandan.api.IJandan;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.model.extension.Time;
-import com.blazers.jandan.model.image.ImagePage;
+import com.blazers.jandan.model.image.Image;
+import com.blazers.jandan.model.image.ImageComment;
 import com.blazers.jandan.model.image.SingleImage;
-import com.blazers.jandan.model.joke.JokePage;
-import com.blazers.jandan.model.news.NewsPage;
+import com.blazers.jandan.model.joke.JokeComment;
+import com.blazers.jandan.model.news.NewsPost;
 import com.blazers.jandan.util.LoggintInterceptor;
 import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.TimeHelper;
+import com.blazers.jandan.util.log.Log;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
-import com.snappydb.DB;
-import com.snappydb.DBFactory;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import com.snappydb.SnappydbException;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,6 +44,8 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Blazers on 2015/9/11.
@@ -49,21 +57,26 @@ import rx.Observable;
  * 3.收藏库   [Fav]  -> [N:id] [J:id] [W:id] [M:id]
  */
 public class DataManager {
-    // 缓存
-    public static final String TAG = "[Parser]";
-    public static final String NEWS = "N:";
-    public static final String WULIAO = "W:";
-    public static final String JOKE = "J:";
-    public static final String MEIZHI = "M:";
-    // 收藏
-    public static final String FAV_NEWS = "F_N:";
-    public static final String FAV_WULIAO = "F_W:";
-    public static final String FAV_JOKE = "F_J:";
-    public static final String FAV_MEIZHI = "F_M:";
+
+    private static final String TAG = "DataManager";
+    private static final int TYPE_WULUAO = 0;
+    private static final int TYPE_MEIZHI = 1;
+    // 缓存 异步数据库
+    private static final String NEWS = "N:";
+    private static final String WULIAO = "W:";
+    private static final String JOKE = "J:";
+    private static final String MEIZHI = "M:";
+    // 收藏 同步查找
+    private static final String FAV_NEWS = "F_N:";
+    private static final String FAV_WULIAO = "F_W:";
+    private static final String FAV_JOKE = "F_J:";
+    private static final String FAV_MEIZHI = "F_M:";
     // 图片本地映射
-    public static final String IMG_MAPPING = "MAP:";
+    private static final String IMG_MAPPING = "MAP:";
     // Lock
     private static final Object monitor = new Object();
+    // 超时
+    private static int TIMEOUT = 10;
     // Instance
     private static DataManager INSTANCE;
     // Vars
@@ -71,15 +84,7 @@ public class DataManager {
     private OkHttpClient client;
     private Gson gson;
     private IJandan mJandan;
-    //==============================================================================================
-    //=
-    //=
-    //=                                 数据库管理
-    //=
-    //=
-    //==============================================================================================
-    private ExecutorService mDatabaseExecutor;
-    private DB mDB;
+    private Realm mRealm;
 
     private DataManager() {
         client = new OkHttpClient.Builder()
@@ -87,7 +92,38 @@ public class DataManager {
                 .addInterceptor(new LoggintInterceptor())
                 .build();
         /* Init Gson  */
-        gson = new Gson();
+        gson = new GsonBuilder()
+                .setExclusionStrategies(new ExclusionStrategy() {
+                    @Override
+                    public boolean shouldSkipField(FieldAttributes f) {
+                        return f.getDeclaringClass().equals(RealmObject.class);
+                    }
+
+                    @Override
+                    public boolean shouldSkipClass(Class<?> clazz) {
+                        return false;
+                    }
+                })
+                .registerTypeAdapter(new TypeToken<RealmList<RealmString>>() {
+                }.getType(), new TypeAdapter<RealmList<RealmString>>() {
+
+                    @Override
+                    public void write(JsonWriter out, RealmList<RealmString> value) throws IOException {
+
+                    }
+
+                    @Override
+                    public RealmList<RealmString> read(JsonReader in) throws IOException {
+                        RealmList<RealmString> realmStrings = new RealmList<>();
+                        in.beginArray();
+                        while (in.hasNext()) {
+                            realmStrings.add(new RealmString(in.nextString()));
+                        }
+                        in.endArray();
+                        return realmStrings;
+                    }
+                })
+                .create();
         // Init api
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(IJandan.BASE_URL)
@@ -97,7 +133,7 @@ public class DataManager {
                 .build();
         mJandan = retrofit.create(IJandan.class);
         // 单一容量线程池
-        mDatabaseExecutor = Executors.newSingleThreadExecutor();
+//        mDBExecutor = Executors.newSingleThreadExecutor();
 
     }
 
@@ -117,11 +153,13 @@ public class DataManager {
      * @param context
      */
     public void init(Context context) throws SnappydbException {
-        mDB = DBFactory.open(context);
-        // Init executor
-        mDatabaseExecutor = Executors.newSingleThreadExecutor();
         // Cache context
-        mApplicationContext = new WeakReference<Context>(context);
+        mApplicationContext = new WeakReference<>(context);
+        // Open database
+        mRealm = Realm.getDefaultInstance();
+    }
+
+    private void test() {
     }
 
     /**
@@ -150,154 +188,237 @@ public class DataManager {
         return response.body().string();
     }
 
+
     /**
      * @param page 读取新鲜事的页码
      */
-    public Observable<List<NewsPage.Posts>> getNewsData(int page) {
-        Log.d("DataManager", "==GetNewsData==");
+    public Observable<List<NewsPost>> getNewsData(int page) {
+        Log.d(TAG, "==GetNewsData==");
+        Observable<List<NewsPost>> observable;
         if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
-            Log.i("Loading", "From API");
-            return mJandan.getNews(page)
-                    .doOnNext(newsPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<NewsPage>(NEWS + page, newsPage)))
-                    .map(newsPage ->  newsPage.posts);
+            observable = mJandan.getNews(page)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .filter(news -> news != null && news.posts != null)
+                    .map(data -> data.posts)
+                    .doOnNext(list -> {
+                        // 清除旧数据 添加新数据
+                        RealmResults<NewsPost> ret = mRealm.where(NewsPost.class).equalTo("page", page).findAllAsync();
+                        mRealm.executeTransaction(realm -> {
+                            for (NewsPost oldPost : ret) {
+                                oldPost.page = 0;
+                            }
+                            for (NewsPost newPost : list) {
+                                newPost.page = page;
+                            }
+                            mRealm.copyToRealmOrUpdate(list);
+                        });
+                    });
         } else {
-            return getNewsDataFromDB(page);
+            observable = Observable.just(getNewsDataFromDB(page));
         }
+        return observable.filter(ret -> ret != null).timeout(TIMEOUT, TimeUnit.SECONDS);
     }
 
     /**
      * @param page 读取新鲜事的页码
      */
-    public Observable<List<NewsPage.Posts>> getNewsDataFromDB(int page) {
-        Log.d("DataManager", "==GetNewsDataFromDB==");
-        return Observable.defer(() -> {
-            try {
-                Future<NewsPage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(NEWS + page, NewsPage.class));
-                NewsPage newsPage = ret.get(5, TimeUnit.SECONDS);
-                return Observable.just(newsPage.posts);
-            } catch (InterruptedException e) {
-                return Observable.error(e);
-            } catch (ExecutionException e) {
-                return Observable.error(e);
-            } catch (TimeoutException e) {
-                return Observable.just(null);
-            } catch (Exception e) {
-                return Observable.error(e);
-            }
-        });
+    public List<NewsPost> getNewsDataFromDB(int page) {
+        Log.d(TAG, "==GetNewsDataFromDB START ==");
+        return mRealm.where(NewsPost.class).equalTo("page", page).findAllSorted("id", Sort.DESCENDING);
+    }
+
+    /**
+     * 获取指定ID的文章内容
+     *
+     * @param id
+     * @return
+     */
+    public NewsPost getNewsPost(int id) {
+        return mRealm.where(NewsPost.class).equalTo("id", id).findFirst();
     }
 
     /**
      * @param page 读取无聊图的页码
      */
     public Observable<List<SingleImage>> getWuliaoData(int page) {
-        Log.d("DataManager", "==GetJokeData==");
-        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
-            Log.i("Loading", "From API");
-            return mJandan.getWuliao(page)
-                    .doOnNext(wuliaoPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<ImagePage>(WULIAO + page, wuliaoPage)))
-                    .map(wuliaoPage -> SingleImage.splitToSingle(wuliaoPage.comments));
-        } else {
-            return getWuliaoDataFromDB(page);
-        }
+        return getImageData(page, IJandan.TYPE_WULIAO, TYPE_WULUAO);
     }
 
     /**
      * @param page 读取无聊图的页码
      */
-    public Observable<List<SingleImage>> getWuliaoDataFromDB(int page) {
-        Log.d("DataManager", "==GetJokeDataFromDB==");
-        return Observable.defer(() -> {
-            try {
-                Future<ImagePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(WULIAO + page, ImagePage.class));
-                ImagePage imagePage = ret.get(5, TimeUnit.SECONDS);
-                return Observable.just(SingleImage.splitToSingle(imagePage.comments));
-            } catch (InterruptedException e) {
-                return Observable.error(e);
-            } catch (ExecutionException e) {
-                return Observable.error(e);
-            } catch (TimeoutException e) {
-                return Observable.just(null);
-            } catch (Exception e) {
-                return Observable.error(e);
-            }
-        });
+    public List<SingleImage> getWuliaoDataFromDB(int page) {
+        Log.d(TAG, "==GetJokeDataFromDB==");
+        return getImageFromDB(page, TYPE_WULUAO);
     }
 
 
     /**
      * @param page 读取段子的页码
      */
-    public Observable<List<JokePage.Comments>> getJokeData(int page) {
-        Log.d("DataManager", "==GetJokeData==");
+    public Observable<List<JokeComment>> getJokeData(int page) {
+        Log.d(TAG, "==GetJokeData==");
+        Observable<List<JokeComment>> observable;
         if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
             Log.i("Loading", "From API");
-            return mJandan.getJoke(page)
-                    .doOnNext(jokePage -> mDatabaseExecutor.execute(new DatabaseSavingTask<JokePage>(JOKE + page, jokePage)))
-                    .map(jokePage -> jokePage.comments);
+            observable = mJandan.getJoke(page)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .filter(joke -> joke != null && joke.comments != null)
+                    .map(data -> data.comments)
+                    .doOnNext(list -> {
+                        // 清除旧数据 添加新数据
+                        RealmResults<JokeComment> ret = mRealm.where(JokeComment.class).equalTo("page", page).findAllAsync();
+                        mRealm.executeTransaction(realm -> {
+                            for (JokeComment oldPost : ret) {
+                                oldPost.page = 0;
+                            }
+                            for (JokeComment newPost : list) {
+                                newPost.page = page;
+                            }
+                            mRealm.copyToRealmOrUpdate(list);
+                        });
+                    });
         } else {
-            return getJokeDataFromDB(page);
+            observable = Observable.just(getJokeDataFromDB(page));
         }
+        return observable.filter(ret -> ret != null).timeout(TIMEOUT, TimeUnit.SECONDS);
     }
 
     /**
      * @param page 读取段子的页码
      */
-    public Observable<List<JokePage.Comments>> getJokeDataFromDB(int page) {
-        Log.d("DataManager", "==GetJokeDataFromDB==");
-        return Observable.defer(() -> {
-            try {
-                Future<JokePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(JOKE + page, JokePage.class));
-                JokePage jokePage = ret.get(5, TimeUnit.SECONDS);
-                return Observable.just(jokePage.comments);
-            } catch (InterruptedException e) {
-                return Observable.error(e);
-            } catch (ExecutionException e) {
-                return Observable.error(e);
-            } catch (TimeoutException e) {
-                return Observable.just(null);
-            } catch (Exception e) {
-                return Observable.error(e);
-            }
-        });
+    public List<JokeComment> getJokeDataFromDB(int page) {
+        Log.d(TAG, "==GetJokeDataFromDB==");
+        return mRealm.where(JokeComment.class).equalTo("page", page).findAllSorted("comment_ID", Sort.DESCENDING);
     }
 
     /**
      * @param page 读取妹纸图的页码
      */
     public Observable<List<SingleImage>> getMeizhiData(int page) {
-        Log.d("DataManager", "==GetMeizhi==");
-        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
-            return mJandan.getMeizhi(page)
-                    .doOnNext(meizhiPage -> mDatabaseExecutor.execute(new DatabaseSavingTask<ImagePage>(MEIZHI + page, meizhiPage)))
-                    .map(meizhiPage ->  SingleImage.splitToSingle(meizhiPage.comments));
-        } else {
-            return getMeizhiDataFromDB(page);
-        }
+        return getImageData(page, IJandan.TYPE_MEIZHI, TYPE_MEIZHI);
     }
 
 
     /**
      * @param page 读取妹纸图
      */
-    public Observable<List<SingleImage>> getMeizhiDataFromDB(int page) {
-        Log.d("DataManager", "==GetJokeDataFromDB==");
-        return Observable.defer(() -> {
-            try {
-                Future<ImagePage> ret = mDatabaseExecutor.submit(new DatabaseQueryTask<>(MEIZHI + page, ImagePage.class));
-                ImagePage imagePage = ret.get(5, TimeUnit.SECONDS);
-                return Observable.just(SingleImage.splitToSingle(imagePage.comments));
-            } catch (InterruptedException e) {
-                return Observable.error(e);
-            } catch (ExecutionException e) {
-                return Observable.error(e);
-            } catch (TimeoutException e) {
-                return Observable.just(null);
-            } catch (Exception e) {
-                return Observable.error(e);
+    public List<SingleImage> getMeizhiDataFromDB(int page) {
+        Log.d(TAG, "==GetJokeDataFromDB==");
+        return getImageFromDB(page, TYPE_MEIZHI);
+    }
+
+
+    private Observable<List<SingleImage>> getImageData(int page, String queryType, int equalType) {
+        Log.d(TAG, "==GetMeizhi==");
+        Observable<List<SingleImage>> observable;
+        if (NetworkHelper.netWorkAvailable(mApplicationContext.get())) {
+            observable = mJandan.getImage(page, queryType)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .filter(image -> image != null && image.comments != null)
+                    .map(data -> {
+                        List<SingleImage> pageImages = new ArrayList<>();
+                        // 清除旧数据 添加新数据
+                        RealmResults<SingleImage> ret = mRealm
+                                .where(SingleImage.class)
+                                .equalTo("page", page)
+                                .equalTo(SingleImage.TYPE, equalType)
+                                .findAll();
+                        mRealm.executeTransaction(realm -> {
+                            // 存储关联对象
+                            List<ImageComment> savedComment = mRealm.copyToRealmOrUpdate(data.comments);
+                            for (SingleImage oldPost : ret) {
+                                oldPost.page = 0;
+                            }
+                            for (ImageComment newPost : savedComment) {
+                                List<SingleImage> singleImageList = SingleImage.splitToSingle(mRealm, newPost);
+                                int i = 0;
+                                for (SingleImage singleImage : singleImageList) {
+                                    singleImage.url = newPost.pics.get(i).getValue();
+                                    singleImage.page = page;
+                                    singleImage.type = equalType;
+                                    i ++;
+                                }
+                                pageImages.addAll(singleImageList);
+                            }
+                            mRealm.copyToRealmOrUpdate(pageImages);
+                        });
+                        return pageImages;
+                    });
+        } else {
+            observable = Observable.just(getMeizhiDataFromDB(page));
+        }
+        return observable.filter(ret -> ret != null).timeout(TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    private List<SingleImage> getImageFromDB(int page, int type) {
+        return mRealm.where(SingleImage.class).equalTo("page", page).equalTo("type", type).findAllSorted(SingleImage.ID, Sort.DESCENDING);
+    }
+
+
+    //==============================================================================================
+    //=
+    //=
+    //=                              本地离线图片管理
+    //=
+    //=
+    //==============================================================================================
+
+
+
+    //==============================================================================================
+    //=
+    //=
+    //=                                 收藏管理
+    //=
+    //=
+    //==============================================================================================
+
+    @MainThread
+    public void manageNewsFavorite(NewsPost newsPost, boolean favorite) {
+        mRealm.executeTransaction(realm -> {
+            if (favorite) {
+                newsPost.favorite = true;
+                newsPost.favorite_time = new Date();
+            } else {
+                newsPost.favorite = false;
+                newsPost.favorite_time = null;
             }
         });
     }
+
+    public void manageJokeFavorite(JokeComment comment, boolean favorite) {
+        mRealm.executeTransaction(realm -> {
+            if (favorite) {
+                comment.favorite = true;
+                comment.favorite_time = new Date();
+            } else {
+                comment.favorite = false;
+                comment.favorite_time = null;
+            }
+        });
+    }
+
+    @MainThread
+    public void manageImageFavorite(SingleImage singleImage, boolean favorite) {
+        mRealm.executeTransaction(realm -> {
+            if (favorite) {
+                singleImage.favorite = true;
+                singleImage.favorite_time = new Date();
+            } else {
+                singleImage.favorite = false;
+                singleImage.favorite_time = null;
+            }
+        });
+    }
+
+
+//    if (Looper.myLooper() == Looper.getMainLooper()) {
+//            // http://stackoverflow.com/questions/11411022/how-to-check-if-current-thread-is-not-main-thread
+//        }
 
     /**
      * 根据文章ID获取评论列表
@@ -314,7 +435,6 @@ public class DataManager {
             subscriber.onCompleted();
         });
     }
-
 
     // --------------------提交数据
 
@@ -335,153 +455,5 @@ public class DataManager {
             }
             subscriber.onCompleted();
         });
-    }
-
-
-    /**
-     * 存储数据
-     * @param <T>
-     */
-    private class DatabaseSavingTask<T> implements Runnable {
-
-        private String mKey;
-        private T mData;
-
-        DatabaseSavingTask(String key, T data) {
-            this.mKey = key;
-            mData = data;
-        }
-
-        @Override
-        public void run() {
-            try {
-                mDB.put(mKey, mData);
-            } catch (SnappydbException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    /**
-     * 获取数据
-     * @param <T>
-     */
-    private class DatabaseQueryTask<T> implements Callable<T> {
-
-        private String mKey;
-        private Class<T> mTClass;
-
-        DatabaseQueryTask(String key, Class<T> TClass) {
-            mKey = key;
-            mTClass = TClass;
-        }
-
-        @Override
-        public T call() throws Exception {
-            if (mDB.exists(mKey)) {
-                return mDB.getObject(mKey, mTClass);
-            }
-            return null;
-        }
-    }
-
-
-    //==============================================================================================
-    //=
-    //=
-    //=                                 收藏管理
-    //=
-    //=
-    //==============================================================================================
-
-
-    public void manageNewsFavorite(NewsPage.Posts posts, boolean favorite) {
-        String key = FAV_NEWS + posts.id;
-        manageFavorite(key, posts, favorite);
-    }
-
-    public void manageJokeFavorite(JokePage.Comments comments, boolean favorite) {
-        String key = FAV_JOKE + comments.comment_ID;
-        manageFavorite(key, comments, favorite);
-    }
-
-    /**
-     * 采用KV对进行储存 速度快 空间占用更多
-     */
-    public void manageWuliaoFavorite(SingleImage singleImage, boolean favorite) {
-        String key = FAV_WULIAO + singleImage.id;
-        manageFavorite(key, singleImage, favorite);
-    }
-
-    public void manageMeizhiFavorite(SingleImage singleImage, boolean favorite) {
-        String key = FAV_MEIZHI + singleImage.id;
-        manageFavorite(key, singleImage, favorite);
-    }
-
-    public boolean isNewsFavorite(NewsPage.Posts posts) {
-        String key = FAV_NEWS + posts.id;
-        return isThisFavorite(key);
-    }
-
-    public boolean isJokeFavorite(JokePage.Comments comments) {
-        String key = FAV_JOKE + comments.comment_ID;
-        return isThisFavorite(key);
-    }
-
-    public boolean isWuliaoFavorite(SingleImage singleImage) {
-        String key = FAV_WULIAO + singleImage.id;
-        return isThisFavorite(key);
-    }
-
-    public boolean isMeizhiFavorite(SingleImage singleImage) {
-        String key = FAV_MEIZHI + singleImage.id;
-        return isThisFavorite(key);
-    }
-
-
-    private boolean isThisFavorite(String key) {
-        try {
-            return mDB.exists(key);
-        } catch (SnappydbException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * @param key
-     * @param data
-     * @param favorite
-     * @param <T>
-     */
-    private <T extends Time> void manageFavorite(String key, T data, boolean favorite) {
-        try {
-            if (favorite) {
-                // 添加到喜欢
-                data.time = TimeHelper.currentTime();
-                mDB.put(key, data);
-            } else {
-                // 移除喜欢
-                if (mDB.exists(key)) {
-                    mDB.del(key);
-                }
-            }
-        } catch (SnappydbException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void release() {
-        // 关闭数据库
-        try {
-            if (mDB != null && mDB.isOpen()) {
-                mDB.close();
-            }
-        } catch (SnappydbException e) {
-            e.printStackTrace();
-        }
-        // 关闭线程池
-        mDatabaseExecutor.shutdown();
     }
 }

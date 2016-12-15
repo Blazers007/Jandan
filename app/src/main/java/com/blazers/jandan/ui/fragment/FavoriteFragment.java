@@ -32,8 +32,6 @@ public class FavoriteFragment extends BaseFragment {
     public static final String TAG = FavoriteFragment.class.getSimpleName();
     //    private static final String[] titles = new String[]{"时间轴", "新鲜事", "图片", "文字"};
     private static final String[] titles = new String[]{"新鲜事", "图片", "文字"};
-    private static FavoriteFragment INSTANCE;
-
 
     @BindView(R.id.avatar)
     SimpleDraweeView mAvatar;
@@ -49,21 +47,10 @@ public class FavoriteFragment extends BaseFragment {
     TextView mFavImagesCount;
     @BindView(R.id.fav_jokes_count)
     TextView mFavJokesCount;
+
     /* Vars */
-    private ArrayList<Fragment> fragments;
 //    @Bind(R.id.fab_fav) FloatingActionButton floatingActionButton;
 
-    public static FavoriteFragment getInstance() {
-        if (null == INSTANCE) {
-            INSTANCE = new FavoriteFragment();
-        }
-        return INSTANCE;
-    }
-
-    @Override
-    protected void initPresenter() {
-
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -72,22 +59,17 @@ public class FavoriteFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        initFavFragments();
+        initFavAdapter();
         setupTabLayoutTheme();
         loadFavCounts();
 //        registerEventReceiver();
     }
 
-    void initFavFragments() {
+    void initFavAdapter() {
         String name = SPHelper.getStringSP(getActivity(), SPHelper.NAME, null);
         // TODO: 封装头像工具 统一地方处理权限申请！ 梳理多个地方需要同一个权限的时候如何用PermissionDispatcher做优化处理
 //        mUserName.setText(name == null ? Unique.generateName(getActivity()) : name);
 //        mAvatar.setImageURI(Uri.parse(Unique.generateGavatar(getActivity(), null)));
-        fragments = new ArrayList<>();
-//        fragments.add(new FavoriteTimelineFragment());  // 暂时不使用
-        fragments.add(new FavoriteNewsFragment());
-        fragments.add(new FavoriteImageFragment());
-        fragments.add(new FavoriteJokesFragment());
         mViewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
         mTabLayout.setupWithViewPager(mViewPager);
         // 点击修改名字
@@ -134,18 +116,29 @@ public class FavoriteFragment extends BaseFragment {
      */
     class FragmentAdapter extends FragmentPagerAdapter {
 
-        public FragmentAdapter(FragmentManager fm) {
+        private FragmentAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragments.get(position);
+            switch (position) {
+                case 0:
+                    return new FavoriteNewsFragment();
+                case 1:
+                    return new FavoriteImageFragment();
+                case 2:
+                    return new FavoriteJokesFragment();
+                default:
+                    return null;
+            }
+
+//            new FavoriteTimelineFragment()
         }
 
         @Override
         public int getCount() {
-            return fragments.size();
+            return 3;
         }
 
         @Override

@@ -1,6 +1,7 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +9,8 @@ import android.view.View;
 import com.blazers.jandan.BR;
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.news.NewsPage;
+import com.blazers.jandan.model.news.NewsPost;
 import com.blazers.jandan.presenter.NewsPresenter;
-import com.blazers.jandan.presenter.NewsReadPresenter;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
@@ -25,13 +26,9 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> implements NewsView {
 
-    private BaseSingleMVVMAdapter<NewsPage.Posts, NewsPresenter> mAdapter;
-    private List<NewsPage.Posts> mList = new ArrayList<>();
+    private BaseSingleMVVMAdapter<NewsPost, NewsPresenter> mAdapter;
+    private List<NewsPost> mList = new ArrayList<>();
 
-    @Override
-    protected void initPresenter() {
-        mPresenter = new NewsPresenter(this);
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -41,6 +38,7 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mPresenter = new NewsPresenter(this);
         initRecyclerView();
     }
 
@@ -53,34 +51,34 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
                 mPresenter,
                 BR.nBean,
                 BR.nPresenter
-        ));
+        ), 12, Color.rgb(241, 242, 241));
         // Try to load from db
-        mPresenter.onInitPageData();
+        mPresenter.initPageData();
     }
 
     @Override
-    public void refreshDataList(List<NewsPage.Posts> postsBeanList) {
+    public void onRefreshDataList(List<NewsPost> postsBeanList) {
         mList.clear();
         mList.addAll(postsBeanList);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void addDataList(List<NewsPage.Posts> postsBeanList) {
+    public void onAddDataList(List<NewsPost> postsBeanList) {
         // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
         int start = mList.size();
         int size = postsBeanList.size();
         mList.addAll(postsBeanList);
-        mAdapter.notifyItemRangeInserted(start, size);
-        mRecyclerView.smoothScrollBy(0, 96);
+        mRecyclerView.post(()->{
+            mAdapter.notifyItemRangeInserted(start, size);
+            mRecyclerView.smoothScrollBy(0, 96);
+        });
     }
 
     @Override
-    public void onGoToNewsRead(NewsPage.Posts post) {
+    public void onNavigateToNewsRead(int postId) {
         getActivity().startActivity(
-                new Intent(getContext(), NewsReadActivity.class)
-                        .putExtra(NewsReadPresenter.KEY_NEWS_POST, post)
-        );
-        getActivity().overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_right_out);
+                new Intent(getContext(), NewsReadActivity.class).putExtra(NewsReadActivity.KEY_POST_ID, postId));
+        getActivity().overridePendingTransition(R.anim.activity_slide_right_in, R.anim.activity_slide_left_out);
     }
 }

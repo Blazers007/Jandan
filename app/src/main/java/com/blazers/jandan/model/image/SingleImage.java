@@ -2,11 +2,19 @@ package com.blazers.jandan.model.image;
 
 import android.databinding.BindingAdapter;
 
+import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.model.extension.Time;
+import com.blazers.jandan.presenter.ImagePresenter;
 import com.blazers.jandan.widgets.AutoScaleFrescoView;
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
  * Created by blazers on 2016/12/2.
@@ -15,37 +23,44 @@ import java.util.List;
  *
  */
 
-public class SingleImage extends Time {
+public class SingleImage extends RealmObject {
 
+    public static final String ID = "id";
+    public static final String TYPE = "type";
+
+    @PrimaryKey
     public String id;
-    public ImagePage.Comments comment;
+    public int page;
+    public int type;
     public String url;
+    public boolean favorite;
+    public Date favorite_time;
+    public ImageComment comment;
 
-    public SingleImage(int index, ImagePage.Comments comment, String url) {
-        this.id = comment.comment_ID + ":" + index;
-        this.comment = comment;
-        this.url = url;
+
+    public SingleImage() {
+
     }
 
-    /**
-     * 将一片Post中的图片提取出来
-     * @param commentsList
-     * @return
-     */
-    public static List<SingleImage> splitToSingle(List<ImagePage.Comments> commentsList) {
-        if (commentsList == null)
+
+    public static List<SingleImage> splitToSingle(Realm realm, ImageComment comment) {
+        if (comment == null)
             return null;
         List<SingleImage> singleImageList = new ArrayList<>();
-        for (ImagePage.Comments comments : commentsList) {
-            if (comments != null && comments.pics != null) {
-                for (int i = 0 ; i < comments.pics.size() ; i ++) {
-                    singleImageList.add(new SingleImage(i, comments, comments.pics.get(i)));
+        if (comment.pics != null) {
+            int index = comment.pics.size();
+            for (int i = 0 ; i < comment.pics.size() ; i ++) {
+                String id = comment.comment_ID + ":" + index--;
+                SingleImage singleImage = realm.where(SingleImage.class).equalTo(ID, id).findFirst();
+                if (singleImage == null) {
+                    singleImage = realm.createObject(SingleImage.class, id);
+                    singleImage.comment = comment;
                 }
+                singleImageList.add(singleImage);
             }
         }
         return singleImageList;
     }
-
 
     @BindingAdapter("image_url")
     public static void showImage(AutoScaleFrescoView autoScaleFrescoView, String url) {
@@ -54,4 +69,9 @@ public class SingleImage extends Time {
         autoScaleFrescoView.showImage(null, url);
     }
 
+    @BindingAdapter({"init_fav_presenter", "init_fav_image"})
+    public static void initFavorite(MaterialFavoriteButton materialFavoriteButton, ImagePresenter presenter, SingleImage singleImage) {
+        materialFavoriteButton.setFavorite(singleImage.favorite, false);
+        materialFavoriteButton.setOnFavoriteChangeListener((buttonView, favorite) -> presenter.setFavoriteOrNot(singleImage, favorite));
+    }
 }

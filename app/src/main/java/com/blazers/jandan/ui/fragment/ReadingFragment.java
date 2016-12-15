@@ -11,15 +11,15 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.model.event.FastScrollUpEvent;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.presenter.ImagePresenter;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
 import com.blazers.jandan.ui.fragment.readingsub.ImageFragment;
 import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
 import com.blazers.jandan.ui.fragment.readingsub.NewsFragment;
+import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.widgets.nightwatch.NightWatcher;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
 
@@ -37,15 +37,7 @@ public class ReadingFragment extends BaseFragment {
     @BindView(R.id.container)
     ViewPager viewPager;
 
-
-    private ArrayList<Fragment> fragments;
     private String[] titles = {"新鲜事", "段子", "无聊图", "妹子图"};
-
-
-    @Override
-    protected void initPresenter() {
-        // No logic
-    }
 
     @Override
     protected int getLayoutResId() {
@@ -55,26 +47,30 @@ public class ReadingFragment extends BaseFragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        initJandanFragments();
+        super.onViewCreated(view, savedInstanceState);
+        initReadingAdapterAndTab();
         setupTabLayoutTheme();
     }
 
     /**
      * 初始化各个Fragment
      */
-    void initJandanFragments() {
-        fragments = new ArrayList<>();
-        fragments.add(new NewsFragment());
-        fragments.add(new JokeFragment());
-        fragments.add(ImageFragment.newInstance(ImagePresenter.TAG_WULIAO));
-        // 是否需要加载妹纸页面
-//        if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false))
-            fragments.add(ImageFragment.newInstance(ImagePresenter.TAG_MEIZHI));
-        viewPager.setAdapter(new FragmentAdapter(getChildFragmentManager()));
+    void initReadingAdapterAndTab() {
+        viewPager.setAdapter(new ReadingFragmentAdapter(getChildFragmentManager()));
 //        mViewPager.setPageMargin(Dppx.Dp2Px(getActivity(), 12));  //  TODO: 需要适配夜间模式
 //        mViewPager.setOffscreenPageLimit(fragments.size());        // 暂不缓存 能够自动释放
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        for (int i = 0 ; i < tabLayout.getChildCount() ; i ++) {
+            tabLayout.getChildAt(i).setOnLongClickListener(view -> {
+                // 快速返回
+                int index = tabLayout.indexOfChild(view);
+                Rxbus.getInstance().send(new FastScrollUpEvent(index));
+                return true;
+            });
+        }
+
+        // TODO: 利用once 如果 首次检测到用户快速上滑 则提示用户可以长按返回
     }
 
     /**
@@ -108,20 +104,33 @@ public class ReadingFragment extends BaseFragment {
     /**
      * Adapter
      */
-    class FragmentAdapter extends FragmentPagerAdapter {
+    class ReadingFragmentAdapter extends FragmentPagerAdapter {
 
-        public FragmentAdapter(FragmentManager fm) {
+        private ReadingFragmentAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return fragments.get(position);
+            switch (position) {
+                case 0:
+                    return new NewsFragment();
+                case 1:
+                    return new JokeFragment();
+                case 2:
+                    return ImageFragment.newInstance(ImagePresenter.TAG_WULIAO);
+                case 3:
+                    return ImageFragment.newInstance(ImagePresenter.TAG_MEIZHI);
+                default:
+                    return null;
+            }
         }
 
         @Override
         public int getCount() {
-            return fragments.size();
+            // 是否需要加载妹纸页面
+            // if (SPHelper.getBooleanSP(getActivity(), SPHelper.MEIZI_MODE_ON, false);
+            return 4;
         }
 
         @Override

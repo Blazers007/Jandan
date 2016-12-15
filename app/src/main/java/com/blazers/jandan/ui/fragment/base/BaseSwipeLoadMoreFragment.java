@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import com.blazers.jandan.util.log.Log;
 import android.view.View;
 
 import com.blazers.jandan.R;
@@ -40,6 +40,10 @@ public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPre
     }
 
     public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter) {
+        trySetupRecyclerViewWithAdapter(adapter, 18, Color.rgb(241, 242, 241));
+    }
+
+    public void trySetupRecyclerViewWithAdapter(RecyclerView.Adapter adapter, int dividerHeight, int color) {
         if (null != mLoadMoreRecyclerView && null != adapter) {
             mLoadMoreRecyclerView.setLayoutManager(RecyclerViewHelper.getVerticalLinearLayoutManager(getActivity()));
             mLoadMoreRecyclerView.addItemDecoration(new VerticalDividerItemDecoration(getActivity(), 18, Color.rgb(241, 242, 241)));
@@ -74,7 +78,7 @@ public abstract class BaseSwipeLoadMoreFragment<T extends BaseLoadMoreRefreshPre
         Log.i(mTAG, "==LoadMore==");
         mIsLoading = true;
         showLoadMoreView();
-        mPresenter.onLoadMore();
+        mPresenter.loadMore();
     }
 
 

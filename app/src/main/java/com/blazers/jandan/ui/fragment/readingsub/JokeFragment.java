@@ -1,37 +1,19 @@
 package com.blazers.jandan.ui.fragment.readingsub;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.blazers.jandan.BR;
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.DataManager;
+import com.blazers.jandan.model.joke.JokeComment;
 import com.blazers.jandan.model.joke.JokePage;
-import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.JokePresenter;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
-import com.blazers.jandan.util.Rxbus;
-import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
-import com.blazers.jandan.util.NetworkHelper;
-import com.blazers.jandan.util.RxHelper;
-import com.blazers.jandan.util.ShareHelper;
-import com.blazers.jandan.widgets.ThumbTextButton;
-import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created by Blazers on 15/9/1.
@@ -43,12 +25,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> imple
 
     // private
     private BaseSingleMVVMAdapter mAdapter;
-    private List<JokePage.Comments> mList = new ArrayList<>();
-
-    @Override
-    protected void initPresenter() {
-        mPresenter = new JokePresenter(this);
-    }
+    private List<JokeComment> mList = new ArrayList<>();
 
     @Override
     protected int getLayoutResId() {
@@ -58,6 +35,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> imple
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mPresenter = new JokePresenter(this);
         initRecyclerView();
     }
 
@@ -72,18 +50,18 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> imple
                 BR.jPresenter
         ));
         // Try to load from db
-        mPresenter.onInitPageData();
+        mPresenter.initPageData();
     }
 
     @Override
-    public void refreshDataList(List<JokePage.Comments> postsBeanList) {
+    public void onRefreshDataList(List<JokeComment> postsBeanList) {
         mList.clear();
         mList.addAll(postsBeanList);
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void addDataList(List<JokePage.Comments> postsBeanList) {
+    public void onAddDataList(List<JokeComment> postsBeanList) {
         // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
         int start = mList.size();
         int size = postsBeanList.size();

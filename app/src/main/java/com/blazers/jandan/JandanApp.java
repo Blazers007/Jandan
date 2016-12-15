@@ -11,8 +11,10 @@ import com.snappydb.DB;
 import com.snappydb.DBFactory;
 import com.snappydb.SnappydbException;
 
+import io.realm.Realm;
 import jonathanfinerty.once.Once;
 import okhttp3.OkHttpClient;
+import timber.log.Timber;
 
 /**
  * Created by Blazers on 2015/8/25.
@@ -22,6 +24,13 @@ public class JandanApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // 初始化数据库
+        Realm.init(this);
+        try {
+            DataManager.getInstance().init(this);
+        } catch (SnappydbException e) {
+            e.printStackTrace();
+        }
         // 初始化Fresco
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new LoggintInterceptor())
@@ -32,11 +41,9 @@ public class JandanApp extends Application {
         Fresco.initialize(this, imagePipelineConfig);
         // 初始化Once
         Once.initialise(this);
-        // 初始化数据库
-        try {
-            DataManager.getInstance().init(this);
-        } catch (SnappydbException e) {
-            e.printStackTrace();
+        // Timber
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
         }
     }
 }
