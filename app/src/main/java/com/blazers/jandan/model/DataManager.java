@@ -63,18 +63,7 @@ public class DataManager {
     private static final String TAG = "DataManager";
     private static final int TYPE_WULUAO = 0;
     private static final int TYPE_MEIZHI = 1;
-    // 缓存 异步数据库
-    private static final String NEWS = "N:";
-    private static final String WULIAO = "W:";
-    private static final String JOKE = "J:";
-    private static final String MEIZHI = "M:";
-    // 收藏 同步查找
-    private static final String FAV_NEWS = "F_N:";
-    private static final String FAV_WULIAO = "F_W:";
-    private static final String FAV_JOKE = "F_J:";
-    private static final String FAV_MEIZHI = "F_M:";
-    // 图片本地映射
-    private static final String IMG_MAPPING = "MAP:";
+
     // Lock
     private static final Object monitor = new Object();
     // 超时
@@ -111,7 +100,7 @@ public class DataManager {
 
                     @Override
                     public void write(JsonWriter out, RealmList<RealmString> value) throws IOException {
-
+                        // 目前暂时没有 Object 到 JsonString的 需要 所以目前不需要复写
                     }
 
                     @Override
@@ -134,9 +123,6 @@ public class DataManager {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         mJandan = retrofit.create(IJandan.class);
-        // 单一容量线程池
-//        mDBExecutor = Executors.newSingleThreadExecutor();
-
     }
 
 
@@ -420,10 +406,14 @@ public class DataManager {
         });
     }
 
-
-//    if (Looper.myLooper() == Looper.getMainLooper()) {
-//            // http://stackoverflow.com/questions/11411022/how-to-check-if-current-thread-is-not-main-thread
-//        }
+    /**
+     *
+     * //    if (Looper.myLooper() == Looper.getMainLooper()) {
+     //            // http://stackoverflow.com/questions/11411022/how-to-check-if-current-thread-is-not-main-thread
+     //        }
+     *
+     *
+     * **/
 
     /**
      * 根据文章ID获取评论列表
