@@ -61,9 +61,9 @@
     <!-- Dialog -->
     <string name="not_in_wifi">当前不在WLAN状态</string>
     <string name="not_in_wifi_message">离线可能会消耗你宝贵的流量，确定要离线吗？</string>
-    <string name="do_offline_download">必须离！</string>
+    <string name="do_offline_download">必须离！不离难道留着过年?</string>
     <string name="choose">就决定是你了!</string>
-    <string name="negetive">还是...算了!</string>
+    <string name="negetive">还是&#8230;算了!</string>
 
     <!-- Nothing Hint -->
     <string name="hint_main">现在还没有评论~</string>

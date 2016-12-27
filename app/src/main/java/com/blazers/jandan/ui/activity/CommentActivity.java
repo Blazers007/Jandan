@@ -1,37 +1,15 @@
 package com.blazers.jandan.ui.activity;
 
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.DataManager;
-import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
-import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.widgets.QuoteView;
-import com.facebook.common.util.UriUtil;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 /**
  * Created by Blazers on 2015/11/24.
@@ -50,7 +28,7 @@ public class CommentActivity extends BaseActivity {
     @BindView(R.id.comment_recycler_view)
     RecyclerView commentRecyclerView;
     @BindView(R.id.progress_wheel)
-    MaterialProgressBar progressWheel;
+    SmoothProgressBar progressWheel;
 
     // 此片评论的ID
     private long commentId;

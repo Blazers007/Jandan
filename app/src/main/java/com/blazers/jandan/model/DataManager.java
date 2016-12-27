@@ -5,13 +5,15 @@ import android.support.annotation.MainThread;
 
 import com.blazers.jandan.api.IJandan;
 import com.blazers.jandan.common.URL;
-import com.blazers.jandan.model.image.Image;
 import com.blazers.jandan.model.image.ImageComment;
 import com.blazers.jandan.model.image.SingleImage;
 import com.blazers.jandan.model.joke.JokeComment;
 import com.blazers.jandan.model.news.NewsPost;
+import com.blazers.jandan.ui.fragment.readingsub.JokeFragment;
+import com.blazers.jandan.ui.fragment.readingsub.NewsFragment;
 import com.blazers.jandan.util.LoggintInterceptor;
 import com.blazers.jandan.util.NetworkHelper;
+import com.blazers.jandan.util.SPHelper;
 import com.blazers.jandan.util.log.Log;
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -201,19 +203,20 @@ public class DataManager {
                     .observeOn(AndroidSchedulers.mainThread())
                     .filter(news -> news != null && news.posts != null)
                     .map(data -> data.posts)
-                    .doOnNext(list -> {
+                    .doOnNext(list -> mRealm.executeTransaction(realm -> {
+                        // 记录时间
+                        SPHelper.setLastRefreshTime(mApplicationContext.get(), NewsFragment.class.getSimpleName());
                         // 清除旧数据 添加新数据
-                        RealmResults<NewsPost> ret = mRealm.where(NewsPost.class).equalTo("page", page).findAllAsync();
-                        mRealm.executeTransaction(realm -> {
-                            for (NewsPost oldPost : ret) {
-                                oldPost.page = 0;
-                            }
-                            for (NewsPost newPost : list) {
-                                newPost.page = page;
-                            }
-                            mRealm.copyToRealmOrUpdate(list);
-                        });
-                    });
+                        RealmResults<NewsPost> ret = mRealm.where(NewsPost.class).equalTo("page", page).findAll();
+                        for (NewsPost oldPost : ret) {
+                            oldPost.page = 0;
+                        }
+                        for (NewsPost newPost : list) {
+                            newPost.page = page;
+                        }
+                        mRealm.copyToRealmOrUpdate(list);
+                    })
+            );
         } else {
             observable = Observable.just(getNewsDataFromDB(page));
         }
@@ -225,7 +228,7 @@ public class DataManager {
      */
     public List<NewsPost> getNewsDataFromDB(int page) {
         Log.d(TAG, "==GetNewsDataFromDB START ==");
-        return mRealm.where(NewsPost.class).equalTo("page", page).findAllSorted("id", Sort.DESCENDING);
+        return mRealm.where(NewsPost.class).equalTo("page", page).findAllSorted("date", Sort.DESCENDING);
     }
 
     /**
@@ -268,6 +271,8 @@ public class DataManager {
                     .filter(joke -> joke != null && joke.comments != null)
                     .map(data -> data.comments)
                     .doOnNext(list -> {
+                        // 记录时间
+                        SPHelper.setLastRefreshTime(mApplicationContext.get(), JokeFragment.class.getSimpleName());
                         // 清除旧数据 添加新数据
                         RealmResults<JokeComment> ret = mRealm.where(JokeComment.class).equalTo("page", page).findAllAsync();
                         mRealm.executeTransaction(realm -> {
@@ -320,10 +325,11 @@ public class DataManager {
                     .observeOn(AndroidSchedulers.mainThread())
                     .filter(image -> image != null && image.comments != null)
                     .map(data -> {
+                        // 记录时间
+                        SPHelper.setLastRefreshTime(mApplicationContext.get(), queryType);
                         List<SingleImage> pageImages = new ArrayList<>();
                         // 清除旧数据 添加新数据
-                        RealmResults<SingleImage> ret = mRealm
-                                .where(SingleImage.class)
+                        RealmResults<SingleImage> ret = mRealm.where(SingleImage.class)
                                 .equalTo("page", page)
                                 .equalTo(SingleImage.TYPE, equalType)
                                 .findAll();
@@ -340,7 +346,7 @@ public class DataManager {
                                     singleImage.url = newPost.pics.get(i).getValue();
                                     singleImage.page = page;
                                     singleImage.type = equalType;
-                                    i ++;
+                                    i++;
                                 }
                                 pageImages.addAll(singleImageList);
                             }
@@ -366,7 +372,6 @@ public class DataManager {
     //=
     //=
     //==============================================================================================
-
 
 
     //==============================================================================================

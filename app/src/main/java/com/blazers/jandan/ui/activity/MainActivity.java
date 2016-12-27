@@ -115,22 +115,19 @@ public class MainActivity extends BaseActivity {
     private void switchToFragmentByTag(String tag) {
         switch (tag) {
             case TAG_READING:
-                if (mReadingFragment == null
-                        && (mReadingFragment = findFragmentByTag(TAG_READING)) == null) {
+                if (mReadingFragment == null && (mReadingFragment = findFragmentByTag(TAG_READING)) == null) {
                     mReadingFragment = new ReadingFragment();
                 }
                 mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_READING, mCurrentFragment, mReadingFragment);
                 break;
             case TAG_FAVORITE:
-                if (mFavoriteFragment == null
-                        && (mFavoriteFragment = findFragmentByTag(TAG_FAVORITE)) == null) {
+                if (mFavoriteFragment == null && (mFavoriteFragment = findFragmentByTag(TAG_FAVORITE)) == null) {
                     mFavoriteFragment = new FavoriteFragment();
                 }
                 mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_FAVORITE, mCurrentFragment, mFavoriteFragment);
                 break;
             case TAG_MINE:
-                if (mMineFragment == null
-                        && (mMineFragment = findFragmentByTag(TAG_MINE)) == null) {
+                if (mMineFragment == null && (mMineFragment = findFragmentByTag(TAG_MINE)) == null) {
                     mMineFragment = new MineFragment();
                 }
                 mCurrentFragment = switchCurrentFragment(R.id.fragment_wrapper, TAG_MINE, mCurrentFragment, mMineFragment);

@@ -6,14 +6,33 @@ package com.blazers.jandan.presenter.base;
 
 public abstract class BaseRefreshPresenter<T> extends BasePresenter<T> {
 
+    /**
+     * 起始加载的页面
+     */
     protected int mPage = 1;
+
+    /**
+     * 是否处于刷新状态
+     */
     protected boolean mIsRefreshing = false;
 
-    public BaseRefreshPresenter(T view) {
+    /**
+     *
+     * @param view MVP V
+     */
+    BaseRefreshPresenter(T view) {
         super(view);
     }
 
-    public abstract void initPageData();
 
+    /**
+     * 进入页面刷新数据
+     */
+    public abstract void init(long lastRefreshTime);
+
+
+    /**
+     * 请求刷新数据
+     */
     public abstract void refresh();
 }

@@ -5,6 +5,7 @@ import com.blazers.jandan.model.joke.JokeComment;
 import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
 import com.blazers.jandan.ui.fragment.readingsub.JokeView;
 import com.blazers.jandan.util.ListHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.util.log.Log;
 
 import java.util.List;
@@ -17,23 +18,20 @@ public class JokePresenter extends BaseLoadMoreRefreshPresenter<JokeView> {
 
     public static final String TAG_JOKE = "joke";
 
-    private int mPage = 1;
-
     public JokePresenter(JokeView view) {
         super(view);
-        view.setTag(TAG_JOKE);
+        Log.i("Presenter", "==OnInitJokePageData==");
     }
 
     @Override
-    public void initPageData() {
-        Log.i("Presenter", "==OnInitJokePageData==");
+    public void init(long lastRefreshTime) {
         List<JokeComment> ret = DataManager.getInstance().getJokeDataFromDB(mPage);
         if (ListHelper.isNotEmptySafe(ret)) {
             mView.onRefreshDataList(ret);
             // 在根据刷新时间判断是否需要刷新
-//            if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(TAG_JOKE))) {
-//                refresh();
-//            }
+            if (TimeHelper.isTimeEnoughForRefreshing(lastRefreshTime)) {
+                refresh();
+            }
         } else {
             // 无数据则直接刷新
             mView.onShowRefreshing();

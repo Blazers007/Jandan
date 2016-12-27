@@ -35,6 +35,7 @@ public class NewsReadPresenter extends BasePresenter<NewsReadView> {
         sb.append("</body></html>");
         // 是否需要替换本地文件? 替换了本地文件之后如何在页面内判断是否已经下载？
         // 添加回复部分，采用js进行填写与布局
+        mView.setTitle(mPost.title);
         mView.onLoadHtmlString(sb.toString());
         mView.onSetFavoriteIconState(mIsFavorite);
         mView.onHideLoadingProgress();
@@ -45,7 +46,7 @@ public class NewsReadPresenter extends BasePresenter<NewsReadView> {
      */
     public void clickFavoriteButton() {
         mIsFavorite = !mIsFavorite;
-//        DataManager.getInstance().manageNewsFavorite(mPost, mIsFavorite);
+        DataManager.getInstance().manageNewsFavorite(mPost, mIsFavorite);
         mView.onAnimateToFavoriteOrNot(mIsFavorite);
     }
 

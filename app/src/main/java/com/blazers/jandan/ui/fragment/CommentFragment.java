@@ -1,36 +1,15 @@
 package com.blazers.jandan.ui.fragment;
 
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.model.DataManager;
-import com.blazers.jandan.model.event.ViewCommentEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
-import com.blazers.jandan.util.RecyclerViewHelper;
-import com.blazers.jandan.util.Rxbus;
-import com.blazers.jandan.widgets.QuoteView;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 /**
  * Created by Blazers on 2015/10/13.
@@ -48,9 +27,9 @@ public class CommentFragment extends BaseFragment {
     @BindView(R.id.comment_recycler_view)
     RecyclerView commentRecyclerView;
     @BindView(R.id.progress_wheel)
-    MaterialProgressBar progressWheel;
+    SmoothProgressBar progressWheel;
 
-    public static CommentFragment NewInstance(long commentId) {
+    public static CommentFragment newInstance(long commentId) {
         CommentFragment fragment = new CommentFragment();
         Bundle data = new Bundle();
         data.putLong("commentId", commentId);

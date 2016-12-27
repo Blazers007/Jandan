@@ -26,7 +26,7 @@ import rx.Observable;
  */
 public class OfflineDownloadService extends IntentService {
 
-    /* NOTIFY mTAG */
+    /* NOTIFY mID */
     public static final int NOTI_NEWS = 11;
     public static final int NOTI_WULIAO = 12;
     public static final int NOTI_JOKES = 13;

@@ -1,0 +1,14 @@
+
+^squid:S1188"DReduce this lambda expression number of lines from 22 to at most 20.(£Ö”±ÿÿÿÿÿ
+S"squid:SwitchLastCaseIsDefaultCheck""Add a default case to this switch.(øå´¡ÿÿÿÿÿ
+Esquid:S1659"+Declare "mMineFragment" on a separate line.(™ã’Òıÿÿÿÿ
+Fsquid:S1135"2Complete the task associated to this TODO comment.(©
+Hsquid:S1659".Declare "mReadingFragment" on a separate line.(™ã’Òıÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¢œ§¿
+„squid:S1151"jReduce this switch case number of lines from 10 to at most 5, for example by extracting code into methods.(¢îà©úÿÿÿÿ
+N"squid:SwitchLastCaseIsDefaultCheck""Add a default case to this switch.(¹ŠÒÓ
+Lsquid:S1135"2Complete the task associated to this TODO comment.(ü·”»üÿÿÿÿ
+Gsquid:S1135"2Complete the task associated to this TODO comment.(ÍÛ¡¿
+Isquid:S1659"/Declare "mFavoriteFragment" on a separate line.(™ã’Òıÿÿÿÿ
+Fsquid:S1602",Remove useless curly braces around statement(¶–Ş‰øÿÿÿÿ
+csquid:MaximumInheritanceDepth"<This class has 9 parents which is greater than 5 authorized.(‘Ù±

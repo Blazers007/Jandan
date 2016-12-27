@@ -1,0 +1,25 @@
+
+nsquid:S3008"TRename this field "ONE_WHILE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(”ï€øÿÿÿÿ
+"squid:ClassVariableVisibilityCheck"SMake ONE_MIN a static final constant or non-public and provide accessors if needed.(Õ…ıç
+`squid:S2184"FCast one of the operands of this multiplication operation to a "long".(Î•‰ıüÿÿÿÿ
+`squid:S2184"FCast one of the operands of this multiplication operation to a "long".(”ï€øÿÿÿÿ
+Msquid:UselessParenthesesCheck"!Remove those useless parentheses.(ÄÒ¤ÿşÿÿÿÿ
+†"squid:ClassVariableVisibilityCheck"UMake ONE_WHILE a static final constant or non-public and provide accessors if needed.(”ï€øÿÿÿÿ
+=squid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
+Bsquid:S1444"-Make this "public static ONE_MIN" field final(Õ…ıç
+`squid:S2184"FCast one of the operands of this multiplication operation to a "long".(æÚ÷»ùÿÿÿÿ
+msquid:S3008"SRename this field "ONE_HOUR" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Î•‰ıüÿÿÿÿ
+=squid:S1148"#Use a logger to log this exception.(€ÉÔ…ıÿÿÿÿ
+_squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(Ñ“»J
+Gsquid:S1444"-Make this "public static ONE_DAY" field final(æÚ÷»ùÿÿÿÿ
+„"squid:ClassVariableVisibilityCheck"SMake ONE_DAY a static final constant or non-public and provide accessors if needed.(æÚ÷»ùÿÿÿÿ
+bsquid:CallToDeprecatedMethod"0Remove this use of "getHours"; it is deprecated.(ğ©§èøÿÿÿÿ8¸éÙÔ“+
+lsquid:S3008"RRename this field "ONE_DAY" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(æÚ÷»ùÿÿÿÿ
+Isquid:S1444"/Make this "public static ONE_WHILE" field final(”ï€øÿÿÿÿ
+Tsquid:S1118":Add a private constructor to hide the implicit public one.(“°–Øøÿÿÿÿ
+Hsquid:S1444".Make this "public static ONE_HOUR" field final(Î•‰ıüÿÿÿÿ
+’ squid:MethodCyclomaticComplexity"cThe Cyclomatic Complexity of this method "getSocialTime" is 13 which is greater than 10 authorized.(¯ıû×ùÿÿÿÿ
+dsquid:CallToDeprecatedMethod"2Remove this use of "getMinutes"; it is deprecated.(ğ©§èøÿÿÿÿ8¸éÙÔ“+
+[squid:S2184"FCast one of the operands of this multiplication operation to a "long".(Õ…ıç
+gsquid:S3008"RRename this field "ONE_MIN" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Õ…ıç
+…"squid:ClassVariableVisibilityCheck"TMake ONE_HOUR a static final constant or non-public and provide accessors if needed.(Î•‰ıüÿÿÿÿ

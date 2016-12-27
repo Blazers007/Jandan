@@ -11,6 +11,7 @@ import com.blazers.jandan.model.joke.JokePage;
 import com.blazers.jandan.presenter.JokePresenter;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
+import com.blazers.jandan.util.SPHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> imple
         super.onViewCreated(view, savedInstanceState);
         mPresenter = new JokePresenter(this);
         initRecyclerView();
+        mPresenter.init(SPHelper.getLastRefreshTime(getActivity(), JokeFragment.class.getSimpleName()));
     }
 
     void initRecyclerView() {
@@ -49,8 +51,6 @@ public class JokeFragment extends BaseSwipeLoadMoreFragment<JokePresenter> imple
                 BR.jBean,
                 BR.jPresenter
         ));
-        // Try to load from db
-        mPresenter.initPageData();
     }
 
     @Override

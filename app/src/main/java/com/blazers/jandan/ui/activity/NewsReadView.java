@@ -8,6 +8,8 @@ import com.blazers.jandan.model.event.ViewImageEvent;
 
 public interface NewsReadView {
 
+    void setTitle(String title);
+
     void onSetFavoriteIconState(boolean favOrNot);
 
     void onAnimateToFavoriteOrNot(boolean favOrNot);

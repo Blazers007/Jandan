@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.blazers.jandan.R;
+import com.blazers.jandan.api.IJandan;
 import com.blazers.jandan.model.event.FastScrollUpEvent;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.presenter.ImagePresenter;
@@ -118,9 +119,9 @@ public class ReadingFragment extends BaseFragment {
                 case 1:
                     return new JokeFragment();
                 case 2:
-                    return ImageFragment.newInstance(ImagePresenter.TAG_WULIAO);
+                    return ImageFragment.newInstance(IJandan.TYPE_WULIAO);
                 case 3:
-                    return ImageFragment.newInstance(ImagePresenter.TAG_MEIZHI);
+                    return ImageFragment.newInstance(IJandan.TYPE_MEIZHI);
                 default:
                     return null;
             }

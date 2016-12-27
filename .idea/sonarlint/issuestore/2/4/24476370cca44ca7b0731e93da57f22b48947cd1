@@ -1,0 +1,23 @@
+
+Hsquid:S1068".Remove this unused "FAV_MEIZHI" private field.(²èÙ÷ûÿÿÿÿ
+–squid:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(°ÏüÕ
+Dsquid:S1068"*Remove this unused "MEIZHI" private field.(ÅÌý‡ýÿÿÿÿ
+Bsquid:S1068"(Remove this unused "JOKE" private field.(Ø¾©Ùÿÿÿÿÿ
+Asquid:S1068",Remove this unused "FAV_JOKE" private field.(ÕÌ€ƒ
+psquid:S1192"VDefine a constant instead of duplicating this literal "==GetJokeDataFromDB==" 3 times.(ã€ Èýÿÿÿÿ
+Lsquid:UnusedPrivateMethod")Remove this unused private "test" method.(¬ÊµË
+fsquid:S3008"RRename this field "TIMEOUT" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(°Œül
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ÏõéÅ
+–squid:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¬ÊµË
+Isquid:S1068"/Remove this unused "IMG_MAPPING" private field.(·Î±ˆÿÿÿÿÿ
+Fsquid:S1068",Remove this unused "FAV_NEWS" private field.(ÈŒÝÚÿÿÿÿÿ
+Bsquid:S1068"(Remove this unused "NEWS" private field.(ÄÀüÿÿÿÿ
+6squid:S2131"Use "Long.toString" instead.(„é¬øþÿÿÿÿ
+Ysquid:S1188"DReduce this lambda expression number of lines from 30 to at most 20.(Üßùï
+Csquid:S1068".Remove this unused "FAV_WULIAO" private field.(§ž˜½
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(¦„² úÿÿÿÿ
+`squid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(ÒöÚí
+msquid:S3008"SRename this field "INSTANCE" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(²©„Œþÿÿÿÿ
+?squid:S1068"*Remove this unused "WULIAO" private field.(€®ÿ¹
+Csquid:S1481")Remove this unused "json" local variable.(œ„Ñöýÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(éØ»Úûÿÿÿÿ

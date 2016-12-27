@@ -6,25 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.BindViews;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.RuntimePermissions;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
 import com.blazers.jandan.util.NetworkHelper;
 import com.blazers.jandan.util.SPHelper;
@@ -33,10 +25,17 @@ import com.blazers.jandan.widgets.SelectableTextView;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.RuntimePermissions;
+
 
 /**
  * Created by Blazers on 2015/9/2.
- *
+ * <p>
  * 离线下载
  */
 
@@ -44,12 +43,11 @@ import java.util.List;
 
 /**
  * http://stackoverflow.com/questions/26440879/how-do-i-use-drawerlayout-to-display-over-the-actionbar-toolbar-and-under-the-st/26440880
- *
+ * <p>
  * Only works fine with Google NavigationView !
- *
+ * <p>
  * If you have two drawer the second won't works well
- *
- * */
+ */
 
 @RuntimePermissions
 public class RightDownloadingFragment extends Fragment {
@@ -101,7 +99,7 @@ public class RightDownloadingFragment extends Fragment {
             countLabels.get(3).setVisibility(View.GONE);
         }
         // Read Count from sp
-        for (int i = 0 ; i < 4 ; i ++)
+        for (int i = 0; i < 4; i++)
             countLabels.get(i).setText(String.format("%d", SPHelper.getLongSP(getActivity(), "Count" + i, 0)));
     }
 
@@ -126,68 +124,68 @@ public class RightDownloadingFragment extends Fragment {
         if (NetworkHelper.isWifi(getActivity())) {
             startDownload();
         } else {
-            new MaterialDialog.Builder(getActivity())
-                    .title(R.string.not_in_wifi)
-                    .content(R.string.not_in_wifi_message)
-                    .positiveText(R.string.do_offline_download)
-                    .positiveColor(Color.rgb(240, 114, 175)) // 需要采用Color
-                    .negativeText(R.string.negetive)
-                    .negativeColor(Color.rgb(109, 109, 109))
-                    .onPositive((dialog, action)->startDownload())
-                    .build()
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.not_in_wifi)
+                    .setMessage(R.string.not_in_wifi_message)
+                    .setPositiveButton(R.string.do_offline_download, (dialogInterface, i) -> startDownload())
+                    .setNegativeButton(R.string.negetive, null)
                     .show();
         }
     }
 
     /**
      * 开始离线阅读
-     * */
+     */
     private void startDownload() {
-//        if (binder != null) {
-//            try {
-//                int page = pageSeekBar.getSelectedValue();
-//                String toast = "";
-//                // 判断
-//                if (segments.get(0).isSegSelected()) {
-//                    binder.startDownloadNews(1, page);
-//                    toast += "新鲜事,";
-//                }
-//                if (segments.get(1).isSegSelected()) {
-//                    binder.startDownloadPicture("wuliao",1, page);
-//                    toast += "无聊图,";
-//                }
-//                if (segments.get(2).isSegSelected()) {
-//                    binder.startDownloadJokes(1, page);
-//                    toast += "段子,";
-//                }
-//                if (segments.get(3).isSegSelected()) {
-//                    binder.startDownloadPicture("meizi", 1, page);
-//                    toast += "妹子图,";
-//                }
-//                Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
-//            } catch (RemoteException e) {
-//                e.printStackTrace();
-//            }
-//        }
-    }
-
-    /**
-     * 监听
-     * */
-    class CountReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-//            Count count = (Count)intent.getSerializableExtra("data");
-//            countLabels.get(count.type).setText(String.format("%d", count.count));
-//            // Save
-//            SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
+        /**
+        if (binder != null) {
+            try {
+                int page = pageSeekBar.getSelectedValue();
+                String toast = "";
+                // 判断
+                if (segments.get(0).isSegSelected()) {
+                    binder.startDownloadNews(1, page);
+                    toast += "新鲜事,";
+                }
+                if (segments.get(1).isSegSelected()) {
+                    binder.startDownloadPicture("wuliao",1, page);
+                    toast += "无聊图,";
+                }
+                if (segments.get(2).isSegSelected()) {
+                    binder.startDownloadJokes(1, page);
+                    toast += "段子,";
+                }
+                if (segments.get(3).isSegSelected()) {
+                    binder.startDownloadPicture("meizi", 1, page);
+                    toast += "妹子图,";
+                }
+                Toast.makeText(getActivity(), "已经开始离线: " + toast, Toast.LENGTH_SHORT).show();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
+         **/
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         RightDownloadingFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
+
+    /**
+     * 监听
+     */
+    class CountReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            /**
+            Count count = (Count)intent.getSerializableExtra("data");
+            countLabels.get(count.type).setText(String.format("%d", count.count));
+            // Save
+            SPHelper.putLongSP(getActivity(), "Count" + count.type, count.count);
+             **/
+        }
     }
 }

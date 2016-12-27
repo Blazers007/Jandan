@@ -30,11 +30,6 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
         ButterKnife.bind(this, view);
     }
 
-    @Override
-    public void setTag(String tag) {
-        mTAG = tag;
-    }
-
     /**
      * 设置SwipeRefreshLayout 适当分离 不需要刻意整合在一起
      */
@@ -48,7 +43,7 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
         if (mIsRefreshing) {
             return;
         }
-        Log.i(mTAG, "==Refreshing==");
+        Log.i(getTag(), "==Refreshing==");
         mIsRefreshing = true;
         mPresenter.refresh();
     }
@@ -57,7 +52,7 @@ public abstract class BaseSwipeRefreshFragment<T extends BaseRefreshPresenter> e
     @Override
     public void onHideRefreshing(boolean successful) {
         if (successful) {
-            SPHelper.setLastRefreshTime(getActivity(), mTAG);
+            SPHelper.setLastRefreshTime(getActivity(), getTag());
         }
         if (null != mSwipeRefreshLayout) {
             mSwipeRefreshLayout.postDelayed(() -> {

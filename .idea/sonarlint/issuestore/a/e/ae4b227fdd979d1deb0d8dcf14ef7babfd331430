@@ -1,0 +1,14 @@
+
+"squid:ClassVariableVisibilityCheck"SMake comment a static final constant or non-public and provide accessors if needed.(•‰¾Ì
+@squid:S1168"+Return an empty collection instead of null.(¥¹ï
+tsquid:S1845"_Rename field "type" to prevent any misunderstanding/clash with field "TYPE" defined on line 29.(ûöå©
+|"squid:ClassVariableVisibilityCheck"PMake type a static final constant or non-public and provide accessors if needed.(ûöå©
+hsquid:UselessImportCheck"ARemove this unused import 'com.blazers.jandan.model.DataManager'.(Éóæ’úÿÿÿÿ
+Š"squid:ClassVariableVisibilityCheck"YMake favorite_time a static final constant or non-public and provide accessors if needed.(Îéú³üÿÿÿÿ
+ksquid:UselessImportCheck"DRemove this unused import 'com.blazers.jandan.model.extension.Time'.(Ê¡¢Şÿÿÿÿÿ
+{"squid:ClassVariableVisibilityCheck"OMake url a static final constant or non-public and provide accessors if needed.(…åØ
+usquid:S1845"[Rename field "id" to prevent any misunderstanding/clash with field "ID" defined on line 28.(Â¥Šˆøÿÿÿÿ
+"squid:ClassVariableVisibilityCheck"PMake page a static final constant or non-public and provide accessors if needed.(“²İÎøÿÿÿÿ
+–squid:S1186"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(¾€Í
+…"squid:ClassVariableVisibilityCheck"TMake favorite a static final constant or non-public and provide accessors if needed.(›ÌÖÇÿÿÿÿÿ
+ssquid:S00116"XRename this field "favorite_time" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Îéú³üÿÿÿÿ

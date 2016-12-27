@@ -1,0 +1,14 @@
+
+‹ squid:MethodCyclomaticComplexity"aThe Cyclomatic Complexity of this method "initWebview" is 14 which is greater than 10 authorized.(øÙîò
+Fsquid:S1602",Remove useless curly braces around statement(øã·ûÿÿÿÿ
+S"squid:SwitchLastCaseIsDefaultCheck""Add a default case to this switch.(Ò“ÿšùÿÿÿÿ
+esquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(İ¿²‹ûÿÿÿÿ
+Ssquid:S3400"9Remove this method and declare a constant for this value.(¹†Û¹ûÿÿÿÿ
+<squid:S1185"(Remove this method to simply inherit it.(ö‹´7
+osquid:MaximumInheritanceDepth"<This class has 9 parents which is greater than 5 authorized.(·óÃÜøÿÿÿÿ8é‡òÓ“+
+8squid:S1659"#Declare "scale" on a separate line.(¾òÈ¶
+esquid:S1301"KReplace this "switch" statement by "if" statements to increase readability.(Ò“ÿšùÿÿÿÿ
+esquid:S1188"DReduce this lambda expression number of lines from 31 to at most 20.(şºæ«ûÿÿÿÿ8¾œ§Ó’+
+{squid:S1067"ZReduce the number of conditional operators (5) used in the expression (maximum allowed 3).(şºæ«ûÿÿÿÿ8¾œ§Ó’+
+^squid:S1244"=Equality tests should not be made with floating point values.(’¬ï‚øÿÿÿÿ8¾œ§Ó’+
+Osquid:UselessParenthesesCheck"!Remove those useless parentheses.(ßêòö8¾œ§Ó’+

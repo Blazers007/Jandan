@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.ViewImageEvent;
-import com.blazers.jandan.model.news.NewsPage;
 import com.blazers.jandan.presenter.NewsReadPresenter;
 import com.blazers.jandan.ui.activity.base.BaseActivity;
 import com.blazers.jandan.util.SPHelper;
@@ -23,7 +22,7 @@ import com.blazers.jandan.util.log.Log;
 import com.blazers.jandan.widgets.ObservableWebView;
 
 import butterknife.BindView;
-import me.zhanghai.android.materialprogressbar.MaterialProgressBar;
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 
 public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements NewsReadView {
 
@@ -38,7 +37,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
     @BindView(R.id.webView)
     ObservableWebView webView;
     @BindView(R.id.progress_wheel)
-    MaterialProgressBar progressWheel;
+    SmoothProgressBar progressWheel;
     @BindView(R.id.fab_fav)
     FloatingActionButton fabFav;
     private int scrolledDistance = 0;
@@ -81,7 +80,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
      * 初始化WebView
      */
     void initWebview() {
-        webView.setListener(((left, top, oldLeft, oldTop) -> {
+        webView.setListener((left, top, oldLeft, oldTop) -> {
             // 滚动到底部 显示
             webViewContentHeight = webView.getContentHeight() * scale;
             float webViewCurrentHeight = (webView.getHeight() + webView.getScrollY());
@@ -111,7 +110,7 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
                     scrolledDistance += distance;
                 }
             }
-        }));
+        });
         // 加载进度条
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
@@ -167,6 +166,11 @@ public class NewsReadActivity extends BaseActivity<NewsReadPresenter> implements
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void setTitle(String title) {
+        setToolbarTitle(title);
     }
 
     @Override

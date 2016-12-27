@@ -60,15 +60,15 @@ public class SPHelper {
     }
 
     /* 刷新 */
-    private static HashMap<String, Long> tempLong = new HashMap<>();
+    private static HashMap<String, Long> TEMPLONG = new HashMap<>();
     /**
      * 获取上次刷新时间
      * */
     public static long getLastRefreshTime(Context context, String key) {
-        if (tempLong.containsKey(key))
-            return tempLong.get(key);
+        if (TEMPLONG.containsKey(key))
+            return TEMPLONG.get(key);
         long time = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).getLong(key, 0);
-        tempLong.put(key, time);
+        TEMPLONG.put(key, time);
         return time;
     }
 
@@ -77,7 +77,7 @@ public class SPHelper {
      * */
     public static void setLastRefreshTime(Context context, String key) {
         long time = TimeHelper.getCurrentMillSeconds();
-        tempLong.put(key, time);
+        TEMPLONG.put(key, time);
         context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE).edit().putLong(key, time).apply();
     }
 

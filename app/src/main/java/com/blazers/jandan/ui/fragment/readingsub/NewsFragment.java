@@ -14,6 +14,7 @@ import com.blazers.jandan.presenter.NewsPresenter;
 import com.blazers.jandan.ui.activity.NewsReadActivity;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
+import com.blazers.jandan.util.SPHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +36,13 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
         return R.layout.fragment_common_refresh_load;
     }
 
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPresenter = new NewsPresenter(this);
         initRecyclerView();
+        mPresenter.init(SPHelper.getLastRefreshTime(getActivity(), NewsFragment.class.getSimpleName()));
     }
 
     void initRecyclerView() {
@@ -52,8 +55,6 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
                 BR.nBean,
                 BR.nPresenter
         ), 12, Color.rgb(241, 242, 241));
-        // Try to load from db
-        mPresenter.initPageData();
     }
 
     @Override
@@ -65,7 +66,6 @@ public class NewsFragment extends BaseSwipeLoadMoreFragment<NewsPresenter> imple
 
     @Override
     public void onAddDataList(List<NewsPost> postsBeanList) {
-        // 是否区分重复元素？ 能否在这区分重复元素  --> 索性不考虑
         int start = mList.size();
         int size = postsBeanList.size();
         mList.addAll(postsBeanList);

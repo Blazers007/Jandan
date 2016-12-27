@@ -1,0 +1,11 @@
+
+"squid:ClassVariableVisibilityCheck"NMake id a static final constant or non-public and provide accessors if needed.(ÍéÌ‘øÿÿÿÿ
+|"squid:ClassVariableVisibilityCheck"PMake slug a static final constant or non-public and provide accessors if needed.(Î‰ĞÃ
+|"squid:ClassVariableVisibilityCheck"PMake name a static final constant or non-public and provide accessors if needed.( şÍ¾
+‡"squid:ClassVariableVisibilityCheck"VMake first_name a static final constant or non-public and provide accessors if needed.(Ù¬•œÿÿÿÿÿ
+†"squid:ClassVariableVisibilityCheck"UMake last_name a static final constant or non-public and provide accessors if needed.(àÜ§ÿûÿÿÿÿ
+"squid:ClassVariableVisibilityCheck"TMake nickname a static final constant or non-public and provide accessors if needed.(ÔÀª\
+{"squid:ClassVariableVisibilityCheck"OMake url a static final constant or non-public and provide accessors if needed.(…åØ
+ˆ"squid:ClassVariableVisibilityCheck"WMake description a static final constant or non-public and provide accessors if needed.(¹ÿ†ğÿÿÿÿÿ
+psquid:S00116"URename this field "first_name" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ù¬•œÿÿÿÿÿ
+osquid:S00116"TRename this field "last_name" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àÜ§ÿûÿÿÿÿ

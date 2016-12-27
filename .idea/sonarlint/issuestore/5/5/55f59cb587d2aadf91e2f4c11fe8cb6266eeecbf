@@ -1,0 +1,13 @@
+
+osquid:S1450"ZRemove the "meiziHolder" field and declare it as a local variable in the relevant methods.(Ú®ý‚
+ssquid:S1450"^Remove the "nightModeHolder" field and declare it as a local variable in the relevant methods.(Ú®ý‚
+@squid:S1659"+Declare "autoGifHolder" on a separate line.(Ú®ý‚
+qsquid:S1450"\Remove the "autoGifHolder" field and declare it as a local variable in the relevant methods.(Ú®ý‚
+Esquid:S1068"0Remove this unused "filterHolder" private field.(Ú®ý‚
+Dsquid:S1068"/Remove this unused "meiziHolder" private field.(Ú®ý‚
+Hsquid:S1068"3Remove this unused "nightModeHolder" private field.(Ú®ý‚
+?squid:S1659"*Declare "filterHolder" on a separate line.(Ú®ý‚
+Fsquid:S1068"1Remove this unused "autoGifHolder" private field.(Ú®ý‚
+psquid:S1450"[Remove the "filterHolder" field and declare it as a local variable in the relevant methods.(Ú®ý‚
+Hsquid:S1659".Declare "cleanCacheHolder" on a separate line.(ËŽ¿ðøÿÿÿÿ
+>squid:S1659")Declare "meiziHolder" on a separate line.(Ú®ý‚

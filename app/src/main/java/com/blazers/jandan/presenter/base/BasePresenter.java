@@ -29,7 +29,8 @@ public abstract class BasePresenter<T> {
      * 一个对应生命周期 onCreate -- onDestory
      * 另外一个对应    onResume -- onPause 只在前台生效
      */
-    private CompositeSubscription mFullLifeTimeSubscriptions, mFrontUISubscriptions;
+    private CompositeSubscription mFullLifeTimeSubscriptions;
+    private CompositeSubscription mFrontUISubscriptions;
 
 
     /**
@@ -37,6 +38,11 @@ public abstract class BasePresenter<T> {
      */
     private boolean mIsFullyVisible = true;
 
+
+    /**
+     * 构造函数
+     * @param view MVP中的View层
+     */
     public BasePresenter(T view) {
         mView = view;
     }

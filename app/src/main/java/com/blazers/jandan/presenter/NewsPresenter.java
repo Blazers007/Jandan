@@ -5,6 +5,7 @@ import com.blazers.jandan.model.news.NewsPost;
 import com.blazers.jandan.presenter.base.BaseLoadMoreRefreshPresenter;
 import com.blazers.jandan.ui.fragment.readingsub.NewsView;
 import com.blazers.jandan.util.ListHelper;
+import com.blazers.jandan.util.TimeHelper;
 import com.blazers.jandan.util.log.Log;
 
 import java.util.List;
@@ -18,33 +19,26 @@ public class NewsPresenter extends BaseLoadMoreRefreshPresenter<NewsView> {
 
     public static final String TAG_NEWS = "news";
 
-    private int mPage = 1;
-
     public NewsPresenter(NewsView view) {
         super(view);
-        view.setTag(TAG_NEWS);
     }
 
 
-    /**
-     * 尝试读取数据库中的旧数据便与展示
-     */
     @Override
-    public void initPageData() {
+    public void init(long lastRefreshTime) {
         Log.i("Presenter", "==OnInitNewsPageData==");
         List<NewsPost> ret = DataManager.getInstance().getNewsDataFromDB(mPage);
         if (ListHelper.isNotEmptySafe(ret)) {
             mView.onRefreshDataList(ret);
             // 在根据刷新时间判断是否需要刷新
-//            if (TimeHelper.isTimeEnoughForRefreshing(SPHelper.getLastRefreshTime(TAG_NEWS))) {
-//                refresh();
-//            }
+            if (TimeHelper.isTimeEnoughForRefreshing(lastRefreshTime)) {
+                refresh();
+            }
         } else {
             mView.onShowRefreshing();
             refresh();
         }
     }
-
 
     /**
      * 刷新内容

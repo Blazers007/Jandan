@@ -1,0 +1,19 @@
+
+{"squid:ClassVariableVisibilityCheck"OMake url a static final constant or non-public and provide accessors if needed.(…åØ
+…"squid:ClassVariableVisibilityCheck"TMake comments a static final constant or non-public and provide accessors if needed.(Ö§ÿ¶ûÿÿÿÿ
+ssquid:S00116"XRename this field "comment_count" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷­·åıÿÿÿÿ
+"squid:ClassVariableVisibilityCheck"PMake page a static final constant or non-public and provide accessors if needed.(“²İÎøÿÿÿÿ
+…"squid:ClassVariableVisibilityCheck"YMake custom_fields a static final constant or non-public and provide accessors if needed.(©ğ ‚
+~"squid:ClassVariableVisibilityCheck"RMake author a static final constant or non-public and provide accessors if needed.(É´ÛĞ
+"squid:ClassVariableVisibilityCheck"SMake content a static final constant or non-public and provide accessors if needed.(­ÁÅ’
+Š"squid:ClassVariableVisibilityCheck"YMake comment_count a static final constant or non-public and provide accessors if needed.(÷­·åıÿÿÿÿ
+…"squid:ClassVariableVisibilityCheck"YMake comments_rank a static final constant or non-public and provide accessors if needed.(Á¯Ç¡
+"squid:ClassVariableVisibilityCheck"PMake tags a static final constant or non-public and provide accessors if needed.(ŠÈéúÿÿÿÿ
+ssquid:S00116"XRename this field "favorite_time" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Îéú³üÿÿÿÿ
+nsquid:S00116"XRename this field "comments_rank" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Á¯Ç¡
+|"squid:ClassVariableVisibilityCheck"PMake date a static final constant or non-public and provide accessors if needed.(áÊ÷
+nsquid:S00116"XRename this field "custom_fields" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(©ğ ‚
+…"squid:ClassVariableVisibilityCheck"TMake favorite a static final constant or non-public and provide accessors if needed.(›ÌÖÇÿÿÿÿÿ
+Š"squid:ClassVariableVisibilityCheck"YMake favorite_time a static final constant or non-public and provide accessors if needed.(Îéú³üÿÿÿÿ
+}"squid:ClassVariableVisibilityCheck"QMake title a static final constant or non-public and provide accessors if needed.(Å¬õ
+usquid:S1845"[Rename field "id" to prevent any misunderstanding/clash with field "ID" defined on line 42.(ÍéÌ‘øÿÿÿÿ

@@ -1,6 +1,5 @@
 package com.blazers.jandan.presenter;
 
-import com.blazers.jandan.model.event.ViewImageEvent;
 import com.blazers.jandan.presenter.base.BasePresenter;
 import com.blazers.jandan.ui.activity.ImageInspectView;
 

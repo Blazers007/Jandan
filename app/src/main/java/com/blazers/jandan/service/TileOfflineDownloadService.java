@@ -55,49 +55,49 @@ public class TileOfflineDownloadService extends TileService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i("mTAG", "onCreate");
+        Log.i("mID", "onCreate");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.i("mTAG", "onBind");
+        Log.i("mID", "onBind");
         return super.onBind(intent);
     }
 
     @Override
     public void onTileAdded() {
-        Log.i("mTAG", "onTileAdded");
+        Log.i("mID", "onTileAdded");
         super.onTileAdded();
     }
 
     @Override
     public void onStartListening() {
-        Log.i("mTAG", "onStartListening");
+        Log.i("mID", "onStartListening");
         super.onStartListening();
         // TODO: 是否能够通过 Update Icon 实现动画效果?
     }
 
     @Override
     public void onStopListening() {
-        Log.i("mTAG", "onStopListening");
+        Log.i("mID", "onStopListening");
         super.onStopListening();
     }
 
     @Override
     public void onTileRemoved() {
-        Log.i("mTAG", "onTileRemoved");
+        Log.i("mID", "onTileRemoved");
         super.onTileRemoved();
     }
 
     @Override
     public void onDestroy() {
-        Log.i("mTAG", "onDestory");
+        Log.i("mID", "onDestory");
         super.onDestroy();
     }
 
     @Override
     public void onClick() {
-        Log.i("mTAG", "onClick");
+        Log.i("mID", "onClick");
         super.onClick();
         Tile tile = getQsTile();
         if (tile != null) {

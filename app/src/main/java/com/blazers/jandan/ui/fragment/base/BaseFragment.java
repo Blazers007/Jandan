@@ -24,10 +24,11 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
-    public String mTAG = "BaseFragment";
     private Toolbar toolbar;
 
     protected T mPresenter;
+
+    protected String mLoggerTag = BaseFragment.class.getSimpleName();
 
     /* Vars */
     protected boolean isNowNightModeOn;
@@ -39,27 +40,22 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
         needUmengStatic = need;
     }
 
-    public BaseFragment() {
-        super();
-        Log.i(mTAG, "Constructor");
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.i(mTAG, "Attach");
+        Log.i(mLoggerTag, "Attach");
         isNowNightModeOn = SPHelper.getBooleanSP(context, SPHelper.NIGHT_MODE_ON, false);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(mTAG, "OnCreate");
+        Log.i(mLoggerTag, "OnCreate");
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.i(mTAG, "OnActivityCreated");
+        Log.i(mLoggerTag, "OnActivityCreated");
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -75,7 +71,7 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
 
     @Override
     public void onStart() {
-        Log.i(mTAG, "OnStart");
+        Log.i(mLoggerTag, "OnStart");
         super.onStart();
     }
 
@@ -85,43 +81,43 @@ public abstract class BaseFragment<T extends BasePresenter> extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.i(mTAG, "OnResume");
+        Log.i(mLoggerTag, "OnResume");
         if (needUmengStatic) {
-            MobclickAgent.onPageStart(mTAG);
+            MobclickAgent.onPageStart(mLoggerTag);
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.i(mTAG, "OnPause");
+        Log.i(mLoggerTag, "OnPause");
         if (needUmengStatic) {
-            MobclickAgent.onPageEnd(mTAG);
+            MobclickAgent.onPageEnd(mLoggerTag);
         }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.i(mTAG, "OnStop");
+        Log.i(mLoggerTag, "OnStop");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.i(mTAG, "OnDestroyView");
+        Log.i(mLoggerTag, "OnDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(mTAG, "OnDestroy");
+        Log.i(mLoggerTag, "OnDestroy");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.i(mTAG, "OnDetach");
+        Log.i(mLoggerTag, "OnDetach");
     }
 
 

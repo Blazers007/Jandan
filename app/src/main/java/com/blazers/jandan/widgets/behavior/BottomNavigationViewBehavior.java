@@ -10,6 +10,8 @@ import android.widget.LinearLayout;
 
 import java.util.List;
 
+import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
+
 /**
  * Created by blazers on 2016/11/15.
  * 能够响应Snackbar的BottomNavigationView
@@ -26,7 +28,7 @@ public class BottomNavigationViewBehavior extends CoordinatorLayout.Behavior<Lin
 
     @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, LinearLayout child, View dependency) {
-        return dependency instanceof Snackbar.SnackbarLayout;
+        return dependency instanceof Snackbar.SnackbarLayout || dependency instanceof SmoothProgressBar;
     }
 
     @Override

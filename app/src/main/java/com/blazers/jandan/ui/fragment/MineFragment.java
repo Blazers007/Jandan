@@ -1,8 +1,8 @@
 package com.blazers.jandan.ui.fragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -10,7 +10,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.blazers.jandan.R;
 import com.blazers.jandan.model.event.NightModeEvent;
 import com.blazers.jandan.ui.fragment.base.BaseFragment;
@@ -35,7 +34,6 @@ import butterknife.ButterKnife;
 public class MineFragment extends BaseFragment {
 
     public static final String TAG = MineFragment.class.getSimpleName();
-    public static MineFragment INSTANCE;
 
     @BindView(R.id.set_night_mode)
     RelativeLayout setNightMode;
@@ -95,97 +93,78 @@ public class MineFragment extends BaseFragment {
         filterNumberHolder = new TextHolder(setFilterNumber,
                 R.string.setting_filter_number, R.string.setting_filter_number_describe,
                 SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, 0) + "",
-                SPHelper.getBooleanSP(getActivity(), SPHelper.AUTO_FILTER_MODE_ON, false),
-                (v) -> {
+                SPHelper.getBooleanSP(getActivity(), SPHelper.AUTO_FILTER_MODE_ON, false), v -> {
                  /* 首先获取当前 */
-                    int selection = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, -1);
-//                    AlertDialog dialog = new AlertDialog.Builder(getActivity())
-//                            .setTitle(R.string.filter_dialog_title)
-//                            .setItems(R.array.filter_selections, (dialogInterface, i) -> {
-//
-//                            })
-//                            .setPositiveButton(R.string.choose, (dialogInterface, i) -> {
-//
-//                            })
-//                            .setPositiveButton(R.string.negetive, (dialogInterface, i) -> {
-//
-//                            })
-//                            .create();
-                    MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                            .title(R.string.filter_dialog_title)
-                            .items(R.array.filter_selections)
-                            .itemsCallbackSingleChoice(selection, (dia, view, which, str) -> {
-                                if (which == -1) {
-                                    SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, which);
-                                    return true;
-                                }
-                                filterNumberHolder.setText(str.toString());
-                                SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, which);
-                                return true;
-                            })
-                            .positiveText(R.string.choose)
-                            .positiveColor(Color.rgb(240, 114, 175))
-                            .negativeText(R.string.negetive)
-                            .negativeColor(Color.rgb(109, 109, 109))
-                            .build();
-                    dialog.show();
-                }
-        );
+            int selection = SPHelper.getIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, -1);
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.filter_dialog_title)
+                    .setSingleChoiceItems(R.array.filter_selections, selection, (dialogInterface, i) -> {
+                        if (i == -1) {
+                            SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, i);
+                        }
+                        filterNumberHolder.setText(getResources().getStringArray(R.array.filter_selections)[i]);
+                        SPHelper.putIntSP(getActivity(), SPHelper.AUTO_FILTER_NUMBER, i);
+                    })
+                    .setPositiveButton(R.string.choose, (dialogInterface, i) -> {
+                        // 添加Code
+                    })
+                    .setNegativeButton(R.string.negetive, (dialogInterface, i) -> {
+                        // 添加Code
+                    })
+                    .show();
+        });
 
         // 点击清空
         cleanCacheHolder = new TextHolder(setCleanCache,
                 R.string.setting_clean_cache, R.string.setting_clean_cache_describe,
-                "计算中", true,
-                (v) -> SdcardHelper.cleanSDCardOffline()
-                        .compose(RxHelper.applySchedulers())
-                        .subscribe(
-                                state -> {
-                                    Toast.makeText(getActivity(), "清理完毕", Toast.LENGTH_SHORT).show();
-                                    SdcardHelper.calculateOfflineSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
-                                }
-                                , throwable -> Log.e("Error", "清空失败")
-                        )
+                "计算中", true, v -> SdcardHelper.cleanSDCardOffline()
+                .compose(RxHelper.applySchedulers())
+                .subscribe(state -> {
+                    Toast.makeText(getActivity(), "清理完毕", Toast.LENGTH_SHORT).show();
+                    SdcardHelper.calculateOfflineSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
+                }, throwable -> Log.e("Error", "清空失败"))
         );
+
         SdcardHelper.calculateOfflineSize().compose(RxHelper.applySchedulers()).subscribe(cleanCacheHolder::setText);
     }
 
     /**
      * Create Or Update Fav data on server
      */
-    void createOrUpdateData() {
-//        try {
-//            BlazersAPI service = Favorite.getRetrofitServiceInstance();
-//            Favorite.getLocalFavorite(getActivity())
-//                    .flatMap(json -> service.postUserFavorite("bqvSgbP6G", json))
-//                    .compose(RxHelper.applySchedulers())
-//                    .subscribe(state -> {
-//                        Log.e("State", state);
-//                    }, throwable -> Log.e("POST", throwable.toString()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
+    /**void createOrUpdateData() {
+     try {
+     BlazersAPI service = Favorite.getRetrofitServiceInstance();
+     Favorite.getLocalFavorite(getActivity())
+     .flatMap(json -> service.postUserFavorite("bqvSgbP6G", json))
+     .compose(RxHelper.applySchedulers())
+     .subscribe(state -> {
+     Log.e("State", state);
+     }, throwable -> Log.e("POST", throwable.toString()));
+     } catch (Exception e) {
+     e.printStackTrace();
+     }
+     }**/
 
     /**
      * Sync Data from Server
      *
      * @param fullCopy true 同样也备份用户UUID
      */
-    void syncDataFromServer(boolean fullCopy) {
-//        BlazersAPI service = null;
-//        try {
-//            service = Favorite.getRetrofitServiceInstance();
-//            service.getUserFavorite("bqvSgbP6G")
-//                    .compose(RxHelper.applySchedulers())
-//                    .subscribe(favorite -> {
-//                        for (LocalFavImages image : favorite.images) {
-//                            Log.i("Url", image.getUrl());
-//                        }
-//                    }, throwable -> Log.e("Error", throwable.toString()));
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
-    }
+    /**void syncDataFromServer(boolean fullCopy) {
+     BlazersAPI service = null;
+     try {
+     service = Favorite.getRetrofitServiceInstance();
+     service.getUserFavorite("bqvSgbP6G")
+     .compose(RxHelper.applySchedulers())
+     .subscribe(favorite -> {
+     for (LocalFavImages image : favorite.images) {
+     Log.i("Url", image.getUrl());
+     }
+     }, throwable -> Log.e("Error", throwable.toString()));
+     } catch (ClassNotFoundException e) {
+     e.printStackTrace();
+     }
+     }**/
 
     /**
      * Switch Holder 终究还要采用Preference
@@ -199,17 +178,13 @@ public class MineFragment extends BaseFragment {
         @BindView(R.id.setting_switch)
         SwitchCompat switchCompat;
         private View root;
-        private String key;
-        //
 
-        public SwitchHolder(View root, int title, int sub, String key, CompoundButton.OnCheckedChangeListener listener) {
+        SwitchHolder(View root, int title, int sub, String key, CompoundButton.OnCheckedChangeListener listener) {
             ButterKnife.bind(this, root);
             this.root = root;
-            //
             this.title.setText(title);
             this.sub.setText(sub);
 
-            this.key = key;
             switchCompat.setChecked(SPHelper.getBooleanSP(getActivity(), key, false));
 
             root.setClickable(true);
@@ -238,14 +213,13 @@ public class MineFragment extends BaseFragment {
         @BindView(R.id.disable_mask)
         View disableMask;
         private View root;
-        private boolean enabled;
 
-        public TextHolder(View root, int title, int sub, String value, boolean enabled, View.OnClickListener listener) {
+        TextHolder(View root, int title, int sub, String value, boolean enabled, View.OnClickListener listener) {
             ButterKnife.bind(this, root);
             this.root = root;
-            this.enabled = enabled;
             this.title.setText(title);
             this.sub.setText(sub);
+
             setEnabled(enabled);
             text.setText(value);
             root.setOnClickListener(listener);
@@ -256,7 +230,6 @@ public class MineFragment extends BaseFragment {
         }
 
         public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
             root.setClickable(enabled);
             if (enabled) {
                 disableMask.setVisibility(View.GONE);

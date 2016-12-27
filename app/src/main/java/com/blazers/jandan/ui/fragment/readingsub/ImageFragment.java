@@ -13,6 +13,7 @@ import com.blazers.jandan.presenter.ImagePresenter;
 import com.blazers.jandan.ui.activity.ImageInspectActivity;
 import com.blazers.jandan.ui.adapter.BaseSingleMVVMAdapter;
 import com.blazers.jandan.ui.fragment.base.BaseSwipeLoadMoreFragment;
+import com.blazers.jandan.util.SPHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +30,10 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
     private BaseSingleMVVMAdapter mAdapter;
     private List<SingleImage> mList = new ArrayList<>();
 
-    public static ImageFragment newInstance(String tag) {
+    public static ImageFragment newInstance(String type) {
         Bundle args = new Bundle();
         ImageFragment fragment = new ImageFragment();
-        args.putString("tag", tag);
+        args.putString("type", type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -46,8 +47,10 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mPresenter = new ImagePresenter(getArguments().getString("tag"), this);
+        String type = getArguments().getString("type");
+        mPresenter = new ImagePresenter(type, this);
         initRecyclerView();
+        mPresenter.init(SPHelper.getLastRefreshTime(getActivity(), type));
     }
 
     void initRecyclerView() {
@@ -60,8 +63,6 @@ public class ImageFragment extends BaseSwipeLoadMoreFragment<ImagePresenter> imp
                 BR.iBean,
                 BR.iPresenter
         ));
-        // Try to load from db
-        mPresenter.initPageData();
     }
 
     @Override
