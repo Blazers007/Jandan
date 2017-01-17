@@ -3,6 +3,7 @@
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
+.idea/sonarlint
 /build
 /captures
 *.iml

@@ -35,4 +35,5 @@
 ---
 ####截图
 
-~~图片链接失效~~
+![Version2](/img/jdv2_1.png)
+![Version2](/img/jdv2_2.png)

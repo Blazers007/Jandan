@@ -87,3 +87,6 @@ h
 8app/src/main/java/com/blazers/jandan/api/BlazersAPI.java,5/c/5c5ebfc02dc5e53f3f99d8ce99b9ee10b59f9d0b
 e
 5app/src/main/java/com/blazers/jandan/api/IJandan.java,5/c/5cade1d93d9016e72a23e2f67538059baebbe044
+:
+
+.gitignore,a/5/a5cc2925ca8258af241be7e5b0381edf30266302
