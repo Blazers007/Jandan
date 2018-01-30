@@ -3,10 +3,8 @@ package com.blazers.jandan.presenter.base;
 import com.blazers.jandan.util.Rxbus;
 import com.blazers.jandan.util.log.Log;
 
-import rx.Observable;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+
 
 /**
  * Created by blazers on 2016/11/11.

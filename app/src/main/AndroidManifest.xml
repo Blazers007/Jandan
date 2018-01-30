@@ -26,52 +26,12 @@
             android:value="${UMENG_CHANNEL}"/>
 
         <!-- Launcher -->
-        <activity
-            android:name=".ui.activity.MainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@style/NeedDrawerStyle">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts"/>
-        </activity>
         <!-- Reading News -->
-        <activity
-            android:name=".ui.activity.NewsReadActivity"
-            android:label="@string/title_activity_news_read"
-            android:screenOrientation="portrait"
-            android:theme="@style/ImmersiveReadingStyle">
-        </activity>
         <!-- View Image-->
-        <activity
-            android:name=".ui.activity.ImageInspectActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/ImageViewStyle"
-            />
         <!-- View Image Pager -->
-        <activity
-            android:name=".ui.activity.ImageDetailActivity"
-            android:screenOrientation="portrait"
-            />
         <!-- Comment -->
-        <activity
-            android:name=".ui.activity.CommentActivity"
-            android:label="@string/title_activity_comment"
-            android:screenOrientation="portrait"/>
         <!-- Offline -->
-        <activity
-            android:name=".ui.activity.OfflineActivity"
-            android:label="@string/title_activity_offline"
-            android:screenOrientation="portrait"
-            />
         <!-- Service -->
-        <service android:name=".service.OfflineDownloadService"/>
         <!-- Android 7.0 Quick Offline Tile Icon -->
         <service
             android:name=".service.TileOfflineDownloadService"

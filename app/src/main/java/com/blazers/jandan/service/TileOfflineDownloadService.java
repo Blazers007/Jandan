@@ -8,7 +8,6 @@ import android.service.quicksettings.TileService;
 import android.support.annotation.RequiresApi;
 
 import com.blazers.jandan.R;
-import com.blazers.jandan.ui.activity.MainActivity;
 import com.blazers.jandan.util.log.Log;
 
 /**
@@ -124,8 +123,8 @@ public class TileOfflineDownloadService extends TileService {
 
     // Start activity for requesting permission and let the user set whether to quit or not
     private void startActivityForRequesintPermission() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // ? 启动到首页 clear top 还是 跳转到指定的权限申请界面?
-        startActivityAndCollapse(intent);
+//        Intent intent = new Intent(this, MainActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // ? 启动到首页 clear top 还是 跳转到指定的权限申请界面?
+//        startActivityAndCollapse(intent);
     }
 }

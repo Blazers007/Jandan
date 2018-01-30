@@ -87,7 +87,8 @@ public class FragmentNestedScrollBehavior extends CoordinatorLayout.Behavior<Fra
             return;
         }
         if (bottomNavigationView == null) {
-            bottomNavigationView = coordinatorLayout.findViewById(R.id.bottom_navigation_view_wrapper);
+            // TODO : 2018年01月30日15:58:46 注解
+//            bottomNavigationView = coordinatorLayout.findViewById(R.id.bottom_navigation_view_wrapper);
         }
         if (bottomNavigationView != null) {
             if (dyConsumed > 0) {

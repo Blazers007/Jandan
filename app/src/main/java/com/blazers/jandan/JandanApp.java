@@ -2,16 +2,10 @@ package com.blazers.jandan;
 
 import android.app.Application;
 
-import com.blazers.jandan.model.DataManager;
 import com.blazers.jandan.util.LoggintInterceptor;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.snappydb.DB;
-import com.snappydb.DBFactory;
-import com.snappydb.SnappydbException;
-
-import io.realm.Realm;
 import jonathanfinerty.once.Once;
 import okhttp3.OkHttpClient;
 import timber.log.Timber;
@@ -24,13 +18,6 @@ public class JandanApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        // 初始化数据库
-        Realm.init(this);
-        try {
-            DataManager.getInstance().init(this);
-        } catch (SnappydbException e) {
-            e.printStackTrace();
-        }
         // 初始化Fresco
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .addInterceptor(new LoggintInterceptor())

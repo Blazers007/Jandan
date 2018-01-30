@@ -16,15 +16,18 @@
    public *;
 }
 
-# RetroLambda
--dontwarn java.lang.invoke.*
 
-# Retrofit
--dontnote retrofit2.Platform
--dontnote retrofit2.Platform$IOS$MainThreadExecutor
--dontwarn retrofit2.Platform$Java8
+# -------------------------  Retrofit -------------------------
+# Retain generic type information for use by reflection by converters and adapters.
 -keepattributes Signature
--keepattributes Exceptions
+# Retain service method parameters.
+-keepclassmembernames,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+# Ignore annotation used for build tooling.
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+# -------------------------  Retrofit -------------------------
+
 
 # Gson -- Very Important
 -keep public class com.google.gson.**
